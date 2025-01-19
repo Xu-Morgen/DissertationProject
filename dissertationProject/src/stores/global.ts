@@ -6,6 +6,7 @@ export const useGlobalStore = defineStore('global', {
         token: '',
         progress: 0,
         newMails:0,
+        task:{}
     }),
     actions: {
         setUser(user: any) {
@@ -20,14 +21,9 @@ export const useGlobalStore = defineStore('global', {
         setMails(newMails: number) {
             this.newMails = newMails;
         },
+        setTasks(task:{}){
+            this.task = task
+        }
     },
-    persist: {
-        enabled: true,
-        strategies: [
-            {
-                key: 'main',
-                storage: localStorage,
-            },
-        ],
-    },
+    persist: true,
 });

@@ -1,18 +1,25 @@
 <script lang="ts" setup>
+import { ref } from 'vue';
 import { useGlobalStore } from '../../stores/global';
 import Inbox from "./mailbox/mailbox.vue"
+import Kanban from "./kanban/kanban.vue"
 const store = useGlobalStore();
 
 const progress = store.progress
 
 const emailList = [
-  { id: 1, sender: 'Alice', subject: '欢迎使用收件箱', time: '2025-01-19 12:30' },
-  { id: 2, sender: 'Bob', subject: '会议邀请', time: '2025-01-18 15:00' },
-  { id: 3, sender: 'Charlie', subject: '月度报告', time: '2025-01-17 10:00' },
+  { id: 1, sender: 'Alice', subject: 'welcome to use', time: '2025-01-19 12:30',detail:"123" },
+  { id: 2, sender: 'Bob', subject: 'invitation', time: '2025-01-18 15:00',detail:"321" },
+  { id: 3, sender: 'Charlie', subject: 'monthly report', time: '2025-01-17 10:00',detail:"111" },
 ];
 
 const handleCreateNew = () => {
-  console.log('点击新邮件按钮');
+  alert('click on new email');
+};
+
+const currentContent = ref('mailbox');
+const changeContent = (content: string) => {
+  currentContent.value = content;
 };
 </script>
 
@@ -22,10 +29,15 @@ const handleCreateNew = () => {
         <a-layout-header class="my-header">{{ progress }}</a-layout-header>
         <a-layout>
             <a-layout-content class="my-content">
-                <Inbox
-                    :initialEmails="emailList"
-                    @create-new="handleCreateNew"
-                    />
+                <div v-if="currentContent === 'mailbox'">
+                    <Inbox
+                        :initialEmails="emailList"
+                        @create-new="handleCreateNew"
+                        />
+                </div>
+                <div v-if="currentContent === 'Kanban'">
+                    <Kanban/>
+                </div>
             </a-layout-content>
             <a-layout-sider class="my-sider">
                     <div class="control-bar">
@@ -41,12 +53,12 @@ const handleCreateNew = () => {
             <a-layout-footer class="my-footer">
                 <div class="control-bar">
                     <a-badge count="5">
-                        <a-button type="primary">
+                        <a-button type="primary" @click="changeContent('mailbox')">
                             mail box
                         </a-button>
                     </a-badge>
 
-                    <a-button type="primary">
+                    <a-button type="primary" @click="changeContent('Kanban')">
                         KanBan
                     </a-button>
                 </div>
