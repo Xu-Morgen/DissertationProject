@@ -3,6 +3,7 @@ import { ref } from 'vue';
 import { useGlobalStore } from '../../stores/global';
 import Inbox from "./mailbox/mailbox.vue"
 import Kanban from "./kanban/kanban.vue"
+import MailModal from "./mailbox/mailmodle.vue"
 const store = useGlobalStore();
 
 const progress = store.progress
@@ -21,6 +22,13 @@ const currentContent = ref('mailbox');
 const changeContent = (content: string) => {
   currentContent.value = content;
 };
+
+const mailboxModalOpen = ref(false);
+
+const openMailModal = () =>{
+    mailboxModalOpen.value = true
+    console.log(mailboxModalOpen.value)
+}
 </script>
 
 
@@ -28,11 +36,13 @@ const changeContent = (content: string) => {
     <a-layout>
         <a-layout-header class="my-header">{{ progress }}</a-layout-header>
         <a-layout>
+            <MailModal v-model:open="mailboxModalOpen"/>
             <a-layout-content class="my-content">
                 <div v-if="currentContent === 'mailbox'">
                     <Inbox
                         :initialEmails="emailList"
                         @create-new="handleCreateNew"
+                        @update:modal-visible="openMailModal"
                         />
                 </div>
                 <div v-if="currentContent === 'Kanban'">

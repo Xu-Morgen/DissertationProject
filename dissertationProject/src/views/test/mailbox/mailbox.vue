@@ -6,12 +6,13 @@ const props = defineProps({
   title: { type: String, default: 'Mail box' },
   subTitle: { type: String, default: 'check and manage' },
   newButtonText: { type: String, default: 'new mail' },
+  modalVisible: { type: Boolean, default: false },
 });
 
 const store = useGlobalStore();
 
 
-const emit = defineEmits(['create-new']);
+const emit = defineEmits(['create-new', 'update:modalVisible'])
 
 const emails = ref([...props.initialEmails]);
 
