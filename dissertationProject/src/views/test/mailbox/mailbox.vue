@@ -31,7 +31,8 @@ const onCreateNew = () => {
 };
 
 const onActionClick = (record: any) => {
-  alert(`click on：${record.subject}\nsender：${record.sender}\ntimeline：${record.time}`);
+  // alert(`click on：${record.subject}\nsender：${record.sender}\ntimeline：${record.time}`);
+  emit('update:modalVisible')
   store.setTasks({name:record.subject,detail:record.detail})
 };
 </script>

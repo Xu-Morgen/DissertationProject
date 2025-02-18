@@ -23,6 +23,6 @@ const handleOk = (e: MouseEvent) => {
     @ok="handleOk"
     @cancel="emit('update:open', false)"
   >
-    <slot>默认内容：Some contents...</slot>
+    <slot>Content：Some contents...</slot>
   </a-modal>
 </template>
