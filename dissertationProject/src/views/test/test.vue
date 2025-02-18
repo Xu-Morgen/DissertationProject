@@ -4,31 +4,38 @@ import { useGlobalStore } from '../../stores/global';
 import Inbox from "./mailbox/mailbox.vue"
 import Kanban from "./kanban/kanban.vue"
 import MailModal from "./mailbox/mailmodle.vue"
+import MailSentModal from "./mailbox/mailsent.vue"
+import {emailList} from "./mockData"
 const store = useGlobalStore();
-
 const progress = store.progress
 
-const emailList = [
-  { id: 1, sender: 'Alice', subject: 'welcome to use', time: '2025-01-19 12:30',detail:"123" },
-  { id: 2, sender: 'Bob', subject: 'invitation', time: '2025-01-18 15:00',detail:"321" },
-  { id: 3, sender: 'Charlie', subject: 'monthly report', time: '2025-01-17 10:00',detail:"111" },
-];
-
 const handleCreateNew = () => {
-  alert('click on new email');
+  mailSentModalOpen.value = true
 };
 
 const currentContent = ref('mailbox');
+const MailModalContent = ref({});
+
 const changeContent = (content: string) => {
   currentContent.value = content;
 };
-
+const handleSendEmail = (emailData: any) => {
+  console.log("Email Sent:", emailData);
+};
 const mailboxModalOpen = ref(false);
+const mailSentModalOpen = ref(false);
 
 const openMailModal = () =>{
     mailboxModalOpen.value = true
     console.log(mailboxModalOpen.value)
+};
+
+interface mailModalContent{
+    content:String;
+    subject:String;
+    detail:String;
 }
+
 </script>
 
 
@@ -36,13 +43,19 @@ const openMailModal = () =>{
     <a-layout>
         <a-layout-header class="my-header">{{ progress }}</a-layout-header>
         <a-layout>
-            <MailModal v-model:open="mailboxModalOpen"/>
+            <MailSentModal
+                v-model:open="mailSentModalOpen"
+                :emailList="emailList.map(email=>({subject: email.subject, type:email.type.toString()}))"
+                @sendEmail="handleSendEmail"
+            />
+            <MailModal v-model:open="mailboxModalOpen" v-model:Content="MailModalContent"/>
             <a-layout-content class="my-content">
                 <div v-if="currentContent === 'mailbox'">
                     <Inbox
                         :initialEmails="emailList"
                         @create-new="handleCreateNew"
                         @update:modal-visible="openMailModal"
+                        @update:modal-content="(newContent) => MailModalContent = newContent"
                         />
                 </div>
                 <div v-if="currentContent === 'Kanban'">

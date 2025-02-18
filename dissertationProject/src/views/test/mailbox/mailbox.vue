@@ -12,7 +12,7 @@ const props = defineProps({
 const store = useGlobalStore();
 
 
-const emit = defineEmits(['create-new', 'update:modalVisible'])
+const emit = defineEmits(['create-new', 'update:modalVisible',"update:modalContent"])
 
 const emails = ref([...props.initialEmails]);
 
@@ -33,7 +33,13 @@ const onCreateNew = () => {
 const onActionClick = (record: any) => {
   // alert(`click on：${record.subject}\nsender：${record.sender}\ntimeline：${record.time}`);
   emit('update:modalVisible')
-  store.setTasks({name:record.subject,detail:record.detail})
+  emit('update:modalContent',record.detail)
+  store.addTask({
+    detail: record.detail,
+    isAccept: false,
+    hiddenImportant: 10,
+    subject:record.subject,
+})
 };
 </script>
 
