@@ -1,4 +1,5 @@
 import type { Email, Reply, Sent, Task } from "../../stores/type";
+import Tasks from "./../../assets/data/task.ts"
 
 export const emailList: Email[] = [
     {
@@ -8,12 +9,8 @@ export const emailList: Email[] = [
       detail: "Please complete the report by the end of the day.",
       time: "2025-02-18T09:00:00Z",
       type:"Task",
-      typeContent: {
-        detail: "Complete the report and submit it.",
-        isAccept: true,
-        subject: "Task 1: Complete the report",
-        hiddenImportant: 1,
-      },
+      isChecked:false,
+      typeContent: Tasks.Task1,
     },
     {
       id: 2,
@@ -22,6 +19,7 @@ export const emailList: Email[] = [
       detail: "I have completed the report and submitted it.",
       time: "2025-02-18T10:00:00Z",
       type:"Reply",
+      isChecked:false,
       typeContent: {
         detail: "I have completed the report and submitted it.",
         relate: {
@@ -41,6 +39,7 @@ export const emailList: Email[] = [
       detail: "The invoice #1234 has been sent to the client.",
       time: "2025-02-18T11:00:00Z",
       type:"Sent",
+      isChecked:false,
       typeContent: {
         detail: "The invoice #1234 has been sent to the client.",
         to: "client@example.com",
@@ -53,12 +52,16 @@ export const emailList: Email[] = [
       detail: "Please schedule the meeting with the client for next week.",
       time: "2025-02-18T12:00:00Z",
       type:"Task",
+      isChecked:false,
       typeContent: {
+        arrange:0,
+        id:2,
+        isFinished:false,
         detail: "Schedule the meeting with the client.",
         isAccept: true,
         subject: "Task 2: Schedule the meeting",
         hiddenImportant: 2, // Placeholder for meeting time
-      } as Task,
+      } 
     },
     {
       id: 5,
@@ -67,6 +70,7 @@ export const emailList: Email[] = [
       detail: "The meeting has been scheduled for next Wednesday.",
       time: "2025-02-18T13:00:00Z",
       type:"Reply",
+      isChecked:false,
       typeContent: {
         detail: "The meeting has been scheduled for next Wednesday.",
         relate: {

@@ -48,7 +48,8 @@
   </template>
   
   <script lang="ts" setup>
-  import { ref, computed, defineProps, defineEmits } from "vue";
+  //用于在点击send new时触发的弹出框
+  import { ref, computed } from "vue";
   
   // 接收 `open` 状态
   const props = defineProps<{ open: boolean; emailList: { subject: string; type: string }[] }>();

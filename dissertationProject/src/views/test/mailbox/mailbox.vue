@@ -1,6 +1,8 @@
 <script lang="ts" setup>
+//用于作为邮件页面的整体框架
 import { ref, defineProps, defineEmits } from 'vue';
 import { useGlobalStore } from '../../../stores/global';
+import type { Email } from '../../../stores/type';
 const props = defineProps({
   initialEmails: { type: Array, default: () => [] },
   title: { type: String, default: 'Mail box' },
@@ -30,16 +32,12 @@ const onCreateNew = () => {
   emit('create-new');
 };
 
-const onActionClick = (record: any) => {
+const onActionClick = (record: Email) => {
   // alert(`click on：${record.subject}\nsender：${record.sender}\ntimeline：${record.time}`);
   emit('update:modalVisible')
   emit('update:modalContent',record.detail)
-  store.addTask({
-    detail: record.detail,
-    isAccept: false,
-    hiddenImportant: 10,
-    subject:record.subject,
-})
+  store.setCurrentEmail(record)
+
 };
 </script>
 
@@ -77,7 +75,6 @@ const onActionClick = (record: any) => {
       <template v-else-if="column.key === 'action'">
         <span>
           <a @click="onActionClick(record)">check detail</a>
-
         </span>
       </template>
       

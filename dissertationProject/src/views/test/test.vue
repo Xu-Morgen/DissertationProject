@@ -3,8 +3,8 @@ import { ref } from 'vue';
 import { useGlobalStore } from '../../stores/global';
 import Inbox from "./mailbox/mailbox.vue"
 import Kanban from "./kanban/kanban.vue"
-import MailModal from "./mailbox/mailmodle.vue"
-import MailSentModal from "./mailbox/mailsent.vue"
+import MailModal from "./mailbox/components/mailmodle.vue"
+import MailSentModal from "./mailbox/components/mailsent.vue"
 import {emailList} from "./mockData"
 const store = useGlobalStore();
 const progress = store.progress
@@ -14,7 +14,7 @@ const handleCreateNew = () => {
 };
 
 const currentContent = ref('mailbox');
-const MailModalContent = ref({});
+const MailModalContent = ref({} as String);
 
 const changeContent = (content: string) => {
   currentContent.value = content;
@@ -42,14 +42,16 @@ interface mailModalContent{
 <template>
     <a-layout>
         <a-layout-header class="my-header">{{ progress }}</a-layout-header>
+        <!--邮件modal-->
         <a-layout>
             <MailSentModal
                 v-model:open="mailSentModalOpen"
                 :emailList="emailList.map(email=>({subject: email.subject, type:email.type.toString()}))"
                 @sendEmail="handleSendEmail"
             />
-            <MailModal v-model:open="mailboxModalOpen" v-model:Content="MailModalContent"/>
+            <MailModal v-model:open="mailboxModalOpen" v-model:content="MailModalContent"/>
             <a-layout-content class="my-content">
+                <!--邮件页面-->
                 <div v-if="currentContent === 'mailbox'">
                     <Inbox
                         :initialEmails="emailList"
@@ -58,6 +60,7 @@ interface mailModalContent{
                         @update:modal-content="(newContent) => MailModalContent = newContent"
                         />
                 </div>
+                <!--Kanban-->
                 <div v-if="currentContent === 'Kanban'">
                     <Kanban/>
                 </div>
