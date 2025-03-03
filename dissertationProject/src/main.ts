@@ -17,5 +17,14 @@ app.use(Antd);
 app.use(router)
 app.mount('#app');
 
-
-
+// router.beforeEach((to, from, next) => {
+//     if (localStorage.getItem('meetingInProgress') === 'true') {
+//       if (confirm('请先完成会议室内容！')) {
+//         next(false);
+//       } else {
+//         next(false);
+//       }
+//     } else {
+//       next();
+//     }
+//   });

@@ -5,6 +5,7 @@ import Inbox from "./mailbox/mailbox.vue"
 import Kanban from "./kanban/kanban.vue"
 import MailModal from "./mailbox/components/mailmodle.vue"
 import MailSentModal from "./mailbox/components/mailsent.vue"
+import Clander from './clander/clander.vue';
 import {emailList} from "./mockData"
 const store = useGlobalStore();
 const progress = store.progress
@@ -64,13 +65,17 @@ interface mailModalContent{
                 <div v-if="currentContent === 'Kanban'">
                     <Kanban/>
                 </div>
+
+                <div v-if="currentContent === 'clander'">
+                    <Clander/>
+                </div>
             </a-layout-content>
             <a-layout-sider class="my-sider">
                     <div class="control-bar">
                         <a-button type="primary" href="/">
                             Close
                         </a-button>
-                        <a-button type="primary">
+                        <a-button type="primary" @click="changeContent('clander')">
                             Clander
                         </a-button>
                     </div>
