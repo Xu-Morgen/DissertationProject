@@ -1,5 +1,5 @@
 import type { Email, Reply, Sent, Task } from "../../stores/type";
-import Tasks from "./../../assets/data/task.ts"
+import Tasks from "../../assets/data/task.ts"
 
 export const emailList: Email[] = [
     {

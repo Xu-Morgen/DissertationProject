@@ -55,7 +55,7 @@
     ]
   };
   
-  import { useGlobalStore } from '../stores/global';
+  import { useGlobalStore } from '../../stores/global';
 
 
     const route = useRoute();
