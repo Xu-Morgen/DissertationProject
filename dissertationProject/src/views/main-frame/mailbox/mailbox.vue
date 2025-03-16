@@ -1,10 +1,9 @@
 <script lang="ts" setup>
 //用于作为邮件页面的整体框架
-import { ref, defineProps, defineEmits } from 'vue';
+import { ref, defineProps, defineEmits, watch } from 'vue';
 import { useGlobalStore } from '../../../stores/global';
 import type { Email } from '../../../stores/type';
 const props = defineProps({
-  initialEmails: { type: Array, default: () => [] },
   title: { type: String, default: 'Mail box' },
   subTitle: { type: String, default: 'check and manage' },
   newButtonText: { type: String, default: 'new mail' },
@@ -13,10 +12,17 @@ const props = defineProps({
 
 const store = useGlobalStore();
 
+const isSent = ref<boolean>(false);
 
 const emit = defineEmits(['create-new', 'update:modalVisible',"update:modalContent"])
 
-const emails = ref([...props.initialEmails]);
+//从仓库中获取邮件数据
+const emails = ref(store.emails);
+
+//当sentbox的选择器被改动时更新邮件列表
+watch(isSent,(newValue,oldValue)=>{
+
+});
 
 const columns = [
   { title: 'sender', dataIndex: 'sender', key: 'sender' },
@@ -47,6 +53,8 @@ const onActionClick = (record: Email) => {
   <div class="inbox-container">
     <a-page-header :title="title" :sub-title="subTitle">
       <template #extra>
+        <a-switch v-model:checked="isSent" checked-children="Send out box" un-checked-children="The inbox" />
+        
         <a-button type="primary" @click="onCreateNew">{{ newButtonText }}</a-button>
       </template>
     </a-page-header>

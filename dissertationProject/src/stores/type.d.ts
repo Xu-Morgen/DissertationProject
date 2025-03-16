@@ -1,15 +1,15 @@
 import type { time } from "echarts/core";
 
 
+
 interface Email {
     id:number;
     sender: string;
     subject: string;
     detail:string;
     time: string;
-    type:"Task"|"Reply"|"Sent";
+    type:"Task"|"Reply"|"Sent"|"Message";
     typeContent?:Task|Reply|Sent;
-    isChecked:boolean;
 }
 
 interface Task {
@@ -37,3 +37,9 @@ interface Sent{
     relate?:Email;
 }
   
+interface Recipient{
+    id:number;
+    Name:String;
+    job:String;
+    color?:number;
+}

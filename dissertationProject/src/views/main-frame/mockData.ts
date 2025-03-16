@@ -9,7 +9,6 @@ export const emailList: Email[] = [
       detail: "Please complete the report by the end of the day.",
       time: "2025-02-18T09:00:00Z",
       type:"Task",
-      isChecked:false,
       typeContent: Tasks.Task1,
     },
     {
@@ -19,7 +18,6 @@ export const emailList: Email[] = [
       detail: "I have completed the report and submitted it.",
       time: "2025-02-18T10:00:00Z",
       type:"Reply",
-      isChecked:false,
       typeContent: {
         detail: "I have completed the report and submitted it.",
         relate: {
@@ -39,7 +37,6 @@ export const emailList: Email[] = [
       detail: "The invoice #1234 has been sent to the client.",
       time: "2025-02-18T11:00:00Z",
       type:"Sent",
-      isChecked:false,
       typeContent: {
         detail: "The invoice #1234 has been sent to the client.",
         to: "client@example.com",
@@ -52,7 +49,6 @@ export const emailList: Email[] = [
       detail: "Please schedule the meeting with the client for next week.",
       time: "2025-02-18T12:00:00Z",
       type:"Task",
-      isChecked:false,
       typeContent: {
         arrange:0,
         id:2,
@@ -70,7 +66,6 @@ export const emailList: Email[] = [
       detail: "The meeting has been scheduled for next Wednesday.",
       time: "2025-02-18T13:00:00Z",
       type:"Reply",
-      isChecked:false,
       typeContent: {
         detail: "The meeting has been scheduled for next Wednesday.",
         relate: {

@@ -4,12 +4,15 @@ import type { Email, Task } from './type';
 export const useGlobalStore = defineStore('global', {
     state: () => ({
         user: null,
-        token: '',
+        token:'',
         progress: 0,
         newMails: 0,
         emails: []  as Email[],//总邮件列表
         currentEmail:{} as Email, //当前正在查看的email
         currentDay: 1, // 新增当前天数
+        sentEmails:[] as Email[],//发件箱
+
+
 
         //用于Kanban
         tasks: [] as Task[], // 定义为 Task 数组
@@ -43,18 +46,21 @@ export const useGlobalStore = defineStore('global', {
         setUser(user: any) {
             this.user = user;
         },
-        setToken(token: string) {
-            this.token = token;
-        },
+
         setProgress(progress: number) {
             this.progress = progress;
         },
-        setMails(newMails: number) {
-            this.newMails = newMails;
+        //邮件部分
+        addMail(newMail:Email){
+            this.emails.push(newMail)
+        },
+        clearMails(){
+            this.emails = []
         },
         setCurrentEmail(current:Email){
             this.currentEmail = current 
         },
+        //任务部分
         addTask(task: Task) { // 添加任务
             this.tasks.push(task);
         },
@@ -142,3 +148,4 @@ export const useGlobalStore = defineStore('global', {
     },
     persist: true, // 持久化存储
 });
+
