@@ -1,6 +1,12 @@
 <template>
   <div class="kanban-container">
     <!-- 优先级看板区域（垂直排列） -->
+、
+    <a-divider orientation="left" class="spring-divider">
+      <a-tag color="#87d068" class="divider-tag">
+        <rocket-outlined /> Priority
+      </a-tag>
+    </a-divider>
     <div class="priority-kanbans">
       <div class="kanban-box must-kanban">
         <a-transfer
@@ -36,7 +42,7 @@
     <!-- Spring看板 -->
     <a-divider orientation="left" class="spring-divider">
       <a-tag color="#87d068" class="divider-tag">
-        <rocket-outlined /> Spring专项任务看板
+        <rocket-outlined /> Spring
       </a-tag>
     </a-divider>
 
@@ -45,13 +51,13 @@
         v-model:data-source="springList"
         v-model:target-keys="springSelect"
         :render="renderFunc"
-        title="SPRING 当前周期专项任务"
+        title="SPRING"
       />
     </div>
 
     <!-- 任务列表 -->
     <a-divider orientation="left" class="task-divider">
-      <a-tag color="#2db7f5">任务明细清单</a-tag>
+      <a-tag color="#2db7f5">task list</a-tag>
     </a-divider>
     
     <div class="task-list-container">
@@ -61,7 +67,7 @@
         danger
         class="clear-btn"
       >
-        <delete-outlined /> 清空所有任务
+        <delete-outlined /> clear task(test only)
       </a-button>
       
       <div v-if="tasks.length > 0" class="task-cards">
@@ -74,7 +80,7 @@
           <template #title>
             <div class="card-title">
               <a-tag :color="getPriorityColor(task.arrange)">
-                任务{{ index + 1 }}
+                task{{ index + 1 }}
               </a-tag>
               <span class="subject-text">{{ task.subject }}</span>
             </div>
@@ -83,13 +89,13 @@
             <p class="detail-text">{{ task.detail }}</p>
             <a-divider dashed />
             <div class="meta-info">
-              <span>优先级: {{ getPriorityText(task.arrange) }}</span>
+              <span>priotity: {{ getPriorityText(task.arrange) }}</span>
               <a-tag v-if="task.relate" color="purple">{{ task.relate }}</a-tag>
             </div>
           </div>
         </a-card>
       </div>
-      <a-empty v-else description="暂无任务" />
+      <a-empty v-else description="no task" />
     </div>
   </div>
 </template>
@@ -217,15 +223,15 @@ const handleChange = (targetKeys, direction, moveKeys, list) => {
 };
 
 const getPriorityText = (priority: number) => {
-  return ['未分级', '必须', '应该', '可以'][priority] || '未知';
+  return ['unarranged', 'must', 'should', 'can'][priority] || 'unkonwen';
 };
 
 const getPriorityTitle = (priority: number) => {
   switch(priority) {
-    case 1: return 'Must (优先级 1)';
-    case 2: return 'Should (优先级 2)';
-    case 3: return 'Can (优先级 3)';
-    default: return '未分级';
+    case 1: return 'Must (tier 1)';
+    case 2: return 'Should (tier 2)';
+    case 3: return 'Can (tier 3)';
+    default: return 'unarranged';
   }
 };
 

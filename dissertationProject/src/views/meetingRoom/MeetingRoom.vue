@@ -1,149 +1,212 @@
 <template>
-    <div class="meeting-room">
-      <div class="chat-log">
-        <div v-for="(message, index) in chatHistory" :key="index" class="sys-message">
-          {{ message }}
-        </div>
-      </div>
-      <div class="player-options">
-        <a-button 
-          v-for="(option, index) in currentOptions" 
-          :key="index"
-          @click="selectOption(option)"
-        >
-          {{ option.text }}
-        </a-button>
+  <div class="meeting-room">
+    <div class="chat-log">
+      <div 
+        v-for="(message, index) in chatHistory" 
+        :key="index"
+        :class="['message-bubble', message.type]"
+      >
+        {{ message.content }}
       </div>
     </div>
-  </template>
-  
-  <script lang="ts" setup>
-  import { ref, onMounted, onUnmounted } from 'vue';
-  import { useRoute } from 'vue-router';
-  
-  interface ScriptStep {
-    sys: string;
-    options: Array<{
-      text: string;
-      effects?: Record<string, any>;
-    }>;
+    <div class="player-options" v-if="currentOptions.length > 0">
+      <a-button 
+        v-for="(option, index) in currentOptions" 
+        :key="index"
+        @click="selectOption(option)"
+        class="option-button"
+      >
+        {{ option.text }}
+      </a-button>
+    </div>
+  </div>
+</template>
+
+<script lang="ts" setup>
+import { ref, onMounted, onUnmounted } from 'vue';
+import { useRoute } from 'vue-router';
+import { useGlobalStore } from '../../stores/global';
+
+interface ScriptStep {
+  sys: string;
+  options?: Array<{ // 改为可选属性
+    text: string;
+    effects?: Record<string, any>;
+  }>;
+}
+
+interface ChatMessage {
+  type: 'system' | 'user';
+  content: string;
+}
+
+// 示例剧本数据
+const sampleScripts: Record<number, ScriptStep[]> = {
+  1: [
+    {
+      sys:"test1"
+    },
+    { 
+      sys: "speeker1：test2！",
+      options: [
+        { text: "action1", effects: { tension: +10 } },
+        { text: "action2", effects: { trust: +5 } }
+      ]
+    },
+    {
+      sys: "speeker2：test3！",
+      options: [
+        { text: "action3", effects: { progress: +20 } },
+        { text: "action4", effects: { tension: +15 } }
+      ]
+    },
+    {
+      sys: "end"
+      // 没有options将自动继续
+    }
+  ]
+};
+
+const route = useRoute();
+const globalStore = useGlobalStore();
+
+const currentStep = ref(0);
+const chatHistory = ref<ChatMessage[]>([]);
+const currentOptions = ref<ScriptStep['options']>([]);
+const totalSteps = ref(0);
+
+onMounted(() => {
+  globalStore.setMeetingInProgress(true);
+  loadScript();
+});
+
+onUnmounted(() => {
+  if (currentStep.value >= totalSteps.value) {
+    globalStore.resetMeetingState();
   }
+});
+
+const loadScript = () => {
+  const eventId = Number(route.params.id);
+  const script = sampleScripts[eventId] || [];
+  totalSteps.value = script.length;
   
-  // 示例剧本数据
-  const sampleScripts: Record<number, ScriptStep[]> = {
-    1: [
-      { 
-        sys: "系统：欢迎来到紧急会议！",
-        options: [
-          { text: "保持沉默", effects: { tension: +10 } },
-          { text: "主动发言", effects: { trust: +5 } }
-        ]
-      },
-      {
-        sys: "同事：我们需要立即行动！",
-        options: [
-          { text: "同意方案", effects: { progress: +20 } },
-          { text: "提出异议", effects: { tension: +15 } }
-        ]
-      },
-      {
-        sys: "系统：会议结束",
-        options: [
-          { text: "结束", effects: { progress: +20 } },
-        ]
-      }
-    ]
-  };
-  
-  import { useGlobalStore } from '../../stores/global';
+  if (script.length > 0) {
+    proceedStep(script[0]);
+  }
+};
 
+const proceedStep = (step: ScriptStep) => {
+  // 添加系统消息
+  chatHistory.value.push({
+    type: 'system',
+    content: step.sys
+  });
 
-    const route = useRoute();
-    const globalStore = useGlobalStore();
-
-
-  const currentStep = ref(0);
-  const chatHistory = ref<string[]>([]);
-  const currentOptions = ref<ScriptStep['options']>([]);
-  const totalSteps = ref(0); // 新增总步骤数
-
-    // 移除localStorage操作，改为store操作
-    onMounted(() => {
-    globalStore.setMeetingInProgress(true);
-    loadScript(); // 这里明确调用了 loadScript
-    });
-
-    onUnmounted(() => {
-    // 仅在完成时清除状态
-    if (currentStep.value >= totalSteps.value) {
-        globalStore.resetMeetingState();
-    }
-    });
-
-    
-
-    const loadScript = () => {
-    const eventId = Number(route.params.id);
-    const script = sampleScripts[eventId] || [];
-    totalSteps.value = script.length; // 设置总步骤数
-    if (script.length > 0) {
-        proceedStep(script[0]);
-    }
-    };
-    
-  const proceedStep = (step: ScriptStep) => {
-    chatHistory.value.push(step.sys);
+  if (step.options && step.options.length > 0) {
     currentOptions.value = step.options;
-  };
-  
-    // 修改selectOption函数
-    const selectOption = (option: ScriptStep['options'][number]) => {
-    if (option.effects) {
-        Object.entries(option.effects).forEach(([key, value]) => {
-        globalStore.updateMeetingVariable({ key, value });
-        });
-    }
+  } else {
+    // 没有选项时自动继续
+    autoProceed();
+  }
+};
 
-    // 增加步骤处理
-    currentStep.value++;
-    
-    const eventId = Number(route.params.id);
-    const script = sampleScripts[eventId] || [];
+const selectOption = (option: ScriptStep['options'][number]) => {
+  // 添加玩家选择消息
+  chatHistory.value.push({
+    type: 'user',
+    content: `you choose：${option.text}`
+  });
 
-    if (currentStep.value < totalSteps.value) {
-        proceedStep(script[currentStep.value]);
-    } else {
-        // 会议完成处理
-        globalStore.setMeetingInProgress(false);
-        setTimeout(() => window.close(), 1000); // 添加延迟确保状态更新
-    }
-    };
-  </script>
-  
-  <style scoped>
-  .meeting-room {
-    padding: 20px;
-    max-width: 800px;
-    margin: 0 auto;
+  // 处理效果
+  if (option.effects) {
+    Object.entries(option.effects).forEach(([key, value]) => {
+      globalStore.updateMeetingVariable({ key, value });
+    });
   }
-  
-  .chat-log {
-    min-height: 300px;
-    border: 1px solid #ddd;
-    padding: 20px;
-    margin-bottom: 20px;
+
+  currentStep.value++;
+  const eventId = Number(route.params.id);
+  const script = sampleScripts[eventId] || [];
+
+  if (currentStep.value < totalSteps.value) {
+    // 延迟显示下一条系统消息
+    setTimeout(() => proceedStep(script[currentStep.value]), 500);
+  } else {
+    completeMeeting();
   }
-  
-  .sys-message {
-    margin: 10px 0;
-    padding: 10px;
-    background: #f5f5f5;
-    border-radius: 4px;
+};
+
+const autoProceed = () => {
+  currentStep.value++;
+  const eventId = Number(route.params.id);
+  const script = sampleScripts[eventId] || [];
+
+  if (currentStep.value < totalSteps.value) {
+    setTimeout(() => proceedStep(script[currentStep.value]), 1000);
+  } else {
+    completeMeeting();
   }
-  
-  .player-options {
-    display: flex;
-    gap: 10px;
-    flex-direction: column;
-  }
-  </style>
+};
+
+const completeMeeting = () => {
+  globalStore.setMeetingInProgress(false);
+  setTimeout(() => window.close(), 1000);
+};
+</script>
+
+<style scoped>
+.meeting-room {
+  padding: 20px;
+  max-width: 800px;
+  margin: 0 auto;
+  background: #f8f9fa;
+  min-height: 100vh;
+}
+
+.chat-log {
+  min-height: 400px;
+  border: 1px solid #e9ecef;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 20px;
+  background: white;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.message-bubble {
+  padding: 12px 16px;
+  border-radius: 12px;
+  max-width: 80%;
+  word-break: break-word;
+}
+
+.message-bubble.system {
+  background: #f1f3f5;
+  align-self: flex-start;
+}
+
+.message-bubble.user {
+  background: #4dabf7;
+  color: white;
+  align-self: flex-end;
+}
+
+.player-options {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.option-button {
+  flex: 1;
+  min-width: 200px;
+  transition: transform 0.2s;
+}
+
+.option-button:hover {
+  transform: translateY(-2px);
+}
+</style>

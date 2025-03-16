@@ -2,11 +2,11 @@
   <div class="calendar">
     <!-- 在调试按钮区域添加重置按钮 -->
     <div class="debug-controls">
-      <a-button @click="changeDay(-1)">前一天</a-button>
-      <span class="current-day-label">当前第 {{ store.currentDay }} 天</span>
-      <a-button @click="changeDay(1)">后一天</a-button>
+      <a-button @click="changeDay(-1)">berfore</a-button>
+      <span class="current-day-label">now: {{ store.currentDay }} </span>
+      <a-button @click="changeDay(1)">past</a-button>
       <a-button @click="store.resetClickedEvents()" type="dashed">
-        重置点击状态
+        reset click state
       </a-button>
     </div>
 
@@ -57,7 +57,7 @@ const router = useRouter();
       number: i,
       events: [
         { id: i, title: `Event for Day ${i}` },
-        {id:300,title:"实验"}
+        {id:300,title:"test"}
       ]
     });
   }
