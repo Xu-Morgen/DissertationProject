@@ -3,6 +3,8 @@
 import { ref, defineProps, defineEmits, watch } from 'vue';
 import { useGlobalStore } from '../../../stores/global';
 import type { Email } from '../../../stores/type';
+import { useEmails } from '../../../stores/emails';
+
 const props = defineProps({
   title: { type: String, default: 'Mail box' },
   subTitle: { type: String, default: 'check and manage' },
@@ -11,13 +13,14 @@ const props = defineProps({
 });
 
 const store = useGlobalStore();
+const emailstore = useEmails();
 
 const isSent = ref<boolean>(false);
 
 const emit = defineEmits(['create-new', 'update:modalVisible',"update:modalContent"])
 
 //从仓库中获取邮件数据
-const emails = ref(store.emails);
+const emails = ref(emailstore.emails);
 
 //当sentbox的选择器被改动时更新邮件列表
 watch(isSent,(newValue,oldValue)=>{
@@ -39,10 +42,9 @@ const onCreateNew = () => {
 };
 
 const onActionClick = (record: Email) => {
-  // alert(`click on：${record.subject}\nsender：${record.sender}\ntimeline：${record.time}`);
   emit('update:modalVisible')
-  emit('update:modalContent',record.detail)
-  store.setCurrentEmail(record)
+  emit('update:modalContent',record)
+  emailstore.setCurrentEmail(record)
 
 };
 </script>

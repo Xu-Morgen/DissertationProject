@@ -6,11 +6,7 @@ export const useGlobalStore = defineStore('global', {
         user: null,
         token:'',
         progress: 0,
-        newMails: 0,
-        emails: []  as Email[],//总邮件列表
-        currentEmail:{} as Email, //当前正在查看的email
         currentDay: 1, // 新增当前天数
-        sentEmails:[] as Email[],//发件箱
 
 
 
@@ -25,6 +21,8 @@ export const useGlobalStore = defineStore('global', {
         SpringTask:[] as number[],//在本次Spring中期望完成的任务
 
         ErrorTask:[] as number[],//遭遇事件暂时无法处理的问题
+        //用于用户任务
+        usertasks:[],
 
         //用于会议
         meetingInProgress: false, // 新增会议状态
@@ -50,16 +48,7 @@ export const useGlobalStore = defineStore('global', {
         setProgress(progress: number) {
             this.progress = progress;
         },
-        //邮件部分
-        addMail(newMail:Email){
-            this.emails.push(newMail)
-        },
-        clearMails(){
-            this.emails = []
-        },
-        setCurrentEmail(current:Email){
-            this.currentEmail = current 
-        },
+
         //任务部分
         addTask(task: Task) { // 添加任务
             this.tasks.push(task);

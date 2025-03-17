@@ -2,11 +2,15 @@
 //用于在游戏设置当中时弹出的页面
 import { useGameConfig } from '../../stores/config';
 import { useGlobalStore } from '../../stores/global';
+import { useEmails } from '../../stores/emails';
+import { useUserTasks } from '../../stores/userTask';
 import { useRouter } from 'vue-router';
 
 const router = useRouter();
 const config =  useGameConfig();
 const store = useGlobalStore();
+const emails = useEmails();
+const userTask = useUserTasks();
 
 // 接收外部传入的 `open` 状态和 `Content`
 const props = defineProps<{
@@ -14,8 +18,10 @@ const props = defineProps<{
 }>();
 
 const resetGame = () =>{
-  config.setFirstTime(true);
-  store.clearMails();
+  emails.$reset();
+  userTask.$reset();  
+  config.$reset();
+  store.$reset();
   router.replace({ path: '/' });
 }
 

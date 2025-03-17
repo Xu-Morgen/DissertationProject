@@ -1,5 +1,6 @@
-import type { Email } from "../../stores/type";
-
+import type { Email, Task } from "../../stores/type";
+import Tasks from './task'
+import UserTasks from './userTasks'
 const Email1:Email = {
     id: 0,
     sender: "System",
@@ -20,7 +21,8 @@ const Email1:Email = {
 
     You must adapt quickly. We don't have time to waste.`,
     time: "2020.1.1",
-    type: "Message",
+    type: "UserTask",
+    typeContent:UserTasks.Task1,
 }
 
 export default {

@@ -8,8 +8,8 @@ interface Email {
     subject: string;
     detail:string;
     time: string;
-    type:"Task"|"Reply"|"Sent"|"Message";
-    typeContent?:Task|Reply|Sent;
+    type:"Task"|"Reply"|"Sent"|"Message"|"UserTask";
+    typeContent?:Task|Reply|Sent|UserTask;
 }
 
 interface Task {
@@ -26,12 +26,23 @@ interface Task {
     meetingTime?:time;
 }
 
+interface UserTask {
+    id:number;
+    detail: string;
+    relate?:string;
+    isAccept:boolean;
+    subject:string;
+    isFinished:boolean;
+}
+
 interface Reply {
+    id:number;
     detail: string;
     relate:Email;
 }
 
 interface Sent{
+    id:number;
     detail:string;
     to:string;
     relate?:Email;

@@ -229,7 +229,7 @@ const getPriorityText = (priority: number) => {
 const getPriorityTitle = (priority: number) => {
   switch(priority) {
     case 1: return 'Must (tier 1)';
-    case 2: return 'Should (tier 2)';
+    case 2: return 'Should (tier   2)';
     case 3: return 'Can (tier 3)';
     default: return 'unarranged';
   }
