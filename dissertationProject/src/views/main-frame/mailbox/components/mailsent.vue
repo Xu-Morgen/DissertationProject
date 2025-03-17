@@ -140,6 +140,12 @@ const handleRecipientSelect = (Recipient:any)=>{
 const handleSend = () => {
   if (!validateForm()) return;
 
+  const matchedReply = Reply.ReplyList.find(reply =>
+    // 根据收件人的 ID 和任务的标题匹配
+    reply.relate.some(r => selectedReceiver.value.includes(r)) &&
+    reply.about === selectedTask.value
+  );
+  
   const emailData = {
     receivers: selectedReceiver.value,
     subject: selectedSubject.value,

@@ -22,6 +22,7 @@ export const useEmails = defineStore('emails', {
         setCurrentEmail(current:Email){
             this.currentEmail = current 
         },
+        addSentEmails
     },
     persist: true, // 持久化存储
 });
