@@ -57,7 +57,7 @@
 
 <script lang="ts" setup>
 import { ref, computed, watch } from 'vue';
-import type { Recipient, Task, UserTask } from '../../../../stores/type';
+import type { Email, Recipient, SentEmail, Task, UserTask } from '../../../../stores/type';
 import { useGlobalStore } from '../../../../stores/global';
 import { useEmails } from '../../../../stores/emails';
 import { useUserTasks } from '../../../../stores/userTask';
@@ -84,13 +84,19 @@ const emailSubject = ref('');
 const selectedContent = ref('');
 const emailOptions = ref<{ value: string; label: string }[]>([]);
 
+//从emailList中奖可用的reply提取出来
+let ReplyCanUse = Reply.ReplyList.filter(r=>emailList.replyCanUse.includes(r.id))
 
+watch([emailList.replyCanUse],()=>{
+  ReplyCanUse = Reply.ReplyList.filter(r=>emailList.replyCanUse.includes(r.id))
+  console.log("reply change")
+})
 // watch 监听器
 watch([selectedReceiver, selectedTask], () => {
   if (!selectedTask.value || selectedReceiver.value.length === 0) return;
 
   // 查找匹配的 `Reply` 规则
-  const matchedReply = Reply.ReplyList.find(reply =>
+  const matchedReply = ReplyCanUse.find(reply =>
     // 根据收件人的 ID 和任务的标题匹配
     reply.relate.some(r => selectedReceiver.value.includes(r)) &&
     reply.about === selectedTask.value
@@ -140,19 +146,21 @@ const handleRecipientSelect = (Recipient:any)=>{
 const handleSend = () => {
   if (!validateForm()) return;
 
-  const matchedReply = Reply.ReplyList.find(reply =>
+  const matchedReply = ReplyCanUse.find(reply =>
     // 根据收件人的 ID 和任务的标题匹配
     reply.relate.some(r => selectedReceiver.value.includes(r)) &&
     reply.about === selectedTask.value
   );
   
-  const emailData = {
-    receivers: selectedReceiver.value,
-    subject: selectedSubject.value,
-    content: [emailContent.value, taskReplyContent.value]
-      .filter(Boolean).join('\n\n'),
-    relatedTask: selectedTask.value,
-    taskReply: taskReplyContent.value
+
+  matchedReply?.Event.action()
+
+  const emailData:SentEmail = {
+    id: emailList.sentEmails.length,
+    SentTo: receivers.filter(recipient => selectedReceiver.value.includes(recipient.id)).map(recipient=>recipient.Name),
+    subject: emailSubject.value,
+    detail: selectedContent.value,
+    type:"Sent",
   };
 
   emit('sendEmail', emailData);

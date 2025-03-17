@@ -1,14 +1,14 @@
 import { defineStore } from 'pinia';
-import type { Email } from './type';
+import type { Email, Reply, SentEmail } from './type';
 //用于邮件设置
 export const useEmails = defineStore('emails', {
     state: (): emailStates => ({
     newMails: 0,
 
     emails: []  as Email[],//总邮件列表
-    currentEmail:{} as Email, //当前正在查看的email
-    sentEmails:[] as Email[],//发件箱
-
+    currentEmail:{} as Email|SentEmail, //当前正在查看的email
+    sentEmails:[] as SentEmail[],//发件箱
+    replyCanUse:[] as number[],
         
     }),
     actions: {
@@ -19,10 +19,20 @@ export const useEmails = defineStore('emails', {
         clearMails(){
             this.emails = []
         },
-        setCurrentEmail(current:Email){
+        setCurrentEmail(current:Email|SentEmail){
             this.currentEmail = current 
         },
-        addSentEmails
+        addSentEmails(sent:SentEmail){
+            this.sentEmails.push(sent)
+        },
+        addReplyCanUse(Reply:number){
+            this.replyCanUse.push(Reply)
+        },
+        removeReplyCanUse(ReplyId:number){
+
+            this.replyCanUse = this.replyCanUse.filter(r=>r != ReplyId)
+
+        }
     },
     persist: true, // 持久化存储
 });
@@ -30,6 +40,7 @@ export const useEmails = defineStore('emails', {
 interface emailStates {
     newMails: number,
     emails:Email[],
-    currentEmail:Email,
-    sentEmails:Email[],
+    currentEmail:Email|SentEmail,
+    sentEmails:SentEmail[],
+    replyCanUse: number[],
 }

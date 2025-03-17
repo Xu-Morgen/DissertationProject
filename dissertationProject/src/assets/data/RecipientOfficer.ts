@@ -15,7 +15,10 @@ const Recipient2:Recipient = {
     isUnlock:false,
 }
 
+const Recipients = [Recipient1,Recipient2]
+
 export default {
     Recipient1,
     Recipient2, 
+    Recipients
 }

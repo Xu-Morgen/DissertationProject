@@ -38,7 +38,7 @@ const checkDuplicate = () => {
 }
 
 
-const formatEmailContent = (text: string) => {
+const formatEmailContent = (text: string = '') => {
   return text
     .replace(/ /g, '&nbsp;')  // 保留空格
     .replace(/\n/g, '<br>')   // 转换换行
@@ -64,12 +64,15 @@ const handleOk = (e: MouseEvent) => {
     }
   }
 
-  if(emails.currentEmail.EventParam){
-    emails.currentEmail.Event.action(emails.currentEmail.EventParam)
+  if(emails.currentEmail.type != "Sent"){
+    if(emails.currentEmail.EventParam){
+      emails.currentEmail.Event.action(emails.currentEmail.EventParam)
+    }
+    else{
+      emails.currentEmail.Event.action()
+    }
   }
-  else{
-    emails.currentEmail.Event.action()
-  }
+
 
 };
 

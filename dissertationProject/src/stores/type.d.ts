@@ -8,11 +8,20 @@ interface Email {
     subject: string;
     detail:string;
     time: string;
-    type:"Task"|"Reply"|"Sent"|"Message"|"UserTask";
+    type:"Task"|"Reply"|"Message"|"UserTask";
     typeContent?:Task|Reply|Sent|UserTask;
     Event:PlayerEvent;
     EventParam?:any;
 }
+
+interface SentEmail{
+    id:number;
+    SentTo:string[];
+    subject:string;
+    detail:string;
+    type:"Sent";
+}
+
 
 interface Task {
     id:number;
@@ -43,6 +52,7 @@ interface Reply {
     about: string;
     subject:string;
     content:{value:string,label:string}[];
+    Event:PlayerEvent;
 }
 
 interface Sent{

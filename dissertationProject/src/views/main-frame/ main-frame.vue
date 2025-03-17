@@ -8,16 +8,18 @@ import MailModal from "./mailbox/components/mailmodle.vue"
 import MailSentModal from "./mailbox/components/mailsent.vue"
 import Configmodal from './configmodal.vue';
 import Clander from './clander/clander.vue';
-import {emailList} from "./mockData"
 import Logic from "../../service/logicService"
 import logicService from '../../service/logicService';
 import { SearchOutlined,ToolOutlined } from '@ant-design/icons-vue';
 import type { Email } from '../../stores/type';
+import { useEmails } from '../../stores/emails';
 
 // 全局状态管理实例
 const store = useGlobalStore();
 // 全局用户任务管理实例
 const userTask = useUserTasks();
+//全局管理邮件实例
+const emaillist = useEmails();
 // 当前进度状态
 const progress = store.progress
 
@@ -36,7 +38,10 @@ const configModalVisible = ref(false);
 const tasks = computed(() => userTask.tasks);
 // 任务侧边栏显示状态
 const taskSidebarVisible = ref(true);
-
+//过滤任务列表
+const filteredTasks = computed(() => {
+  return userTask.tasks.filter(task => !userTask.finishedtask.includes(task.id));
+});
 // 打开发送邮件模态框
 const handleCreateNew = () => {
   mailSentModalOpen.value = true
@@ -49,7 +54,7 @@ const changeContent = (content: string) => {
 
 // 处理邮件发送逻辑
 const handleSendEmail = (emailData: any) => {
-  console.log("Email Sent:", emailData);
+  emaillist.addSentEmails(emailData);
 };
 
 // 打开邮件查看模态框
@@ -98,7 +103,6 @@ watchEffect(()=>{
                 <!--邮件主题页面-->
                 <div v-if="currentContent === 'mailbox'">
                     <Inbox
-                        :initialEmails="emailList"
                         @create-new="handleCreateNew"
                         @update:modal-visible="openMailModal"
                         @update:modal-content="(newContent) => MailModalContent = newContent"
@@ -127,19 +131,22 @@ watchEffect(()=>{
                         </a-button>
                         
                         <!-- 任务列表 -->
-                        <div v-if="tasks.length > 0" class="task-list">
+                        <div v-if="taskSidebarVisible">
+
+                          <div v-if="filteredTasks.length > 0" class="task-list">
                             <h3>Current Tasks</h3>
                             <ul>
-                            <li v-for="task in tasks" :key="task.id" :style="{ textDecoration: task.isFinished ? 'line-through' : 'none' }">
+                              <li v-for="task in filteredTasks" :key="task.id" :style="{ textDecoration: task.isFinished ? 'line-through' : 'none' }">
                                 <span>{{ task.subject }}</span>
                                 <span v-if="task.isFinished" style="color: green;">(Completed)</span>
                                 <span v-else style="color: red;">(Pending)</span>
-                            </li>
+                              </li>
                             </ul>
-                        </div>
-                        <div v-else>
+                          </div>
+                          <div v-else>
                             <span>No tasks available</span>
-                        </div>
+                          </div>
+                      </div>
                     </div>
                     
                 </a-layout-sider>

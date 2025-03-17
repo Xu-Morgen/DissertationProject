@@ -1,8 +1,8 @@
 <script lang="ts" setup>
 //用于作为邮件页面的整体框架
-import { ref, defineProps, defineEmits, watch } from 'vue';
+import { ref, defineProps, defineEmits, watch, onMounted } from 'vue';
 import { useGlobalStore } from '../../../stores/global';
-import type { Email } from '../../../stores/type';
+import type { Email, SentEmail } from '../../../stores/type';
 import { useEmails } from '../../../stores/emails';
 
 const props = defineProps({
@@ -18,34 +18,65 @@ const emailstore = useEmails();
 const isSent = ref<boolean>(false);
 
 const emit = defineEmits(['create-new', 'update:modalVisible',"update:modalContent"])
-
+let columns: any[] = [];
 //从仓库中获取邮件数据
-const emails = ref(emailstore.emails);
+const emails = ref();
+
+onMounted(()=>{
+  isSent.value = false;
+  emails.value = emailstore.emails
+  columns = [
+      { title: 'sender', dataIndex: 'sender', key: 'sender' },
+      { title: 'subject', dataIndex: 'subject', key: 'subject' },
+      { title: 'time ', dataIndex: 'time', key: 'time' },
+      {
+        title: 'Action',
+        key: 'action',
+      },
+    ];
+})
 
 //当sentbox的选择器被改动时更新邮件列表
 watch(isSent,(newValue,oldValue)=>{
+  if (isSent.value === true) {
+    emails.value = emailstore.sentEmails.map(email => ({
+      ...email,
+      SentTo: Array.isArray(email.SentTo) ? email.SentTo[0] : email.SentTo
+    }));
+    columns = [
+      { title: 'SentTo', dataIndex: 'SentTo', key: 'SentTo' },
+      { title: 'subject', dataIndex: 'subject', key: 'subject' },
+      {
+        title: 'Action',
+        key: 'action',
+      },
+    ];
+  }
 
+  else{
+    emails.value = emailstore.emails
+    columns = [
+      { title: 'sender', dataIndex: 'sender', key: 'sender' },
+      { title: 'subject', dataIndex: 'subject', key: 'subject' },
+      { title: 'time ', dataIndex: 'time', key: 'time' },
+      {
+        title: 'Action',
+        key: 'action',
+      },
+    ];
+  }
 });
 
-const columns = [
-  { title: 'sender', dataIndex: 'sender', key: 'sender' },
-  { title: 'subject', dataIndex: 'subject', key: 'subject' },
-  { title: 'time ', dataIndex: 'time', key: 'time' },
-  {
-    title: 'Action',
-    key: 'action',
-  },
-];
+
 
 const onCreateNew = () => {
   emit('create-new');
 };
 
-const onActionClick = (record: Email) => {
+const onActionClick = (record: Email|SentEmail) => {
   emit('update:modalVisible')
   emit('update:modalContent',record)
   emailstore.setCurrentEmail(record)
-
 };
 </script>
 

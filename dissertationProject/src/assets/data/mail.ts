@@ -1,6 +1,7 @@
+import Events from './Events'
 import type { Email, Task } from "../../stores/type";
 import Tasks from './task'
-import Events from './Events'
+
 import Recipient from './RecipientOfficer'
 
 import UserTasks from './userTasks'
@@ -26,7 +27,7 @@ const Email1:Email = {
     time: "2020.1.1",
     type: "UserTask",
     typeContent: UserTasks.Task1,
-    Event: Events.addReceiver,
+    Event: Events.Event2,
     EventParam:Recipient.Recipient1,
 }
 
