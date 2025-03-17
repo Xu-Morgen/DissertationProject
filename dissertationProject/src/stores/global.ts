@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import type { Email, Task } from './type';
+import type { Email, Recipient, Task } from './type';
 
 export const useGlobalStore = defineStore('global', {
     state: () => ({
@@ -8,7 +8,7 @@ export const useGlobalStore = defineStore('global', {
         progress: 0,
         currentDay: 1, // 新增当前天数
 
-
+        recipients:[] as Recipient[],//用于维护当前的收信人列表
 
         //用于Kanban
         tasks: [] as Task[], // 定义为 Task 数组
@@ -49,6 +49,10 @@ export const useGlobalStore = defineStore('global', {
             this.progress = progress;
         },
 
+        //收信人
+        addRecipients(Recipient:Recipient){
+            this.recipients.push(Recipient)
+        },
         //任务部分
         addTask(task: Task) { // 添加任务
             this.tasks.push(task);

@@ -16,6 +16,7 @@
       mode="multiple"
       show-search
       option-filter-prop="label"
+      @change="handleRecipientSelect"
     />
 
     <!-- 关联任务选择 -->
@@ -30,32 +31,20 @@
     />
 
     <!-- 邮件主题选择 -->
-    <a-auto-complete
-      v-model:value="selectedSubject"
-      :options="emailOptions"
-      placeholder="Email Subject"
+    <a-textarea
+      v-model:value="emailSubject"
+      placeholder="Email subject"
       style="width: 100%; margin-bottom: 10px"
+      readonly
     />
 
-    <!-- 任务相关回复内容 -->
-    <div v-if="selectedTaskContent" class="task-related-section">
-      <a-textarea
-        v-model:value="taskReplyContent"
-        placeholder="Task-related reply content"
-        :rows="4"
-        style="margin-bottom: 10px"
-      />
-      <div class="task-preview">
-        <h4>Selected Task Details:</h4>
-        <p>{{ selectedTaskContent }}</p>
-      </div>
-    </div>
-
-    <!-- 邮件正文编辑 -->
-    <a-textarea
-      v-model:value="emailContent"
-      placeholder="Email content"
+    <!-- 邮件正文选择 -->
+    <a-select
+      v-model:value="selectedContent"
+      :options="emailOptions"
+      placeholder="Email Content(Select Reply)"
       :rows="6"
+      option-filter-prop="label"
       style="width: 100%; margin-bottom: 10px"
     />
 
@@ -68,61 +57,84 @@
 
 <script lang="ts" setup>
 import { ref, computed, watch } from 'vue';
-import type { Task } from '../../../../stores/type';
+import type { Recipient, Task, UserTask } from '../../../../stores/type';
+import { useGlobalStore } from '../../../../stores/global';
+import { useEmails } from '../../../../stores/emails';
+import { useUserTasks } from '../../../../stores/userTask';
+import Reply from '../../../../assets/data/Reply';
 
 const props = defineProps<{
   open: boolean;
-  emailList: { subject: string; type: string }[];
-  receivers: string[];       // 新增收件人列表
-  tasks: Task[];             // 新增任务列表
+
 }>();
+//创建状态实例
+const store = useGlobalStore();
+const userTasks = useUserTasks();
+const emailList = useEmails();
 
 const emit = defineEmits(["update:open", "sendEmail"]);
 
+const receivers:Recipient[] = store.recipients;
+const tasks:Task[] = store.tasks;
+const userTask:UserTask[] = userTasks.tasks
 // 表单数据
-const selectedReceiver = ref<string[]>([]);
+const selectedReceiver = ref<number[]>([]);
 const selectedTask = ref<string>();
-const selectedSubject = ref('');
-const emailContent = ref('');
-const taskReplyContent = ref('');
+const emailSubject = ref('');
+const selectedContent = ref('');
+const emailOptions = ref<{ value: string; label: string }[]>([]);
+
+
+// watch 监听器
+watch([selectedReceiver, selectedTask], () => {
+  if (!selectedTask.value || selectedReceiver.value.length === 0) return;
+
+  // 查找匹配的 `Reply` 规则
+  const matchedReply = Reply.ReplyList.find(reply =>
+    // 根据收件人的 ID 和任务的标题匹配
+    reply.relate.some(r => selectedReceiver.value.includes(r)) &&
+    reply.about === selectedTask.value
+  );
+
+  // 如果找到匹配的 `Reply`，自动填充邮件主题和内容
+  if (matchedReply) {
+    emailSubject.value = matchedReply.subject;
+
+    // 更新 emailOptions
+    emailOptions.value = matchedReply.content.map(contentItem => ({
+      value: contentItem.value,
+      label: contentItem.label,
+    }));
+  }
+});
+
+
 
 // 计算属性
 const receiverOptions = computed(() => 
-  props.receivers.map(r => ({ value: r, label: r }))
+  receivers.map(r => ({ value: r.id, label: r.Name , receivers:r}))
 );
 
 const taskOptions = computed(() =>
-  props.tasks.map(t => ({
-    value: t.id,
-    label: `${t.title} (${t.status})`,
-    task: t // 保留完整任务对象
+  [...tasks, ...userTask].map(t => ({
+    value: t.subject,
+    label: `${t.subject} (${t.isFinished ? "Finished" : "Pending"})`,
+    task: t 
   }))
 );
 
-const emailOptions = computed(() =>
-  props.emailList.map(email => ({ value: email.subject }))
-);
 
-// 当前选中任务内容
-const selectedTaskContent = computed(() => {
-  const task = props.tasks.find(t => t.id === selectedTask.value);
-  return task ? `
-    Title: ${task.title}
-    Status: ${task.status}
-    Deadline: ${task.deadline}
-    Description: ${task.description}
-  ` : '';
-});
 
-// 处理任务选择
+
+
 const handleTaskSelect = (taskId: string) => {
-  const task = props.tasks.find(t => t.id === taskId);
-  if (task) {
-    // 自动生成任务相关回复建议
-    taskReplyContent.value = `Regarding task "${task.title}":\n\n`;
-    emailContent.value = `Reference Task: ${task.title}\nStatus: ${task.status}\n\n`;
-  }
+  selectedTask.value = taskId
 };
+
+const handleRecipientSelect = (Recipient:any)=>{
+  console.log(Recipient)
+}
+
 
 // 发送处理
 const handleSend = () => {
@@ -147,8 +159,8 @@ const validateForm = () => {
     alert('Please select at least one receiver');
     return false;
   }
-  if (!selectedSubject.value) {
-    alert('Please enter email subject');
+  if (!selectedContent.value) {
+    alert('Please enter email content');
     return false;
   }
   return true;
@@ -158,9 +170,9 @@ const validateForm = () => {
 const resetForm = () => {
   selectedReceiver.value = [];
   selectedTask.value = undefined;
-  selectedSubject.value = '';
-  emailContent.value = '';
-  taskReplyContent.value = '';
+  emailSubject.value = '';
+  selectedContent.value = '';
+  emailOptions.value = [];
   emit('update:open', false);
 };
 

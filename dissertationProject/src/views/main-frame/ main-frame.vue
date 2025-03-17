@@ -70,6 +70,7 @@ const toggleTaskSidebar = () => {
 // 监听响应式数据变化，检查首次播放状态
 watchEffect(()=>{
     logicService.checkFirstTimePlay()
+    
 })
 </script>
 
@@ -89,7 +90,6 @@ watchEffect(()=>{
             <!--用于发送邮件-->
             <MailSentModal
                 v-model:open="mailSentModalOpen"
-                :emailList="emailList.map(email=>({subject: email.subject, type:email.type.toString()}))"
                 @sendEmail="handleSendEmail"
             />
             <!--用于显示邮件详细内容-->

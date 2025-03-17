@@ -64,6 +64,13 @@ const handleOk = (e: MouseEvent) => {
     }
   }
 
+  if(emails.currentEmail.EventParam){
+    emails.currentEmail.Event.action(emails.currentEmail.EventParam)
+  }
+  else{
+    emails.currentEmail.Event.action()
+  }
+
 };
 
 const handleCancel = () => {

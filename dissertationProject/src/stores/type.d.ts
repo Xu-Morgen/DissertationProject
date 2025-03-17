@@ -10,6 +10,8 @@ interface Email {
     time: string;
     type:"Task"|"Reply"|"Sent"|"Message"|"UserTask";
     typeContent?:Task|Reply|Sent|UserTask;
+    Event:PlayerEvent;
+    EventParam?:any;
 }
 
 interface Task {
@@ -37,8 +39,10 @@ interface UserTask {
 
 interface Reply {
     id:number;
-    detail: string;
-    relate:Email;
+    relate:number[];
+    about: string;
+    subject:string;
+    content:{value:string,label:string}[];
 }
 
 interface Sent{
@@ -50,7 +54,14 @@ interface Sent{
   
 interface Recipient{
     id:number;
-    Name:String;
-    job:String;
+    Name:string;
+    job:string;
     color?:number;
+    isUnlock:boolean;
+}
+
+interface PlayerEvent {
+    id: number;
+    name: string;
+    action: (payload?: any) => void;
 }

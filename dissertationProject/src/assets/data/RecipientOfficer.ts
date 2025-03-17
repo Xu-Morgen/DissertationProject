@@ -5,8 +5,17 @@ const Recipient1:Recipient = {
     id: 0,
     Name: "Boss",
     job: "Boss",
+    isUnlock:true,
+}
+
+const Recipient2:Recipient = {
+    id:1,
+    Name:"Scrum Team",
+    job:"worker",
+    isUnlock:false,
 }
 
 export default {
-    Recipient1
+    Recipient1,
+    Recipient2, 
 }

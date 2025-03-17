@@ -8,6 +8,7 @@ export const useEmails = defineStore('emails', {
     emails: []  as Email[],//总邮件列表
     currentEmail:{} as Email, //当前正在查看的email
     sentEmails:[] as Email[],//发件箱
+
         
     }),
     actions: {
