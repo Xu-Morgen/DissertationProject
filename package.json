@@ -4,6 +4,12 @@
     "ant-design-vue": "^4.0.0-rc.6",
     "pinia": "^2.3.0",
     "pinia-plugin-persistedstate": "^4.2.0",
-    "vue-router": "^4.5.0"
+    "vue-router": "^4.5.0",
+    "vuedraggable": "^4.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.13.10",
+    "less": "^4.2.2",
+    "less-loader": "^12.2.0"
   }
 }
