@@ -4,10 +4,24 @@ import App from './App.vue';
 import router from './router';
 import { createPinia } from 'pinia';
 import piniaPluginPersistedstate from 'pinia-plugin-persistedstate';
+import EmailData from './data/emails'
 
 import 'ant-design-vue/dist/reset.css';
 import './style.css'
+import { useEmailStore, useRootStore } from './stores';
+import CommonUtils from './utils/utils';
 
+//方法定义
+const InitialTheGame = () =>{
+    const root = useRootStore();
+    if(root.firstTimePlay){
+        useEmailStore().addEmail(CommonUtils.omitEmail(EmailData.SYSTEM_EMAILS[0]))
+    }
+    root.played()
+}
+
+
+//正文使用部分
 const pinia = createPinia();
 pinia.use(piniaPluginPersistedstate);
 
@@ -17,14 +31,8 @@ app.use(Antd);
 app.use(router)
 app.mount('#app');
 
-// router.beforeEach((to, from, next) => {
-//     if (localStorage.getItem('meetingInProgress') === 'true') {
-//       if (confirm('请先完成会议室内容！')) {
-//         next(false);
-//       } else {
-//         next(false);
-//       }
-//     } else {
-//       next();
-//     }
-//   });
+InitialTheGame()
+
+
+
+

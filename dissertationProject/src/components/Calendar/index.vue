@@ -142,7 +142,7 @@
   // 完成事件
   const completeEvent = (eventId: string) => {
     calendarStore.completeEvent(eventId);
-    showEventDetail = false;
+    showEventDetail.value = false;
   };
   
   // 调试功能

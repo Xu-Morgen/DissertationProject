@@ -6,6 +6,9 @@ import { useEmailStore } from '.';
 export const useUIStore = defineStore('ui', {
   state: (): UIState => ({
     activeView: 'mail',
+
+    configModalOpen:false,
+
     emailFilter: {
       unreadOnly: false,
       category: undefined
@@ -19,7 +22,11 @@ export const useUIStore = defineStore('ui', {
       }
     }
   }),
-
+  actions: {
+    toggleConfig(state:boolean){
+      this.configModalOpen = state
+    },
+  },
   getters: {
     /** 过滤后的邮件列表 */
     filteredEmails: (state) => {
@@ -34,5 +41,5 @@ export const useUIStore = defineStore('ui', {
         return categoryMatch && unreadMatch;
       });
     }
-  }
+  },
 });

@@ -14,10 +14,10 @@ export const useEventStore = defineStore('events', {
     /**
      * 触发指定事件
      */
-    async triggerEvent(eventId: string,gameEvents:GameEvent[],) {
+    async triggerEvent(eventId: string,gameEvents:Record<string, GameEvent>,) {
       if (this.triggeredEvents.has(eventId)) return;
 
-      const event = gameEvents.find(r=>r.id == eventId); // 需要从外部导入预定义事件
+      const event = gameEvents[eventId]; // 需要从外部导入预定义事件
       if (!event) return;
 
       try {
@@ -53,5 +53,6 @@ export const useEventStore = defineStore('events', {
         // 其他动作类型处理...
       }
     }
-  }
+  },
+  persist:true,
 });

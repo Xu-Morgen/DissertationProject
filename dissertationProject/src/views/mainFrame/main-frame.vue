@@ -1,30 +1,30 @@
 <script lang="ts" setup>
-import { ref, computed, watch,h} from 'vue';
+import { ref, computed, watch, h } from 'vue';
 import { 
   useEmailStore, 
   useTaskStore, 
   useCalendarStore,
   useEventStore,
-  useUIStore
+  useUIStore,
+  useRootStore
 } from '@/stores';
 import { GAME_EVENTS } from '@/data/events';
 import Inbox from '@/components/Inbox/index.vue';
 import MailModal from '@/components/MailModal/index.vue';
 import MailComposer from '@/components/MailComposer/index.vue';
 import Kanban from '@/components/Kanban/index.vue';
-
 import CalendarView from '@/components/Calendar/index.vue';
-
-
 import ConfigModal from '@/components/ConfigModal/index.vue';
 import { MailOutlined, AppstoreOutlined, CalendarOutlined } from '@ant-design/icons-vue';
-
+import {statusColor} from '@/data/Global'
+import type { Email } from '@/types';
 // Store 实例
 const emailStore = useEmailStore();
 const taskStore = useTaskStore();
 const calendarStore = useCalendarStore();
 const eventStore = useEventStore();
 const uiStore = useUIStore();
+const rootStore = useRootStore();
 
 // 当前视图状态
 const currentView = ref<'mail' | 'kanban' | 'calendar'>('mail');
@@ -35,11 +35,9 @@ const isComposing = ref(false);
 const isReading = ref(false);
 
 //选择meeting
-const handleMeetingSelect = () =>{
+const handleMeetingSelect = () => {
   //TODO
 }
-//选择任务颜色
-const statusColor = ["red","blue","white"]
 
 // 任务过滤
 const visibleTasks = computed(() => 
@@ -73,18 +71,18 @@ watch(() => uiStore.initialized, (initialized) => {
     eventStore.triggerEvent('game_start', GAME_EVENTS);
   }
 });
-</script>
 
+</script>
 <template>
   <div class="main-layout">
     <a-layout>
       <!-- 头部 -->
       <a-layout-header class="header">
-        <ConfigModal />
+        <ConfigModal :open="uiStore.configModalOpen"/>
         <a-button 
           type="primary" 
           shape="circle" 
-          @click="uiStore.toggleConfig"
+          @click="uiStore.toggleConfig(true)"
           :icon="h(ToolOutlined)" 
         />
         <span class="progress">
@@ -135,30 +133,32 @@ watch(() => uiStore.initialized, (initialized) => {
         <a-layout-sider class="sider">
           <div class="task-panel">
             <h3>当前任务 ({{ visibleTasks.length }})</h3>
-            <a-list item-layout="horizontal">
-              <a-list-item 
+            <div class="task-list">
+              <a-card
                 v-for="task in visibleTasks" 
                 :key="task.id"
+                class="task-card"
                 :class="`priority-${task.priority}`"
+                hoverable
               >
-                <template #actions>
-                  <a-tag :color="statusColor[task.status]">
+                <template #title>
+                  {{ task.title }}
+                </template>
+
+                <template #extra>
+                  <a-tag :color="statusColor[task.status]" class="status-tag">
                     {{ task.status }}
                   </a-tag>
                 </template>
-                <a-list-item-meta>
-                  <template #title>
-                    {{ task.title }}
-                  </template>
-                  <template #description>
-                    <span class="deadline" v-if="task.deadline">
-                      D-{{ task.deadline - calendarStore.currentDay }}
-                    </span>
-                    <span>{{ task.description }}</span>
-                  </template>
-                </a-list-item-meta>
-              </a-list-item>
-            </a-list>
+
+                <p>
+                  <span class="deadline" v-if="task.deadline">
+                    D-{{ task.deadline - calendarStore.currentDay }}
+                  </span>
+                  <span>{{ task.description }}</span>
+                </p>
+              </a-card>
+            </div>
           </div>
         </a-layout-sider>
       </a-layout>
@@ -208,9 +208,17 @@ watch(() => uiStore.initialized, (initialized) => {
   </div>
 </template>
 
+
+
+
 <style scoped lang="less">
 .main-layout {
   height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden; /* 防止滚动条 */
+
+  /* 根布局 */
   display: flex;
   flex-direction: column;
 
@@ -221,49 +229,43 @@ watch(() => uiStore.initialized, (initialized) => {
     background: #fff;
     padding: 0 24px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-
     .progress {
       margin-left: auto;
       font-weight: 500;
     }
-
     .day {
       color: #666;
     }
   }
 
   .content {
+    max-width: 1600px; /* 限制最大宽度为 1600px 或根据需要调整 */
+    margin: 0 auto;
     padding: 24px;
     background: #f0f2f5;
+    flex-grow: 1; /* 允许内容区域伸展以填充剩余空间 */
   }
 
+  /* 右侧任务栏样式，调整宽度 */
   .sider {
     background: #fff;
     border-left: 1px solid #e8e8e8;
     padding: 16px;
+    flex-shrink: 0; /* 确保任务栏不会缩小 */
+    width: 350px !important; /* 调整任务栏宽度为 400px，可以根据需要进一步增加或减少 */
+    min-width: 350px !important;
+    max-width: 350px !important;
 
-    .task-panel {
-      h3 {
-        margin-bottom: 16px;
-      }
-
-      .deadline {
-        color: #ff4d4f;
-        margin-right: 8px;
-      }
-    }
   }
 
   .footer {
     padding: 16px;
     background: #fff;
     border-top: 1px solid #e8e8e8;
-
     .nav-bar {
       display: flex;
       justify-content: space-between;
       align-items: center;
-
       .active {
         border-color: #1890ff;
         background-color: #e6f7ff;
@@ -271,4 +273,6 @@ watch(() => uiStore.initialized, (initialized) => {
     }
   }
 }
+
+
 </style>

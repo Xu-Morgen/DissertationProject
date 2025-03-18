@@ -67,7 +67,6 @@
   import { ref, computed } from 'vue';
   import { useTaskStore } from '@/stores';
   import { RocketOutlined } from '@ant-design/icons-vue';
-  import draggable from 'vuedraggable';
   import type { Task } from '@/types';
   
   const taskStore = useTaskStore();

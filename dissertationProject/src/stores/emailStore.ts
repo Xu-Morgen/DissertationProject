@@ -85,5 +85,6 @@ export const useEmailStore = defineStore('email', {
     /** 获取联系人名称 */
     getContactName: (state) => (id: string) => 
       state.contacts.find(c => c.id === id)?.name || id
-  }
+  },
+  persist:true,
 });

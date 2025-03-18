@@ -58,5 +58,6 @@ export const useTaskStore = defineStore('tasks', {
         ? (this.currentSprint.completedPoints / total) * 100
         : 0;
     }
-  }
+  },
+  persist:true,
 });

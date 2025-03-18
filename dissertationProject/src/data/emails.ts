@@ -1,6 +1,6 @@
 import type { Email, Reply } from '@/types';
 
-export const SYSTEM_EMAILS: Email[] = [{
+const SYSTEM_EMAILS: Email[] = [{
   id: 'welcome',
   from: 'system',
   to: ['player'],
@@ -10,7 +10,7 @@ export const SYSTEM_EMAILS: Email[] = [{
   isRead: false, // 添加 isRead 字段
   replies: [{
     id: 'accept',
-    text: '接受挑战',
+    text: '好的主人',
     nextEventId: 'start_first_sprint',
     affectsSatisfaction: +5
   }],
@@ -21,7 +21,7 @@ export const SYSTEM_EMAILS: Email[] = [{
   }
 }];
 
-export const CLIENT_EMAILS: Email[] = [{
+ const CLIENT_EMAILS: Email[] = [{
   id: 'client_request',
   from: 'client',
   to: ['player'],
@@ -49,3 +49,5 @@ export const CLIENT_EMAILS: Email[] = [{
   },
   triggers: ["new requirements analyse"]
 }];
+
+export default {SYSTEM_EMAILS,CLIENT_EMAILS} 

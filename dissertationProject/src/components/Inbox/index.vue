@@ -4,6 +4,7 @@ import { useEmailStore, useEventStore } from '@/stores';
 import { GAME_EVENTS } from '@/data/events';
 import type { Email } from '@/types';
 import { MailOutlined } from '@ant-design/icons-vue';
+import {categoryColors} from '@/data/Global'
 
 const emailStore = useEmailStore();
 const eventStore = useEventStore();

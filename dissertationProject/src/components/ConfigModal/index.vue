@@ -2,7 +2,7 @@
 //用于在游戏设置当中时弹出的页面
 
 import { useRouter } from 'vue-router';
-import {useCalendarStore,useEmailStore,useEventStore,useTaskStore,useUIStore} from "@/stores/index"
+import {useCalendarStore,useEmailStore,useEventStore,useRootStore,useTaskStore,useUIStore} from "@/stores/index"
 const router = useRouter();
 
 
@@ -11,13 +11,16 @@ const props = defineProps<{
   open: boolean;
 }>();
 
+const uiStore = useUIStore();
+
 const resetGame = () =>{
     useCalendarStore().$reset()
     useEmailStore().$reset()
     useEventStore().$reset()
     useTaskStore().$reset()
     useUIStore().$reset()
-  router.replace({ path: '/' });
+    useRootStore().$reset()
+    router.replace({ path: '/' });
 }
 
 // 触发事件通知父组件状态变化
@@ -25,7 +28,7 @@ const emit = defineEmits(["update:open"]);
 
 
 const handleCancel = () => {
-  emit("update:open", false);
+  emit("update:open", uiStore.toggleConfig(false));
 };
 </script>
 

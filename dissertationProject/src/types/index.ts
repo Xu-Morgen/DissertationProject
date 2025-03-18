@@ -108,6 +108,7 @@ export interface GameEvent {
 
 /* ================= UI状态 ================= */
 export interface UIState {
+  configModalOpen:boolean,
   activeView: 'mail' | 'kanban' | 'calendar';
   emailFilter: {
     unreadOnly: boolean;

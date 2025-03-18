@@ -47,5 +47,6 @@ export const useCalendarStore = defineStore('calendar', {
     upcomingMeetings: (state) => state.events.filter(
       e => e.day > state.currentDay && e.day <= state.currentDay + 3
     )
-  }
+  },
+  persist:true,
 });

@@ -73,8 +73,8 @@ const formattedContent = computed(() => {
         v-html="formattedContent"
       />
 
-      <!-- 回复选项 -->
-      <div v-if="email?.replies?.length" class="reply-actions">
+      <!-- 邮件回复选项部分 -->
+      <div v-if="email?.replies?.length && email.isRead" class="reply-actions">
         <a-button
           v-for="reply in email.replies"
           :key="reply.id"
@@ -89,6 +89,7 @@ const formattedContent = computed(() => {
           </span>
         </a-button>
       </div>
+
     </div>
   </a-modal>
 </template>
