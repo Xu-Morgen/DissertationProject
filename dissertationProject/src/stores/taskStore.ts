@@ -1,6 +1,6 @@
 // stores/taskStore.ts
 import { defineStore } from 'pinia';
-import type { Task, Sprint, PersonalTask } from '@/types';
+import type { Task, Sprint, PersonalTask, TaskPriority } from '@/types';
 
 export const useTaskStore = defineStore('tasks', {
   state: () => ({
@@ -12,6 +12,14 @@ export const useTaskStore = defineStore('tasks', {
   }),
 
   actions: {
+
+    updateTaskPriority(taskid: string,priority: TaskPriority){
+      const index = this.backlog.findIndex(t => t.id === taskid);
+      const task = this.backlog.find(t => t.id === taskid);
+      if (index >= 0 && task) {
+        this.backlog.splice(index, 1, {...task,priority:priority});
+      } 
+    },
     /**
      * 添加或更新任务
      */
