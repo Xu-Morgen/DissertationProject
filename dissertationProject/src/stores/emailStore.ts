@@ -1,28 +1,17 @@
 // stores/emailStore.ts
 import { defineStore } from 'pinia';
-import type { Email, Recipient, Reply } from '@/types';
+import type { Email, Recipient, Reply,  SentFormat } from '@/types';
+import contacts from '@/data/contacts';
+
+import sentFormat from '@/data/sentFormat';
 
 export const useEmailStore = defineStore('email', {
   state: () => ({
     inbox: [] as Email[],
     sent: [] as Email[],
     answeredEmail:[] as Email[],
-    contacts: [
-      {
-        id: 'boss',
-        name: '项目经理',
-        email: 'boss@company.com',
-        isUnlocked: true,
-        signature: '请及时跟进项目进度'
-      },
-      {
-        id: 'client',
-        name: '主要客户',
-        email: 'client@corp.com',
-        isUnlocked: false,
-        signature: '期待您的回复'
-      }
-    ] as Recipient[]
+    contacts: [] as Recipient[],
+    sentFormat:[] as SentFormat[],
   }),
 
   actions: {
@@ -37,6 +26,41 @@ export const useEmailStore = defineStore('email', {
         isRead: false
       });
     },
+
+    /**
+   * 发送新邮件到发件箱
+   * @param email 不包含id和isRead的新邮件对象
+   */
+    sentEmail(email: Omit<Email, 'id' | 'isRead'>) {
+      this.inbox.unshift({
+        ...email,
+        id: `email_${Date.now()}`,
+        isRead: false
+      });
+    },
+
+    
+  /**
+   * 添加新收件人
+   * @param RecipientId 收信人的id
+   */
+    addRecipient(RecipientId:string) {
+      const newRecipient = contacts.CONTACTS.find(c=>c.id == RecipientId)
+      if (newRecipient){
+        this.contacts.push(newRecipient)
+      }
+    },
+
+  /**
+   * 添加新发件格式
+   * @param SentId 发件格式的id
+   */
+    addSentFormat(SentId:string) {
+      const newSentFormat = sentFormat.SENT.find(s=>s.id == SentId)
+      if (newSentFormat){
+        this.sentFormat.push(newSentFormat)
+      }
+  },
 
     /**
      * 处理邮件回复
@@ -75,6 +99,11 @@ export const useEmailStore = defineStore('email', {
   },
 
   getters: {
+     // 根据收件人筛选对应的主题
+    getSubjectsByRecipient: (state) => (recipient: Recipient) => {
+      return state.sentFormat
+        .filter(mail => mail.relate.some(r => r.id !== recipient.id));
+    },
     /** 未读邮件数量 */
     unreadCount: (state) => state.inbox.filter(e => !e.isRead).length,
 

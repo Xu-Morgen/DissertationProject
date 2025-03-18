@@ -29,22 +29,6 @@ const handleEmailClick = (email: Email) => {
   uiStore.toggleReading(true);
 };
 
-// 处理邮件回复
-const handleReply = (replyId: string) => {
-  if (!activeEmail.value) return;
-
-  // 处理回复逻辑
-  emailStore.processReply(activeEmail.value.id, replyId);
-
-  // 触发后续事件
-  const reply = activeEmail.value.replies.find(r => r.id === replyId);
-  if (reply?.nextEventId) {
-    eventStore.triggerEvent(reply.nextEventId, GAME_EVENTS);
-  }
-
-  // 关闭模态框
-  activeEmail.value = null;
-};
 </script>
 
 <template>
@@ -70,13 +54,11 @@ const handleReply = (replyId: string) => {
   <MailModal
     v-model:open="uiStore.readingEmailModalOpen"
     :email="activeEmail"
-    @reply="handleReply"
   />
 
   <!-- 邮件编辑器 -->
   <MailComposer
     v-model:open="uiStore.sendingEmailModalOpen"
-    @send="emailStore.addEmail"
   />
 
   <div class="inbox-container">

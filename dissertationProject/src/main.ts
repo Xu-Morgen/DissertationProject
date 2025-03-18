@@ -5,10 +5,11 @@ import router from './router';
 import { createPinia } from 'pinia';
 import piniaPluginPersistedstate from 'pinia-plugin-persistedstate';
 import EmailData from './data/emails'
+import TaskData from '@/data/tasks'
 
 import 'ant-design-vue/dist/reset.css';
 import './style.css'
-import { useEmailStore, useRootStore } from './stores';
+import { useEmailStore, useRootStore, useTaskStore } from './stores';
 import CommonUtils from './utils/utils';
 
 //方法定义
@@ -16,6 +17,7 @@ const InitialTheGame = () =>{
     const root = useRootStore();
     if(root.firstTimePlay){
         useEmailStore().addEmail(CommonUtils.omitEmail(EmailData.SYSTEM_EMAILS[0]))
+        useTaskStore().upsertPersoanlTask(TaskData.PERSONAL_TASK[0])
     }
     root.played()
 }

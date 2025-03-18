@@ -10,7 +10,7 @@ const props = defineProps<{
   email: Email | null;
 }>();
 
-const emit = defineEmits(['update:open', 'reply']);
+const emit = defineEmits(['update:open']);
 
 const emailStore = useEmailStore();
 const eventStore = useEventStore();
@@ -27,9 +27,7 @@ const handleReply = (replyId: string) => {
   if (reply?.nextEventId) {
     eventStore.triggerEvent(reply.nextEventId, GAME_EVENTS);
   }
-
-  // 通知父组件
-  emit('reply', replyId);
+  
   closeModal();
 };
 

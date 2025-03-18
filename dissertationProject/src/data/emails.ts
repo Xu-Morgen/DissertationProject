@@ -7,11 +7,11 @@ const SYSTEM_EMAILS: Email[] = [{
   subject: '欢迎加入Scrum团队！',
   content: `亲爱的项目经理，<br><br>请开始你的第一个Sprint...`,
   day: 0,
-  isRead: false, // 添加 isRead 字段
+  isRead: false, 
   replies: [{
     id: 'accept',
     text: '好的主人',
-    nextEventId: 'start_first_sprint',
+    nextEventId: 'first_reply_message',
     affectsSatisfaction: +5
   }],
   triggers: ['event1'],

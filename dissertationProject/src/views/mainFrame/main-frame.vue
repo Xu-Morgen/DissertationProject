@@ -40,7 +40,7 @@ const handleMeetingSelect = () => {
 
 // 任务过滤
 const visibleTasks = computed(() => 
-  taskStore.backlog.filter(t => t.status !== 'done')
+  taskStore.personaltTask.filter(t => t.status !== 'done')
 );
 
 

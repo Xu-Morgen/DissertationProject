@@ -1,6 +1,6 @@
 // stores/taskStore.ts
 import { defineStore } from 'pinia';
-import type { Task, Sprint } from '@/types';
+import type { Task, Sprint, PersonalTask } from '@/types';
 
 export const useTaskStore = defineStore('tasks', {
   state: () => ({
@@ -8,7 +8,7 @@ export const useTaskStore = defineStore('tasks', {
     currentSprint: null as Sprint | null,
     sprintHistory: [] as Sprint[],
     satisfaction: 100, // 客户满意度（0-100）
-    projectTask:[] as Task[], //用户个人任务
+    personaltTask:[] as PersonalTask[], //用户个人任务
   }),
 
   actions: {
@@ -21,6 +21,17 @@ export const useTaskStore = defineStore('tasks', {
         this.backlog.splice(index, 1, task);
       } else {
         this.backlog.push(task);
+      }
+    },
+    /**
+     * 添加或更新个人任务
+     */
+    upsertPersoanlTask(task: PersonalTask) {
+      const index = this.personaltTask.findIndex(t => t.id === task.id);
+      if (index >= 0) {
+        this.personaltTask.splice(index, 1, task);
+      } else {
+        this.personaltTask.push(task);
       }
     },
 

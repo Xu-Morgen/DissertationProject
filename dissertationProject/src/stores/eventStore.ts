@@ -4,10 +4,13 @@ import type { GameEvent, GameEventAction } from '@/types';
 import { useCalendarStore } from './calendarStore';
 import { useEmailStore } from './emailStore';
 import { useTaskStore } from './taskStore';
+import tasks from '@/data/tasks';
+import { toRaw } from 'vue';
+import TaskData from '@/data/tasks'
 
 export const useEventStore = defineStore('events', {
   state: () => ({
-    triggeredEvents: new Set<string>() // 已触发的一次性事件
+    triggeredEvents: [] as string[] // 已触发的一次性事件
   }),
 
   actions: {
@@ -15,7 +18,13 @@ export const useEventStore = defineStore('events', {
      * 触发指定事件
      */
     async triggerEvent(eventId: string,gameEvents:Record<string, GameEvent>,) {
-      if (this.triggeredEvents.has(eventId)) return;
+
+      if (this.triggeredEvents.some(t=>t == eventId)) {
+        console.log(`Event ${eventId} already triggered`);
+        return;
+      }
+
+      if (this.triggeredEvents.some(t=>t == eventId)) return;
 
       const event = gameEvents[eventId]; // 需要从外部导入预定义事件
       if (!event) return;
@@ -26,7 +35,7 @@ export const useEventStore = defineStore('events', {
         }
 
         if (event.isOnce) {
-          this.triggeredEvents.add(eventId);
+          this.triggeredEvents.push(eventId);
         }
       } catch (error) {
         console.error(`事件处理失败: ${eventId}`, error);
@@ -54,7 +63,31 @@ export const useEventStore = defineStore('events', {
           console.log(action.type)
           console.log(action.taskId)
           break
+        
+        case 'add_personal_task':
+          const findTask = TaskData.PERSONAL_TASK.find(t=>t.id == action.taskId)
+          if(findTask){
+            taskStore.upsertPersoanlTask(findTask)
+          }
+          break
+        
+        case 'finish_personal_task':
+          const finishTask = taskStore.personaltTask.find(t=>t.id === action.taskId)
+          if(finishTask){
+            taskStore.upsertPersoanlTask({...finishTask,status:"done"})
+          }
+          break
 
+        case 'finish_task':
+          break
+
+        case 'add_recipient':
+          emailStore.addRecipient(action.recipientId)
+          break
+
+        case 'add_sent_format':
+          emailStore.addSentFormat(action.replyId)
+          break
         // 其他动作类型处理...
       }
     }

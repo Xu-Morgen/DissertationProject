@@ -9,31 +9,24 @@
     >
       <!-- 收件人选择 -->
       <a-select
-        v-model:value="selectedRecipients"
+        v-model:value="selectedRecipient"
         placeholder="选择收件人"
         style="width: 100%; margin-bottom: 10px"
         :options="recipientOptions"
-        mode="multiple"
         show-search
         option-filter-prop="label"
       />
-  
-      <!-- 关联任务选择 -->
-      <a-select
-        v-model:value="selectedTask"
-        placeholder="关联任务"
+
+
+      <!-- 邮件主题选择 -->
+        <a-select
+        v-model:value="selectedSubject"
+        placeholder="选择主题"
         style="width: 100%; margin-bottom: 10px"
-        :options="taskOptions"
+        :options="subjectOptions"
+        mode='single'
         show-search
         option-filter-prop="label"
-        @change="handleTaskSelect"
-      />
-  
-      <!-- 邮件主题 -->
-      <a-input
-        v-model:value="emailSubject"
-        placeholder="邮件主题"
-        style="width: 100%; margin-bottom: 10px"
       />
   
       <!-- 邮件正文 -->
@@ -42,6 +35,7 @@
         placeholder="邮件正文"
         :rows="6"
         style="width: 100%; margin-bottom: 10px"
+        readonly
       />
   
       <template #footer>
@@ -53,25 +47,25 @@
   
   <script lang="ts" setup>
   import { ref, computed, watch } from 'vue';
-  import { useEmailStore, useTaskStore, useEventStore } from '@/stores';
+  import { useEmailStore, useTaskStore, useEventStore, useCalendarStore, useUIStore } from '@/stores';
   import { GAME_EVENTS } from '@/data/events';
-  import type { Email, Recipient } from '@/types';
+  import type { Email, Recipient, SentFormat } from '@/types';
   
   const props = defineProps<{
     open: boolean;
   }>();
   
-  const emit = defineEmits(['update:open', 'send']);
+  const emit = defineEmits(['update:open']);
   
   const emailStore = useEmailStore();
   const taskStore = useTaskStore();
   const eventStore = useEventStore();
   
-  // 表单数据
-  const selectedRecipients = ref<string[]>([]);
-  const selectedTask = ref<string | null>(null);
-  const emailSubject = ref('');
-  const emailContent = ref('');
+// 选中的收件人和主题
+const selectedRecipient = ref<Recipient>();  // 数组形式
+const selectedSubject = ref<string>("");
+const emailContent = ref<string>("");
+const subject = ref<SentFormat[]>([]);
   
   // 收件人选项
   const recipientOptions = computed(() => 
@@ -83,23 +77,23 @@
       }))
   );
   
-  // 任务选项
-  const taskOptions = computed(() =>
-    taskStore.backlog
-      .filter(t => t.status !== 'done')
-      .map(t => ({
-        value: t.id,
-        label: `${t.title} (${t.status})`
-      }))
-  );
+  // 主题选项
+  const subjectOptions = computed(() => {
+    console.log(selectedRecipient.value)
+    if (!selectedRecipient.value) return [];
+    subject.value = emailStore.getSubjectsByRecipient(selectedRecipient.value);
+    return subject.value.map(c=>({value:c.subject,label:c.subject}))
+});
+
   
-  // 处理任务选择
-  const handleTaskSelect = (taskId: string) => {
-    const task = taskStore.backlog.find(t => t.id === taskId);
-    if (task) {
-      emailSubject.value = `关于任务：${task.title}`;
+  // 自动变更主题内容
+  watch(selectedSubject, (newSubject) => {
+    const content = selectedSubject ? subject.value.find(t=>t.subject === selectedSubject.value)?.content : "";
+    if(content){
+      emailContent.value = content
     }
-  };
+
+  });
   
   // 发送邮件
   const handleSend = () => {
@@ -127,8 +121,7 @@
     // 触发发送事件
     eventStore.triggerEvent('email_sent', GAME_EVENTS);
   
-    // 通知父组件
-    emit('send', newEmail);
+
     resetForm();
   };
   
@@ -151,11 +144,10 @@
   
   // 重置表单
   const resetForm = () => {
-    selectedRecipients.value = [];
-    selectedTask.value = null;
-    emailSubject.value = '';
+    selectedRecipient.value = null
+    selectedSubject.value = ''
     emailContent.value = '';
-    emit('update:open', false);
+    emit('update:open', useUIStore().toggleSending(false));
   };
   
   // 取消操作
