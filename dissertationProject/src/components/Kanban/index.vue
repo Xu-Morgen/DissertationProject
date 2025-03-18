@@ -31,33 +31,8 @@
           <h3 class="column-title">
             {{ priority.label }}
           </h3>
-          <draggable
-            v-model="priority.tasks"
-            group="tasks"
-            @end="handlePriorityChange(priority.value)"
-          >
-            <div
-              v-for="task in priority.tasks"
-              :key="task.id"
-              class="task-card"
-            >
-              <div class="task-header">
-                <a-tag :color="getPriorityColor(task.priority)">
-                  {{ taskStatusMap[task.status] }}
-                </a-tag>
-                <span class="task-title">{{ task.title }}</span>
-              </div>
-              <div class="task-body">
-                <p class="task-description">{{ task.description }}</p>
-                <div class="task-meta">
-                  <span>故事点: {{ task.storyPoints || 0 }}</span>
-                  <span v-if="task.deadline">
-                    截止: 第 {{ task.deadline }} 天
-                  </span>
-                </div>
-              </div>
-            </div>
-          </draggable>
+
+
         </div>
       </div>
     </div>
@@ -147,6 +122,7 @@
   
   // 初始化数据
   updatePriorityTasks();
+
   </script>
   
   <style scoped lang="less">

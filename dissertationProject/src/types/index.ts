@@ -49,7 +49,7 @@ export interface SentFormat{
 
 /* ================= 任务系统 ================= */
 export type TaskStatus = 'backlog' | 'todo' | 'inProgress' | 'done';
-export type TaskPriority = 'low' | 'medium' | 'high' | 'urgent';
+export type TaskPriority = 'none' |'low' | 'medium' | 'high' | 'urgent';
 
 export interface Task {
   id: string;
