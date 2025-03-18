@@ -66,7 +66,7 @@ export const useEventStore = defineStore('events', {
         case 'add_task':
           const findTask = TaskData.TASK_TEMPLATES[action.taskId]
           if(findTask){
-            taskStore.upsertPersoanlTask({
+            taskStore.upsertTask({
               ...findTask,
               id: `email_${Date.now()}`,
               createdAt: calendarStore.currentDay

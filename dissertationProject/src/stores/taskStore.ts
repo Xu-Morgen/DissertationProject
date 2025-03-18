@@ -12,7 +12,9 @@ export const useTaskStore = defineStore('tasks', {
   }),
 
   actions: {
-
+    clearTasks(){
+      this.backlog = []
+    },
     updateTaskPriority(taskid: string,priority: TaskPriority){
       const index = this.backlog.findIndex(t => t.id === taskid);
       const task = this.backlog.find(t => t.id === taskid);
