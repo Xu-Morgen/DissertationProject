@@ -1,30 +1,28 @@
 import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router';
-import Home from '../views/start/HelloWorld.vue';
-import Main from '../views/main-frame/ main-frame.vue';
-import { useGlobalStore } from '../stores/global';
+import Main from '@/views/mainFrame/main-frame.vue';
 const routes: Array<RouteRecordRaw> = [
+    // {
+    //     path: '/',
+    //     name: 'Home',
+    //     component: Home,
+    // },
     {
         path: '/',
-        name: 'Home',
-        component: Home,
-    },
-    {
-        path: '/main',
         name: 'Main',
         component: Main,
     },
-    {
-        path: '/meeting/:id',
-        name: 'MeetingRoom',
-        component: () => import('../views/meetingRoom/MeetingRoom.vue'),
-        meta: { requiresAuth: true }
-    },
-    {
-        path: '/test',
-        name: 'test',
-        component: () => import('../views/test/test.vue'),
-        meta: { requiresAuth: true }
-    },
+    // {
+    //     path: '/meeting/:id',
+    //     name: 'MeetingRoom',
+    //     component: () => import('../views/meetingRoom/MeetingRoom.vue'),
+    //     meta: { requiresAuth: true }
+    // },
+    // {
+    //     path: '/test',
+    //     name: 'test',
+    //     component: () => import('../views/test/test.vue'),
+    //     meta: { requiresAuth: true }
+    // },
 ];
 
 const router = createRouter({
@@ -32,16 +30,6 @@ const router = createRouter({
     routes,
 });
 
-// router.ts
-// router.beforeEach((to, from, next) => {
-//     const store = useGlobalStore();
-    
-//     if (store.meetingInProgress) {
-//       alert('请先完成会议室内容！');
-//       next(false);
-//     } else {
-//       next();
-//     }
-//   });
+
 
 export default router;

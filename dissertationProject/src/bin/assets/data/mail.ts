@@ -31,6 +31,20 @@ const Email1:Email = {
     EventParam:Recipient.Recipient1,
 }
 
+const Email2:Email = {
+    id: 1,
+    sender: "Boss",
+    subject: "The First Meeting",
+    detail: `
+    I am very happy to see your quick report at this time. Now please organize an emergency meeting so that the members of the group can get to know you.`,
+    time: "2020.1.1",
+    type: "UserTask",
+    typeContent: UserTasks.Task1,
+    Event: Events.Event3,
+    EventParam:Recipient.Recipient2,
+}
+
 export default {
-    Email1
+    Email1,
+    Email2,
 }
