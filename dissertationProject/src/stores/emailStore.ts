@@ -125,10 +125,11 @@ export const useEmailStore = defineStore('email', {
 
   getters: {
      // 根据收件人筛选对应的主题
-    getSubjectsByRecipient: (state) => (recipient: Recipient) => {
-      return state.sentFormat
-        .filter(mail => mail.relate.some(r => r.id !== recipient.id));
+     getSubjectsByRecipient: (state) => (recipientId: string) => {
+      return state.sentFormat.filter(mail => mail.relate.id === recipientId);
     },
+    
+    
     /** 未读邮件数量 */
     unreadCount: (state) => state.inbox.filter(e => !e.isRead).length,
 

@@ -61,15 +61,15 @@
   const taskStore = useTaskStore();
   const eventStore = useEventStore();
   
-// 选中的收件人和主题
-const selectedRecipient = ref<Recipient>();  
-const selectedSubject = ref<string>("");
-const emailContent = ref<string>("");
-const subject = ref<SentFormat[]>([]);
+  // 选中的收件人和主题
+  const selectedRecipient = ref<string>();  
+  const selectedSubject = ref<string>("");
+  const emailContent = ref<string>("");
+  let subject = ref<SentFormat[]>([]);
   
   // 收件人选项
   const recipientOptions = computed(() => 
-    emailStore.contacts
+    emailStore.contacts 
       .filter(c => c.isUnlocked)
       .map(c => ({
         value: c.id,
@@ -79,11 +79,20 @@ const subject = ref<SentFormat[]>([]);
   
   // 主题选项
   const subjectOptions = computed(() => {
-    console.log(selectedRecipient.value)
-    if (!selectedRecipient.value) return [];
-    subject.value = emailStore.getSubjectsByRecipient(selectedRecipient.value);
-    return subject.value.map(c=>({value:c.subject,label:c.subject}))
+    console.log("sentFormat:", emailStore.sentFormat);
+    console.log("selectedRecipient id:", selectedRecipient.value  );
+
+  if (!selectedRecipient.value) return [];
+  const recipientId = selectedRecipient.value; // 直接获取收件人 id
+  subject.value = emailStore.getSubjectsByRecipient(recipientId);
+  console.log(subject.value)
+  return subject.value.map((c) => ({
+    value: c.subject, 
+    label: c.subject
+  }));
 });
+
+
 
   
   // 自动变更主题内容
@@ -101,7 +110,7 @@ const subject = ref<SentFormat[]>([]);
   
     const newEmail: Omit<Email, 'id' | 'isRead'> = {
       from: 'player',
-      to: [selectedRecipient.value?.name as string],
+      to: [selectedRecipient.value as string],
       subject: selectedSubject.value,
       content: emailContent.value,
       day: useCalendarStore().currentDay,
@@ -122,7 +131,6 @@ const subject = ref<SentFormat[]>([]);
     const format = subject.value.find(t=>t.subject === selectedSubject.value)
     if(format?.nextEventId){
       eventStore.triggerEvent(format.nextEventId, GAME_EVENTS);
-
     }
 
     resetForm();

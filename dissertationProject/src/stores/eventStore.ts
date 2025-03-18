@@ -50,10 +50,9 @@ export const useEventStore = defineStore('events', {
       const calendarStore = useCalendarStore();
 
       switch (action.type) {
+        // 常规动作处理...
         case 'add_email':
-          console.log(action.templateId)
           const email = EmailData.SYSTEM_EMAILS.find(t=>t.id == action.templateId)
-          console.log(email)
           if(email){
             emailStore.addEmail({...email})
           }
@@ -104,6 +103,32 @@ export const useEventStore = defineStore('events', {
           console.log(action.replyId)
           emailStore.removeSentFormat(action.replyId)
           break
+        //需验证动作处理
+
+        case 'do_first_kanban':
+          const firsttask = taskStore.backlog.find(t=>t.title == "用户分析面板")
+          //验证成功
+          if(firsttask?.priority == 'urgent'){
+            const actions:GameEventAction[] = [
+              {type:'finish_personal_task',taskId:"first_kanban_work"},
+              {type:'remove_sent_format',replyId:"first_kanban"},
+              {type:'add_email',templateId:"first_kanban_succeed"},
+            ]
+            for (const action of actions) {
+              await this.executeAction(action);
+            }
+          }
+          //验证失败
+          else{
+            const actions:GameEventAction[] = [
+              {type:'add_email',templateId:"first_kanban_failed"},
+            ]
+            for (const action of actions) {
+              await this.executeAction(action);
+            }
+          }
+          break
+
         // 其他动作类型处理...
       }
     }

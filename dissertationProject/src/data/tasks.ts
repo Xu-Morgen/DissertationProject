@@ -20,7 +20,6 @@ const TASK_TEMPLATES: Record<string, Omit<Task, 'id' | 'createdAt'>> = {
     storyPoints: 8,
     creator: 'client', // 仅允许 'player' | 'boss' | 'client'
     blocked: false,
-    dependencies: ['task_data_api']
   }
 };
 
@@ -44,11 +43,10 @@ const PERSONAL_TASK:PersonalTask[]=[
   { 
     id:'first_kanban_work',
     title:"第一次kanban工作",
-    description:"点击左下角的Kanban将新的工程任务添加到当前sprint中，调整完毕后向team发送报告",
+    description:"点击左下角的Kanban将新的工程任务添加到urgent中，调整完毕后向team发送报告",
     status:'todo',
     creator:'client',
     createdAt:0
-
   }
 ]
 

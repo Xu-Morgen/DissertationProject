@@ -11,19 +11,30 @@
             </a-tag>
           </div>
 
-          <!-- 右侧选项卡 -->
-          <div class="priority-tabs">
-            <div 
-              v-for="tab in priorityTabs"
-              :key="tab.value"
-              class="tab-item"
-              :class="{ active: activeTab === tab.value }"
-              @click="setActiveTab(tab.value)"
-            >
-              <span class="tab-label">{{ tab.label }}</span>
-              <span class="tab-count">{{ getTabCount(tab.value) }}</span>
-              <div class="indicator"></div>
+          <!-- 右侧选项卡和按钮 -->
+          <div class="header-right">
+            <div class="priority-tabs">
+              <div 
+                v-for="tab in priorityTabs"
+                :key="tab.value"
+                class="tab-item"
+                :class="{ active: activeTab === tab.value }"
+                @click="setActiveTab(tab.value)"
+              >
+                <span class="tab-label">{{ tab.label }}</span>
+                <span class="tab-count">{{ getTabCount(tab.value) }}</span>
+                <div class="indicator"></div>
+              </div>
             </div>
+
+            <!-- 新增按钮 -->
+            <!-- <a-button 
+              type="primary" 
+              class="custom-button"
+              @click="handleButtonClick"
+            >
+              <plus-outlined /> 保存安排
+            </a-button> -->
           </div>
         </div>
       </a-divider>
@@ -39,7 +50,7 @@
             v-model:data-source="datalist1"
             v-model:target-keys="list2"
             :render="renderFunc"
-            @change="handleChange('list2', $event)"
+            @change="(t, d, m) => handleChange('urgent',t, d, m,1)"
             class="custom-transfer"
           />
         </div>
@@ -53,7 +64,7 @@
             v-model:data-source="datalist2"
             v-model:target-keys="list3"
             :render="renderFunc"
-            @change="handleChange('list3', $event)"
+            @change="(t, d, m) => handleChange('high',t, d, m,2)"
             class="custom-transfer"
           />
         </div>
@@ -67,7 +78,7 @@
             v-model:data-source="datalist3"
             v-model:target-keys="list4"
             :render="renderFunc"
-            @change="handleChange('list4', $event)"
+            @change="(t, d, m) => handleChange('low',t, d, m,3)"
             class="custom-transfer"
           />
         </div>
@@ -98,7 +109,7 @@
           class="task-card"
           :class="getPriorityClass(task.priority)"
         >
-          <template #title>
+          <template #title>     
             <div class="card-header">
               <a-tag :color="getPriorityColor(task.priority)" class="task-tag">
                 TASK-{{ index + 1 }}
@@ -132,7 +143,7 @@
 import { ref, computed, onMounted } from 'vue';
 import { useTaskStore } from '@/stores';
 import type { TaskPriority } from '@/types';
-import { DeleteOutlined, ClockCircleOutlined, RocketOutlined } from '@ant-design/icons-vue';
+import { DeleteOutlined, ClockCircleOutlined, RocketOutlined, PlusOutlined } from '@ant-design/icons-vue';
 
 const taskStore = useTaskStore();
 
@@ -218,40 +229,32 @@ const setActiveTab = (tab: TaskPriority) => {
 };
 
 // 处理Transfer变化
-const handleChange = (listType: string, [targetKeys, direction, moveKeys]: any) => {
-  const priorityMap: Record<string, TaskPriority> = {
-    list2: 'urgent',
-    list3: 'high',
-    list4: 'low'
-  };
+const handleChange = (priority: TaskPriority, targetKeys:string[], direction:string, moveKeys:string[],listNumber:number) => {
 
-  if (direction === 'right') {    
+  // 当前列表对应数据源
+  const listConfig = [
+    [datalist2, datalist3],
+    [datalist1, datalist3],
+    [datalist1, datalist2]
+  ];
+
+  if (direction === 'right') {
     moveKeys.forEach((key: string) => {
       const task = taskStore.backlog.find(t => t.id === key);
       if (task) {
-        const priority = priorityMap[listType];
         taskStore.updateTaskPriority(key, priority);
       }
     });
-    setActiveTab(priorityMap[listType]);
-  }
-
-  // 更新数据源
-  const listConfig = {
-    list2: [datalist2, datalist3],
-    list3: [datalist1, datalist3],
-    list4: [datalist1, datalist2]
-  };
-
-  if (direction === 'right') {
-    listConfig[listType as keyof typeof listConfig].forEach(list => {
+    listConfig[listNumber-1].forEach(list => {
       list.value = list.value.filter(item => !moveKeys.includes(item.key));
     });
   } else if (direction === 'left') {
     moveKeys.forEach((key: string) => {
       const originalItem = unarrangedTask.value.find(task => task.id === key);
       if (originalItem) {
-        const item = { key: originalItem.id, title: originalItem.title };
+        taskStore.updateTaskPriority(originalItem.id  ,'none')
+        const item = {     key: originalItem.id,
+          title: `${originalItem.id} - ${originalItem.title}` };
         [datalist1, datalist2, datalist3].forEach(list => {
           if (!list.value.some(i => i.key === item.key)) {
             list.value.push(item);
@@ -279,6 +282,12 @@ const getPriorityClass = (priority: TaskPriority): string => {
 
 // Transfer组件项渲染器
 const renderFunc = (item: { title: string }) => item.title;
+
+// 新增按钮点击事件
+const handleButtonClick = () => {
+  // 在这里处理按钮点击逻辑
+  console.log('新增任务按钮被点击');
+};
 </script>
 
 <style scoped lang="less">
@@ -316,65 +325,79 @@ const renderFunc = (item: { title: string }) => item.title;
     }
   }
 
-  .priority-tabs {
+  .header-right {
     display: flex;
-    gap: 8px;
-    background: #fff;
-    padding: 4px;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    align-items: center;
+    gap: 16px;
 
-    .tab-item {
-      position: relative;
-      padding: 8px 20px;
-      border-radius: 6px;
-      cursor: pointer;
-      transition: all 0.3s;
+    .priority-tabs {
+      display: flex;
+      gap: 8px;
+      background: #fff;
+      padding: 4px;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+
+      .tab-item {
+        position: relative;
+        padding: 8px 20px;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: all 0.3s;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+
+        &:hover {
+          background: #f5f5f5;
+        }
+
+        &.active {
+          background: #f0f5ff;
+          
+          .tab-label {
+            color: #1890ff;
+            font-weight: 500;
+          }
+          
+          .indicator {
+            width: 100%;
+            background: #1890ff;
+          }
+        }
+      }
+
+      .tab-label {
+        color: rgba(0, 0, 0, 0.85);
+        font-size: 14px;
+        transition: color 0.3s;
+      }
+
+      .tab-count {
+        background: #f0f0f0;
+        padding: 2px 8px;
+        border-radius: 10px;
+        font-size: 12px;
+        color: rgba(0, 0, 0, 0.65);
+      }
+
+      .indicator {
+        position: absolute;
+        bottom: -4px;
+        left: 0;
+        width: 0;
+        height: 2px;
+        background: transparent;
+        transition: all 0.3s;
+      }
+    }
+
+    .custom-button {
+      height: 32px;
+      border-radius: 4px;
       display: flex;
       align-items: center;
-      gap: 8px;
-
-      &:hover {
-        background: #f5f5f5;
-      }
-
-      &.active {
-        background: #f0f5ff;
-        
-        .tab-label {
-          color: #1890ff;
-          font-weight: 500;
-        }
-        
-        .indicator {
-          width: 100%;
-          background: #1890ff;
-        }
-      }
-    }
-
-    .tab-label {
-      color: rgba(0, 0, 0, 0.85);
-      font-size: 14px;
-      transition: color 0.3s;
-    }
-
-    .tab-count {
-      background: #f0f0f0;
-      padding: 2px 8px;
-      border-radius: 10px;
-      font-size: 12px;
-      color: rgba(0, 0, 0, 0.65);
-    }
-
-    .indicator {
-      position: absolute;
-      bottom: -4px;
-      left: 0;
-      width: 0;
-      height: 2px;
-      background: transparent;
-      transition: all 0.3s;
+      justify-content: center;
     }
   }
 }

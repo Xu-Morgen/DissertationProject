@@ -28,7 +28,15 @@ export const GAME_EVENTS: Record<string, GameEvent> = {
     actions: [
       {type:'add_personal_task',taskId:'first_kanban_work'},
       {type:'add_task',taskId:'analytics'},
-      
+      {type:'add_sent_format',replyId:'first_kanban'},
+      {type:'add_recipient',recipientId:'team'}
+    ]
+  },
+  finish_firsh_kanban:{
+    id:'finish_firsh_kanban',
+    trigger:'special',
+    actions:[
+      {type:'do_first_kanban'}
     ]
   }
 }

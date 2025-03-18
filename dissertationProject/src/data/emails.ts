@@ -38,7 +38,44 @@ const SYSTEM_EMAILS: Email[] = [{
     requiresAction: true,
     category: 'system'
   }
-}];
+},{
+  
+    id: 'first_kanban_failed',
+    from: 'team',
+    to: ['player'],
+    subject: '你的验证未能通过，请仔细检查kanban内容',
+    content: `kanban都不会调整，去死吧<br><br>杀杀杀！...`,
+    day: 0,
+    isRead: false, 
+    metadata: {
+      requiresAction: false,
+      category: 'system'
+  }
+},{
+  
+  id: 'first_kanban_succeed',
+  from: 'team',
+  to: ['player'],
+  subject: '你的验证成功通过',
+  content: `我们现在以及迫不及待想和你开展一场会议了！！...`,
+  day: 0,
+  isRead: false, 
+  replies: [{
+    id: 'accept',
+    text: '好的主人',
+    nextEventId: 'do_first_meeting',
+    affectsSatisfaction: +5
+  }],
+  triggers: ['event1'],
+  metadata: {
+    requiresAction: true,
+    category: 'system'
+  }
+}
+
+];
+
+
 
  const CLIENT_EMAILS: Email[] = [{
   id: 'client_request',

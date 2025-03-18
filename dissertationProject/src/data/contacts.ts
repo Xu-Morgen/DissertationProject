@@ -14,6 +14,13 @@ const CONTACTS: Recipient[] =  [
         email: 'client@corp.com',
         isUnlocked: true,
         signature: '期待您的回复'
+    },
+    {
+        id: 'team',
+        name: '项目团队',
+        email: 'client@corp.com',
+        isUnlocked: true,
+        signature: '期待您的回复'
     }
 ]
 

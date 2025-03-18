@@ -12,7 +12,7 @@ export interface Email {
   content: string;    // 支持HTML格式
   isRead: boolean;
   day: GameDate;      // 邮件所属游戏天数
-  replies: Reply[];   // 可用的回复选项
+  replies?: Reply[];   // 可用的回复选项
   triggers?: string[]; // 触发的事件ID列表
   metadata: {
     requiresAction: boolean;    // 是否需要玩家操作
@@ -43,7 +43,7 @@ export interface SentFormat{
   id:string;
   subject:string;//标题
   content:string;//内容
-  relate:Recipient[];//能对谁发送这份内容
+  relate:Recipient;//能对谁发送这份内容
   nextEventId?: string;         // 触发的后续事件ID
 }
 
@@ -123,6 +123,8 @@ export type GameEventAction =
   | { type: 'remove_sent_format';replyId:string} //删去不再可用的发送格式
   | { type: 'add_recipient';recipientId:string} //增加新的可联系人
   | { type: 'remove_recipient';recipientId:string} //删去不再可用的联系人
+  //特殊任务列表
+  | {type:'do_first_kanban'}//第一次kanban任务
 
 
 export interface GameEvent {
