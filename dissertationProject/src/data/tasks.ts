@@ -5,7 +5,7 @@ const INITIAL_TASKS: Task[] = [{
   title: '完成新手引导',
   description: '通过邮件系统学习基本操作',
   status: 'backlog',
-  priority: 'high',
+  priority: 'none',
   creator: 'boss', // 修改为 'boss' 或 'client'
   createdAt: 0,
   blocked: false
@@ -16,7 +16,7 @@ const TASK_TEMPLATES: Record<string, Omit<Task, 'id' | 'createdAt'>> = {
     title: '用户分析面板',
     description: '开发用户行为分析功能',
     status: 'backlog',
-    priority: 'medium',
+    priority: 'none',
     storyPoints: 8,
     creator: 'client', // 仅允许 'player' | 'boss' | 'client'
     blocked: false,
@@ -40,6 +40,15 @@ const PERSONAL_TASK:PersonalTask[]=[
     status: 'todo',
     creator: 'client',
     createdAt: 0
+  },
+  { 
+    id:'first_kanban_work',
+    title:"第一次kanban工作",
+    description:"点击左下角的Kanban将新的工程任务添加到当前sprint中，调整完毕后向team发送报告",
+    status:'todo',
+    creator:'client',
+    createdAt:0
+
   }
 ]
 

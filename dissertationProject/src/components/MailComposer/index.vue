@@ -111,7 +111,7 @@ const subject = ref<SentFormat[]>([]);
         requiresAction: false,
         category: 'system',
         autoReply: false,
-      }
+      },
     };
 
     console.log(newEmail)

@@ -14,7 +14,7 @@ import Inbox from '@/components/Inbox/index.vue';
 import Kanban from '@/components/Kanban/index.vue';
 import CalendarView from '@/components/Calendar/index.vue';
 import ConfigModal from '@/components/ConfigModal/index.vue';
-import { MailOutlined, AppstoreOutlined, CalendarOutlined } from '@ant-design/icons-vue';
+import { MailOutlined, AppstoreOutlined, CalendarOutlined,ToolOutlined } from '@ant-design/icons-vue';
 import {statusColor} from '@/data/Global'
 import type { Email } from '@/types';
 // Store 实例
@@ -51,14 +51,6 @@ const advanceDay = () => {
   eventStore.triggerEvent('daily_check', GAME_EVENTS);
 };
 
-// 初始化加载
-watch(() => uiStore.initialized, (initialized) => {
-  if (initialized) {
-    // 触发初始事件
-    eventStore.triggerEvent('game_start', GAME_EVENTS);
-  }
-});
-
 
 </script>
 <template>
@@ -74,7 +66,7 @@ watch(() => uiStore.initialized, (initialized) => {
           :icon="h(ToolOutlined)" 
         />
         <span class="progress">
-          进度: {{ taskStore.workflowProgress }}%
+          进度: {{ rootStore.workflowProgress }}%
         </span>
         <span class="day">
           第 {{ calendarStore.currentDay }} 天
@@ -88,21 +80,18 @@ watch(() => uiStore.initialized, (initialized) => {
         <a-layout-content class="content">
           <!-- 动态视图切换 -->
           <Inbox 
-            v-show="currentView === 'mail'"
+            v-if="currentView == 'mail'"
             @select-email="(email) => {
               activeEmail = email;
-              isReading = true;
-            }"
+            }"  
           />
           
           <Kanban 
-            v-show="currentView === 'kanban'"
-            @update-task="taskStore.upsertTask"
+            v-if="currentView == 'kanban'"
           />
           
           <CalendarView 
-            v-show="currentView === 'calendar'"
-            @select-meeting="handleMeetingSelect"
+            v-if="currentView == 'calendar'"
           />
         </a-layout-content>
 
@@ -115,7 +104,6 @@ watch(() => uiStore.initialized, (initialized) => {
                 v-for="task in visibleTasks" 
                 :key="task.id"
                 class="task-card"
-                :class="`priority-${task.priority}`"
                 hoverable
               >
                 <template #title>

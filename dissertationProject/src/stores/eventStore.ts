@@ -7,6 +7,7 @@ import { useTaskStore } from './taskStore';
 import tasks from '@/data/tasks';
 import { toRaw } from 'vue';
 import TaskData from '@/data/tasks'
+import EmailData from '@/data/emails'
 
 export const useEventStore = defineStore('events', {
   state: () => ({
@@ -50,7 +51,12 @@ export const useEventStore = defineStore('events', {
 
       switch (action.type) {
         case 'add_email':
-          // 需要实现邮件模板查找逻辑
+          console.log(action.templateId)
+          const email = EmailData.SYSTEM_EMAILS.find(t=>t.id == action.templateId)
+          console.log(email)
+          if(email){
+            emailStore.addEmail({...email})
+          }
           break;
           
         case 'advance_day':
@@ -58,14 +64,20 @@ export const useEventStore = defineStore('events', {
           break;
 
         case 'add_task':
-          console.log(action.type)
-          console.log(action.taskId)
+          const findTask = TaskData.TASK_TEMPLATES[action.taskId]
+          if(findTask){
+            taskStore.upsertPersoanlTask({
+              ...findTask,
+              id: `email_${Date.now()}`,
+              createdAt: calendarStore.currentDay
+            })
+          }
           break
         
         case 'add_personal_task':
-          const findTask = TaskData.PERSONAL_TASK.find(t=>t.id == action.taskId)
-          if(findTask){
-            taskStore.upsertPersoanlTask(findTask)
+          const findPersonalTask = TaskData.PERSONAL_TASK.find(t=>t.id == action.taskId)
+          if(findPersonalTask){
+            taskStore.upsertPersoanlTask(findPersonalTask)
           }
           break
         

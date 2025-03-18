@@ -19,6 +19,25 @@ const SYSTEM_EMAILS: Email[] = [{
     requiresAction: true,
     category: 'system'
   }
+},{
+  id: 'see_kanban',
+  from: 'boss',
+  to: ['player'],
+  subject: '欢迎你的报道',
+  content: `亲爱的项目经理，<br><br>去看眼Kanban长啥样吧...`,
+  day: 0,
+  isRead: false, 
+  replies: [{
+    id: 'accept',
+    text: '好的主人',
+    nextEventId: 'do_first_kanban',
+    affectsSatisfaction: +5
+  }],
+  triggers: ['event1'],
+  metadata: {
+    requiresAction: true,
+    category: 'system'
+  }
 }];
 
  const CLIENT_EMAILS: Email[] = [{

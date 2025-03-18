@@ -18,7 +18,17 @@ export const GAME_EVENTS: Record<string, GameEvent> = {
     trigger: 'email_reply:send',
     actions: [
       {type:'finish_personal_task',taskId:"first_reply"},
-      {type:'remove_sent_format',replyId:"first_reply"}
+      {type:'remove_sent_format',replyId:"first_reply"},
+      {type:'add_email',templateId:'see_kanban'}
     ]
   },
+  do_first_kanban:{
+    id: 'do_first_kanban',
+    trigger: 'email_reply:accept',
+    actions: [
+      {type:'add_personal_task',taskId:'first_kanban_work'},
+      {type:'add_task',taskId:'analytics'},
+      
+    ]
+  }
 }

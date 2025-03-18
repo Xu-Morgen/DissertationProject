@@ -35,7 +35,7 @@ export const useEmailStore = defineStore('email', {
       this.sent.unshift({
         ...email,
         id: `email_${Date.now()}`,
-        isRead: false
+        isRead: true
       });
     },
 
