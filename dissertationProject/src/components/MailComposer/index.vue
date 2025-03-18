@@ -62,7 +62,7 @@
   const eventStore = useEventStore();
   
 // 选中的收件人和主题
-const selectedRecipient = ref<Recipient>();  // 数组形式
+const selectedRecipient = ref<Recipient>();  
 const selectedSubject = ref<string>("");
 const emailContent = ref<string>("");
 const subject = ref<SentFormat[]>([]);
@@ -101,42 +101,41 @@ const subject = ref<SentFormat[]>([]);
   
     const newEmail: Omit<Email, 'id' | 'isRead'> = {
       from: 'player',
-      to: selectedRecipients.value,
-      subject: emailSubject.value,
+      to: [selectedRecipient.value?.name as string],
+      subject: selectedSubject.value,
       content: emailContent.value,
       day: useCalendarStore().currentDay,
       replies: [],
       triggers: [],
       metadata: {
         requiresAction: false,
-        category: 'sent',
+        category: 'system',
         autoReply: false,
-        associatedTask: selectedTask.value || undefined
       }
     };
+
+    console.log(newEmail)
   
     // 添加邮件
-    emailStore.addEmail(newEmail);
+    emailStore.sentEmail(newEmail);
   
-    // 触发发送事件
-    eventStore.triggerEvent('email_sent', GAME_EVENTS);
-  
+    const format = subject.value.find(t=>t.subject === selectedSubject.value)
+    if(format?.nextEventId){
+      eventStore.triggerEvent(format.nextEventId, GAME_EVENTS);
+
+    }
 
     resetForm();
   };
   
   // 表单验证
   const validateForm = () => {
-    if (selectedRecipients.value.length === 0) {
-      alert('请选择至少一个收件人');
-      return false;
-    }
-    if (!emailSubject.value) {
-      alert('请输入邮件主题');
-      return false;
-    }
-    if (!emailContent.value) {
-      alert('请输入邮件正文');
+    // if (!selectedRecipient.value?.name) {
+    //   alert('请选择至少一个收件人');
+    //   return false;
+    // }
+    if (!selectedSubject) {
+      alert('请选择邮件主题');
       return false;
     }
     return true;
@@ -144,7 +143,7 @@ const subject = ref<SentFormat[]>([]);
   
   // 重置表单
   const resetForm = () => {
-    selectedRecipient.value = null
+    selectedRecipient.value = undefined 
     selectedSubject.value = ''
     emailContent.value = '';
     emit('update:open', useUIStore().toggleSending(false));

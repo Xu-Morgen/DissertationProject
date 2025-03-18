@@ -13,24 +13,12 @@ export const GAME_EVENTS: Record<string, GameEvent> = {
       {type:'add_sent_format',replyId:"first_reply"}
     ]
   },
-
-  start_first_sprint: {
-    id: 'start_first_sprint',
-    trigger: 'email_reply:accept',  // 邮件回复accept时触发
+  finish_first_reply:{
+    id: 'finish_first_reply',
+    trigger: 'email_reply:send',
     actions: [
-      { type: 'add_task', taskId: 'sprint_plan' },
-      { type: 'advance_day', days: 1 }
-    ],
-    isOnce: true
-  },
-
-
-  add_analytics_task: {
-    id: 'add_analytics_task',
-    trigger: 'email_reply:agree',
-    actions: [
-      { type: 'add_task', taskId: 'analytics' },
-      { type: 'modify_satisfaction', value: +5 }
+      {type:'finish_personal_task',taskId:"first_reply"},
+      {type:'remove_sent_format',replyId:"first_reply"}
     ]
-  }
-};
+  },
+}

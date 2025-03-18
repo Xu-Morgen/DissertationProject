@@ -24,8 +24,6 @@ export const useEventStore = defineStore('events', {
         return;
       }
 
-      if (this.triggeredEvents.some(t=>t == eventId)) return;
-
       const event = gameEvents[eventId]; // 需要从外部导入预定义事件
       if (!event) return;
 
@@ -87,6 +85,12 @@ export const useEventStore = defineStore('events', {
 
         case 'add_sent_format':
           emailStore.addSentFormat(action.replyId)
+          break
+
+        case 'remove_sent_format':
+          console.log(123)
+          console.log(action.replyId)
+          emailStore.removeSentFormat(action.replyId)
           break
         // 其他动作类型处理...
       }

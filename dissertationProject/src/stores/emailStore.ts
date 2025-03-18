@@ -32,7 +32,7 @@ export const useEmailStore = defineStore('email', {
    * @param email 不包含id和isRead的新邮件对象
    */
     sentEmail(email: Omit<Email, 'id' | 'isRead'>) {
-      this.inbox.unshift({
+      this.sent.unshift({
         ...email,
         id: `email_${Date.now()}`,
         isRead: false
@@ -50,6 +50,18 @@ export const useEmailStore = defineStore('email', {
         this.contacts.push(newRecipient)
       }
     },
+  /**
+   * 删去收件人
+   * @param RecipientId 收信人的id
+   */
+      removeRecipient(RecipientId:string) {
+        const removeRecipient = contacts.CONTACTS.find(c=>c.id == RecipientId)
+        if (removeRecipient){
+          this.contacts = this.contacts.filter(t=>t != removeRecipient)
+        }
+      },
+
+
 
   /**
    * 添加新发件格式
@@ -62,6 +74,19 @@ export const useEmailStore = defineStore('email', {
       }
   },
 
+
+  /**
+   * 删去发件格式
+   * @param SentId 发件格式的id
+   */
+    removeSentFormat(SentId:string) {
+      const removeSentFormat = sentFormat.SENT.find(s=>s.id == SentId)
+      console.log(removeSentFormat)
+      if (removeSentFormat){
+        this.sentFormat = this.sentFormat.filter(t=>t.id != removeSentFormat.id)
+        console.log(this.sentFormat)
+      }
+  },
     /**
      * 处理邮件回复
      * @param emailId 目标邮件ID

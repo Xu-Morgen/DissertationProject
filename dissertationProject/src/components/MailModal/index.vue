@@ -24,6 +24,7 @@ const handleReply = (replyId: string) => {
 
   // 触发后续事件
   const reply = props.email.replies.find(r => r.id === replyId);
+  
   if (reply?.nextEventId) {
     eventStore.triggerEvent(reply.nextEventId, GAME_EVENTS);
   }

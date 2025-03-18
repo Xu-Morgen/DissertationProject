@@ -18,7 +18,7 @@ export interface Email {
     requiresAction: boolean;    // 是否需要玩家操作
     associatedTask?: string;    // 关联的任务ID
     autoReply?: boolean;        // 是否为自动生成回复
-    category: 'system' | 'client' | 'boss' | 'team'; // 邮件分类
+    category: 'system' | 'client' | 'boss' | 'team' ; // 邮件分类
   };
 }
 
