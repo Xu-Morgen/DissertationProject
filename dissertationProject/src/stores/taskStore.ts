@@ -7,7 +7,8 @@ export const useTaskStore = defineStore('tasks', {
     backlog: [] as Task[],
     currentSprint: null as Sprint | null,
     sprintHistory: [] as Sprint[],
-    satisfaction: 100 // 客户满意度（0-100）
+    satisfaction: 100, // 客户满意度（0-100）
+    projectTask:[] as Task[], //用户个人任务
   }),
 
   actions: {

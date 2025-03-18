@@ -1,31 +1,32 @@
 <script lang="ts" setup>
 import { ref, computed } from 'vue';
-import { useEmailStore, useEventStore } from '@/stores';
+import { useEmailStore, useEventStore, useUIStore } from '@/stores';
 import { GAME_EVENTS } from '@/data/events';
 import type { Email } from '@/types';
-import { MailOutlined } from '@ant-design/icons-vue';
-import {categoryColors} from '@/data/Global'
+import MailModal from '@/components/MailModal/index.vue';
+import MailComposer from '@/components/MailComposer/index.vue';
+import { categoryColors } from '@/data/Global';
 
 const emailStore = useEmailStore();
 const eventStore = useEventStore();
+const uiStore = useUIStore();
 
 // 当前选中的邮件
 const activeEmail = ref<Email | null>(null);
 
+// 控制收件箱和发件箱的显示
+const isInbox = ref(true); // 默认为显示收件箱
+
 // 邮件列表
-const emails = computed(() => emailStore.inbox);
+const emails = computed(() => {
+  return isInbox.value ? emailStore.inbox : emailStore.sent; // 根据 isInbox 显示不同的邮箱
+});
 
 // 处理邮件点击
 const handleEmailClick = (email: Email) => {
   activeEmail.value = email;
   emailStore.markAsRead(email.id);
-
-  // 触发邮件打开事件
-  if (email.triggers.length > 0) {
-    email.triggers.forEach(trigger => {
-      eventStore.triggerEvent(trigger, GAME_EVENTS);
-    });
-  }
+  uiStore.toggleReading(true);
 };
 
 // 处理邮件回复
@@ -44,16 +45,40 @@ const handleReply = (replyId: string) => {
   // 关闭模态框
   activeEmail.value = null;
 };
-
-// 格式化邮件内容
-const formatContent = (content: string) => {
-  return content
-    .replace(/ /g, '&nbsp;')
-    .replace(/\n/g, '<br>');
-};
 </script>
 
 <template>
+  <!-- 切换收件箱和发件箱 -->
+  <div class="email-switch-container">
+    <a-switch
+      v-model:checked="isInbox"
+      :checkedChildren="'收件箱'"
+      :unCheckedChildren="'发件箱'"
+      style="margin-right: 16px;"
+    />
+    
+    <!-- 发送按钮 -->
+    <a-button 
+      type="primary" 
+      @click="uiStore.sendingEmailModalOpen = true"
+      style="height: 32px;">
+      发送邮件
+    </a-button>
+  </div>
+
+  <!-- 邮件阅读器 -->
+  <MailModal
+    v-model:open="uiStore.readingEmailModalOpen"
+    :email="activeEmail"
+    @reply="handleReply"
+  />
+
+  <!-- 邮件编辑器 -->
+  <MailComposer
+    v-model:open="uiStore.sendingEmailModalOpen"
+    @send="emailStore.addEmail"
+  />
+
   <div class="inbox-container">
     <!-- 邮件列表 -->
     <a-list
@@ -62,7 +87,7 @@ const formatContent = (content: string) => {
       class="email-list"
     >
       <template #renderItem="{ item }">
-        <a-list-item 
+        <a-list-item
           :class="['email-item', { unread: !item.isRead }]"
           @click="handleEmailClick(item)"
         >
@@ -86,47 +111,6 @@ const formatContent = (content: string) => {
         </a-list-item>
       </template>
     </a-list>
-
-    <!-- 邮件详情模态框 -->
-    <a-modal
-      v-model:open="activeEmail"
-      :title="activeEmail?.subject"
-      width="800px"
-      @cancel="activeEmail = null"
-    >
-      <div class="email-content">
-        <!-- 发件人信息 -->
-        <div class="email-header">
-          <span class="sender">
-            {{ emailStore.getContactName(activeEmail?.from) }}
-          </span>
-          <span class="day">第 {{ activeEmail?.day }} 天</span>
-        </div>
-        
-        <!-- 邮件正文 -->
-        <div 
-          class="email-body"
-          v-html="formatContent(activeEmail?.content || '')"
-        />
-
-        <!-- 回复选项 -->
-        <div v-if="activeEmail?.replies?.length" class="reply-actions">
-          <a-button
-            v-for="reply in activeEmail.replies"
-            :key="reply.id"
-            :type="reply.affectsSatisfaction ? 'primary' : 'default'"
-            :danger="reply.affectsSatisfaction && reply.affectsSatisfaction < 0"
-            @click="handleReply(reply.id)"
-            class="reply-button"
-          >
-            {{ reply.text }}
-            <span v-if="reply.requiresDays" class="days-cost">
-              (需要{{ reply.requiresDays }}天)
-            </span>
-          </a-button>
-        </div>
-      </div>
-    </a-modal>
   </div>
 </template>
 
@@ -176,32 +160,6 @@ const formatContent = (content: string) => {
       }
     }
   }
-
-  .email-content {
-    .email-header {
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 16px;
-      color: #666;
-      
-      .day {
-        font-size: 0.9em;
-      }
-    }
-
-    .email-body {
-      line-height: 1.6;
-      border-top: 1px solid #eee;
-      padding-top: 16px;
-    }
-
-    .reply-actions {
-      margin-top: 24px;
-      display: flex;
-      gap: 8px;
-      justify-content: flex-end;
-    }
-  }
 }
 
 // 分类颜色映射
@@ -210,5 +168,15 @@ const formatContent = (content: string) => {
   client: #faad14;
   boss: #52c41a;
   team: #722ed1;
+}
+
+.email-switch-container {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 16px;
+    flex-wrap: nowrap;
+    align-content: center;
+    align-items: center;
+
 }
 </style>

@@ -14,7 +14,7 @@ const SYSTEM_EMAILS: Email[] = [{
     nextEventId: 'start_first_sprint',
     affectsSatisfaction: +5
   }],
-  triggers: ['game_start'],
+  triggers: ['event1'],
   metadata: {
     requiresAction: true,
     category: 'system'

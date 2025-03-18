@@ -6,7 +6,8 @@ import { useEmailStore } from '.';
 export const useUIStore = defineStore('ui', {
   state: (): UIState => ({
     activeView: 'mail',
-
+    readingEmailModalOpen:false,
+    sendingEmailModalOpen:false,
     configModalOpen:false,
 
     emailFilter: {
@@ -25,6 +26,12 @@ export const useUIStore = defineStore('ui', {
   actions: {
     toggleConfig(state:boolean){
       this.configModalOpen = state
+    },
+    toggleReading(state:boolean){
+      this.readingEmailModalOpen = state
+    },
+    toggleSending(state:boolean){
+      this.sendingEmailModalOpen = state
     },
   },
   getters: {

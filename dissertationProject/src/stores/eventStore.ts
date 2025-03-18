@@ -50,6 +50,11 @@ export const useEventStore = defineStore('events', {
           calendarStore.advanceDay(action.days);
           break;
 
+        case 'add_task':
+          console.log(action.type)
+          console.log(action.taskId)
+          break
+
         // 其他动作类型处理...
       }
     }

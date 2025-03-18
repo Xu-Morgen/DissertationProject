@@ -10,8 +10,7 @@ import {
 } from '@/stores';
 import { GAME_EVENTS } from '@/data/events';
 import Inbox from '@/components/Inbox/index.vue';
-import MailModal from '@/components/MailModal/index.vue';
-import MailComposer from '@/components/MailComposer/index.vue';
+
 import Kanban from '@/components/Kanban/index.vue';
 import CalendarView from '@/components/Calendar/index.vue';
 import ConfigModal from '@/components/ConfigModal/index.vue';
@@ -31,8 +30,8 @@ const currentView = ref<'mail' | 'kanban' | 'calendar'>('mail');
 
 // 邮件相关状态
 const activeEmail = ref<Email | null>(null);
-const isComposing = ref(false);
-const isReading = ref(false);
+
+
 
 //选择meeting
 const handleMeetingSelect = () => {
@@ -44,19 +43,7 @@ const visibleTasks = computed(() =>
   taskStore.backlog.filter(t => t.status !== 'done')
 );
 
-// 处理邮件回复
-const handleReply = (replyId: string) => {
-  if (!activeEmail.value) return;
-  
-  // 触发事件
-  eventStore.triggerEvent(
-    activeEmail.value.replies.find(r => r.id === replyId)?.nextEventId,
-    GAME_EVENTS
-  );
-  
-  // 关闭模态框
-  activeEmail.value = null;
-};
+
 
 // 处理每日推进
 const advanceDay = () => {
@@ -71,6 +58,7 @@ watch(() => uiStore.initialized, (initialized) => {
     eventStore.triggerEvent('game_start', GAME_EVENTS);
   }
 });
+
 
 </script>
 <template>
@@ -95,18 +83,7 @@ watch(() => uiStore.initialized, (initialized) => {
 
       <!-- 内容区域 -->
       <a-layout>
-        <!-- 邮件编辑器 -->
-        <MailComposer
-          v-model:open="isComposing"
-          @send="emailStore.addEmail"
-        />
 
-        <!-- 邮件阅读器 -->
-        <MailModal
-          v-model:open="isReading"
-          :email="activeEmail"
-          @reply="handleReply"
-        />
 
         <a-layout-content class="content">
           <!-- 动态视图切换 -->

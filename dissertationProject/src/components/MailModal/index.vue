@@ -3,6 +3,7 @@ import { computed } from 'vue';
 import { useEmailStore, useEventStore } from '@/stores';
 import { GAME_EVENTS } from '@/data/events';
 import type { Email } from '@/types';
+import { categoryColors } from '@/data/Global';
 
 const props = defineProps<{
   open: boolean;
@@ -74,7 +75,7 @@ const formattedContent = computed(() => {
       />
 
       <!-- 邮件回复选项部分 -->
-      <div v-if="email?.replies?.length && email.isRead" class="reply-actions">
+      <div v-if="email?.replies?.length && !emailStore.answeredEmail.some(t=>t.id == email?.id)" class="reply-actions">
         <a-button
           v-for="reply in email.replies"
           :key="reply.id"

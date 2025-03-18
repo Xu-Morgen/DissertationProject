@@ -6,6 +6,7 @@ export const useEmailStore = defineStore('email', {
   state: () => ({
     inbox: [] as Email[],
     sent: [] as Email[],
+    answeredEmail:[] as Email[],
     contacts: [
       {
         id: 'boss',
@@ -48,8 +49,8 @@ export const useEmailStore = defineStore('email', {
 
       if (!email || !reply) return;
 
-      // 将回复移到已发送
-      this.sent.push({
+      // 将作出回应的邮件记录列表
+      this.answeredEmail.push({
         ...email,
         from: 'player',
         to: [email.from],

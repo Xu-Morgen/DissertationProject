@@ -13,7 +13,7 @@ export interface Email {
   isRead: boolean;
   day: GameDate;      // 邮件所属游戏天数
   replies: Reply[];   // 可用的回复选项
-  triggers: string[]; // 触发的事件ID列表
+  triggers?: string[]; // 触发的事件ID列表
   metadata: {
     requiresAction: boolean;    // 是否需要玩家操作
     associatedTask?: string;    // 关联的任务ID
@@ -57,6 +57,16 @@ export interface Task {
   createdAt: GameDate;
   deadline?: GameDate;          // 截止天数（可选）
   dependencies?: string[];      // 依赖的任务ID列表
+}
+
+export interface PersonalTask {
+  id: string;
+  title: string;
+  description: string;
+  status: TaskStatus;
+  creator: 'player' | 'boss' | 'client'; // 任务来源
+  createdAt: GameDate;
+  deadline?: GameDate;          // 截止天数（可选）
 }
 
 /* ================= 日历系统 ================= */
@@ -109,6 +119,8 @@ export interface GameEvent {
 /* ================= UI状态 ================= */
 export interface UIState {
   configModalOpen:boolean,
+  readingEmailModalOpen:boolean,
+  sendingEmailModalOpen:boolean,
   activeView: 'mail' | 'kanban' | 'calendar';
   emailFilter: {
     unreadOnly: boolean;
