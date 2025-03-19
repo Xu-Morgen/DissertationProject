@@ -199,7 +199,7 @@ const currentOptions = computed(() => {
   if (step.options) return step.options;
   
   return [{
-    text: isLastStep ? "完成会议" : "继续",
+    text: isLastStep ? "finish meeting" : "continue",
     effects: []
   }];
 });
