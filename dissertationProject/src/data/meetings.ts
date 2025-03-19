@@ -70,29 +70,29 @@ const CLIENT_MEETINGS: CalendarEvent[] = [{
 const FRESH_MEETINGS: CalendarEvent[] = [{
   id: 'fresher_meeting',
   type: 'client',
-  title: '新人会议',
+  title: 'Orientation party',
   day:0,
   participants: contacts.CONTACTS[0],
   completed: false,
   finishEventId:"finish_first_meeting",
   scripts: [
     {
-      sys: "欢迎开会欢迎开会：",
+      sys: "Welcome to our team：",
       options: [
         {
-          text: "不开心不开心呢",
+          text: "Hello everyone ",
 
         }
       ]
     },
     {
-      sys:"不管开不开心都得开会哦"
+      sys:"Theoretically I should explain some background of the game now, but I am lazy, so I will write it later."
     },
     {
-      sys:"那么就此散会",
+      sys:"So the meeting ends here.",
       options:[
         {
-          text:"散会好耶",
+          text:"goodbye",
         }
       ]
     }

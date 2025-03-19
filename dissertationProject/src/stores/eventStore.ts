@@ -125,7 +125,7 @@ export const useEventStore = defineStore('events', {
 
         //需验证动作处理
         case 'do_first_kanban':
-          const firsttask = taskStore.backlog.find(t=>t.title == "用户分析面板")
+          const firsttask = taskStore.backlog.find(t=>t.title == "User analysis panel")
           //验证成功
           if(firsttask?.priority == 'urgent'){
             const actions:GameEventAction[] = [
@@ -156,9 +156,10 @@ export const useEventStore = defineStore('events', {
               this.executeAction({type:'finish_personal_task',taskId:"first_day"})
               this.executeAction({type:'add_sent_format',replyId:'daily_standup'})
               this.executeAction({type:'add_recipient',recipientId:'client'})
+              this.executeAction({type:'add_daily_mail',templateId:"client_request"})
               break
             case 1:
-              this.executeAction({type:'add_daily_mail',templateId:"client_request"})
+
               break
           }
           break

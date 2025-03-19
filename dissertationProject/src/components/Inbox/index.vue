@@ -36,8 +36,8 @@ const handleEmailClick = (email: Email) => {
   <div class="email-switch-container">
     <a-switch
       v-model:checked="isInbox"
-      :checkedChildren="'收件箱'"
-      :unCheckedChildren="'发件箱'"
+      :checkedChildren="'Inbox'"
+      :unCheckedChildren="'Outbox'"
       style="margin-right: 16px;"
     />
     
@@ -46,7 +46,7 @@ const handleEmailClick = (email: Email) => {
       type="primary" 
       @click="uiStore.sendingEmailModalOpen = true"
       style="height: 32px;">
-      发送邮件
+      Send
     </a-button>
   </div>
 
@@ -87,7 +87,7 @@ const handleEmailClick = (email: Email) => {
               <span class="sender">
                 {{ emailStore.getContactName(item.from) }}
               </span>
-              <span class="day">第 {{ item.day }} 天</span>
+              <span class="day">Day:{{ item.day }} </span>
             </template>
           </a-list-item-meta>
         </a-list-item>
@@ -98,7 +98,7 @@ const handleEmailClick = (email: Email) => {
 
 <style scoped lang="less">
 .inbox-container {
-  height: 100%;
+  height: 70vh;
   background: #fff;
   border-radius: 8px;
   padding: 16px;

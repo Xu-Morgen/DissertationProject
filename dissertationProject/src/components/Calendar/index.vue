@@ -3,16 +3,16 @@
     <!-- 调试控制区域（保持不变） -->
     <div class="debug-controls">
       <a-button @click="changeDay(-1)">
-        <left-outlined /> 前一天
+        <left-outlined /> the day before
       </a-button>
       <span class="current-day-label">
-        当前天数: {{ calendarStore.currentDay }}
+        Current days: {{ calendarStore.currentDay }}
       </span>
       <a-button @click="changeDay(1)">
-        <right-outlined /> 后一天
+        <right-outlined /> the day after
       </a-button>
       <a-button @click="resetClickedEvents" type="dashed">
-        <reload-outlined /> 重置点击状态
+        <reload-outlined /> Reset click state
       </a-button>
     </div>
 
@@ -25,7 +25,7 @@
         :class="{ 'current-day': day.number === calendarStore.currentDay }"
       >
         <div class="day-header">
-          <span>第 {{ day.number }} 天</span>
+          <span>Day: {{ day.number }}</span>
           <a-tag v-if="isSprintDay(day.number)" color="#87d068">
             Sprint {{ sprintDayNumber(day.number) }}
           </a-tag>
@@ -136,9 +136,9 @@ const getEventClass = (dayNumber: number, eventId: string) => ({
 
 // 事件状态与颜色
 const eventStatus = (event: any) => {
-  if (event.completed) return '已完成';
-  if (event.day < calendarStore.currentDay) return '已过期';
-  return '计划中';
+  if (event.completed) return 'Complete';
+  if (event.day < calendarStore.currentDay) return 'Passed';
+  return 'Planed';
 };
 const eventStatusColor = (event: any) => {
   if (event.completed) return '#52c41a';
@@ -151,7 +151,7 @@ const handleEventClick = (dayNumber: number, eventId: string) => {
   if(calendarStore.inMeeting != true){
     calendarStore.inMeeting = true
   }else{
-    console.log('请先完成当前会议 ')
+    alert('Please complete the current meeting first')
   }
   
   if (dayNumber !== calendarStore.currentDay || isEventClicked(eventId)) return;

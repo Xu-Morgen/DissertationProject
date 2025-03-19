@@ -60,7 +60,7 @@ const formattedContent = computed(() => {
           <span class="sender-name">
             {{ emailStore.getContactName(email?.from) }}
           </span>
-          <span class="send-day">第 {{ email?.day }} 天</span>
+          <span class="send-day">Day:{{ email?.day }} </span>
         </div>
         <a-tag v-if="email?.metadata.category" :color="categoryColors[email.metadata.category]">
           {{ email.metadata.category }}
@@ -78,8 +78,6 @@ const formattedContent = computed(() => {
         <a-button
           v-for="reply in email.replies"
           :key="reply.id"
-          :type="reply.affectsSatisfaction ? 'primary' : 'default'"
-          :danger="reply.affectsSatisfaction && reply.affectsSatisfaction < 0"
           @click="handleReply(reply.id)"
           class="reply-button"
         >

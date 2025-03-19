@@ -68,10 +68,10 @@ const advanceDay = () => {
           :icon="h(ToolOutlined)" 
         />
         <span class="progress">
-          进度: {{ rootStore.workflowProgress }}%
+          Progres: {{ rootStore.workflowProgress }}%
         </span>
         <span class="day">
-          第 {{ calendarStore.currentDay }} 天
+          Day:{{ calendarStore.currentDay }} 
         </span>
       </a-layout-header>
 
@@ -100,7 +100,7 @@ const advanceDay = () => {
         <!-- 右侧任务侧边栏 -->
         <a-layout-sider class="sider">
           <div class="task-panel">
-            <h3>当前任务 ({{ visibleTasks.length }})</h3>
+            <h3>Task List: ({{ visibleTasks.length }})</h3>
             <div class="task-list">
               <a-card
                 v-for="task in visibleTasks" 
@@ -140,7 +140,7 @@ const advanceDay = () => {
               @click="currentView = 'mail'"
             >
               <template #icon><MailOutlined /></template>
-              邮箱
+              Mail Box
               <a-badge :count="emailStore.unreadCount" />
             </a-button>
 
@@ -150,7 +150,7 @@ const advanceDay = () => {
               @click="currentView = 'kanban'"
             >
               <template #icon><AppstoreOutlined /></template>
-              看板
+              Kanban
             </a-button>
 
             <a-button
@@ -159,7 +159,7 @@ const advanceDay = () => {
               @click="currentView = 'calendar'"
             >
               <template #icon><CalendarOutlined /></template>
-              日历
+              calendar
             </a-button>
           </a-button-group>
           
@@ -169,7 +169,7 @@ const advanceDay = () => {
             type="primary" 
             @click="advanceDay"
           >
-            下一天
+            Next Day
           </a-button>
         </div>
       </a-layout-footer>

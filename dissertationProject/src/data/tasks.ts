@@ -13,8 +13,8 @@ const INITIAL_TASKS: Task[] = [{
 
 const TASK_TEMPLATES: Record<string, Omit<Task, 'id' | 'createdAt'>> = {
   analytics: {
-    title: '用户分析面板',
-    description: '开发用户行为分析功能',
+    title: 'User analysis panel',
+    description: 'Develop user behavior analysis functions',
     status: 'backlog',
     priority: 'none',
     storyPoints: 8,
@@ -26,40 +26,40 @@ const TASK_TEMPLATES: Record<string, Omit<Task, 'id' | 'createdAt'>> = {
 const PERSONAL_TASK:PersonalTask[]=[
   {
     id: 'first_email',
-    title: '第一份邮件',
-    description: '点击画面中央的第一份邮件来查看详情',
+    title: 'Tutorial: First Email',
+    description: 'Click on the first email in your inbox to view the details',
     status: 'todo',
     creator: 'client',
     createdAt: 0
   },
   {
     id: 'first_reply',
-    title: '第一份回信',
-    description: '点击右上角的发送邮件来向boss发送你的报道邮件',
+    title: 'Tutorial: First Sent',
+    description: 'Click on the Send Email button in the upper right corner to send your report email to the boss.',
     status: 'todo',
     creator: 'client',
     createdAt: 0
   },
   { 
     id:'first_kanban_work',
-    title:"第一次kanban工作",
-    description:"点击左下角的Kanban将新的工程任务添加到urgent中，调整完毕后向team发送报告",
+    title:"Tutorial: First kanban work",
+    description:"Click Kanban in the lower left corner to add new engineering tasks to urgent, and send a report to the Scurm team after the adjustment is completed.",
     status:'todo',
     creator:'client',
     createdAt:0
   },
   { 
     id:'first_meeting',
-    title:"通过邮件安排一次会议",
-    description:"点击发送邮件按钮，选择Scrum团队，然后在今天举行一次迎新会",
+    title:"Tutorial: Arrange a meeting via email",
+    description:"Click the Send Email button, select the Scrum team, and hold an orientation meeting today",
     status:'todo',
     creator:'client',
     createdAt:0
   },
   { 
     id:'first_day',
-    title:"新手教程已经结束",
-    description:"请点击下一天来正式开始游戏,点击右下角的下一天按钮",
+    title:"The tutorial has ended",
+    description:"Please click Next Day to officially start the game, click the Next Day button in the lower right corner",
     status:'todo',
     creator:'client',
     createdAt:0

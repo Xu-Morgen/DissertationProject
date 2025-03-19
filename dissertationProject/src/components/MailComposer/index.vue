@@ -1,7 +1,7 @@
 <template>
     <a-modal
       :open="open"
-      title="撰写邮件"
+      title="Sent Email"
       @ok="handleSend"
       @cancel="handleCancel"
       destroyOnClose
@@ -10,7 +10,7 @@
       <!-- 收件人选择 -->
       <a-select
         v-model:value="selectedRecipient"
-        placeholder="选择收件人"
+        placeholder="Select recipient"
         style="width: 100%; margin-bottom: 10px"
         :options="recipientOptions"
         show-search
@@ -21,7 +21,7 @@
       <!-- 邮件主题选择 -->
         <a-select
         v-model:value="selectedSubject"
-        placeholder="选择主题"
+        placeholder="Select Subject"
         style="width: 100%; margin-bottom: 10px"
         :options="subjectOptions"
         mode='single'
@@ -34,7 +34,7 @@
       <!-- 邮件正文 -->
       <a-textarea
         v-model:value="emailContent"
-        placeholder="邮件正文"
+        placeholder="Email text"
         :rows="6"
         style="width: 100%; margin-bottom: 10px"
         readonly
@@ -43,23 +43,23 @@
       <!-- 下方是会议选项 -->
       <!--选择开会日期-->
       <div v-if = 'isMeeting' class="meeting-day">
-      第
+      At Day :  &nbsp;
       <a-input-number
         
         v-model:value="meetingDay"
-        placeholder="请输入数字"
+        placeholder="Please enter a number"
         :rows="6"
         style="width:30%; margin-bottom: 10px"
         :min="0" :max="30"
       />
-      天
+  
       </div>
 
       <!-- 会议主题选择 -->
       <a-select
         v-if = 'isMeeting'
         v-model:value="selectedMeeting"
-        placeholder="选择主题"
+        placeholder="Select Meeting Subject"
         style="width: 100%; margin-bottom: 10px"
         :options="meetingOptions"
         mode='single'
@@ -69,8 +69,8 @@
   
   
       <template #footer>
-        <a-button @click="handleCancel">取消</a-button>
-        <a-button type="primary" @click="handleSend">发送</a-button>
+        <a-button @click="handleCancel">Cancel</a-button>
+        <a-button type="primary" @click="handleSend">Sent</a-button>
       </template>
     </a-modal>
   </template>

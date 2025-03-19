@@ -4,13 +4,13 @@ const SYSTEM_EMAILS: Email[] = [{
   id: 'welcome',
   from: 'system',
   to: ['player'],
-  subject: '欢迎加入Scrum团队！',
-  content: `亲爱的项目经理，<br><br>请开始你的第一个Sprint...`,
+  subject: 'Welcome to Engineering Rescue!！',
+  content: `Before everything officially starts, let me teach you a little trick`,
   day: 0,
   isRead: false, 
   replies: [{
     id: 'accept',
-    text: '好的主人',
+    text: 'Yes,Sir',
     nextEventId: 'first_reply_message',
   }],
   metadata: {
@@ -21,13 +21,13 @@ const SYSTEM_EMAILS: Email[] = [{
   id: 'see_kanban',
   from: 'boss',
   to: ['player'],
-  subject: '欢迎你的报道',
-  content: `亲爱的项目经理，<br><br>去看眼Kanban长啥样吧...`,
+  subject: 'An urgent task entered our backlog',
+  content: `Our staff has not been effectively taking tasks from kanban for too long. Please go to the kanban page and transfer new tasks to urgent.`,
   day: 0,
   isRead: false, 
   replies: [{
     id: 'accept',
-    text: '好的主人',
+    text: 'Yes,Sir',
     nextEventId: 'do_first_kanban',
   }],
   metadata: {
@@ -39,8 +39,8 @@ const SYSTEM_EMAILS: Email[] = [{
     id: 'first_kanban_failed',
     from: 'team',
     to: ['player'],
-    subject: '你的验证未能通过，请仔细检查kanban内容',
-    content: `kanban都不会调整，去死吧<br><br>杀杀杀！...`,
+    subject: 'Your verification failed, please check the kanban content carefully',
+    content: `Please check the kanban content carefully`,
     day: 0,
     isRead: false, 
     metadata: {
@@ -52,13 +52,13 @@ const SYSTEM_EMAILS: Email[] = [{
   id: 'first_kanban_succeed',
   from: 'team',
   to: ['player'],
-  subject: '你的验证成功通过',
-  content: `我们现在以及迫不及待想和你开展一场会议了！！...`,
+  subject: 'Your verification has been successfully passed',
+  content: `Now, it's time to hold an orientation meeting to introduce yourself to everyone.`,
   day: 0,
   isRead: false, 
   replies: [{
     id: 'accept',
-    text: '好的主人',
+    text: 'Yes,Sir',
     nextEventId: 'do_first_meeting',
   }],
   metadata: {
@@ -75,19 +75,19 @@ const SYSTEM_EMAILS: Email[] = [{
   id: 'client_request',
   from: 'client',
   to: ['player'],
-  subject: '新功能需求',
-  content: `我们希望增加用户分析面板...`,
+  subject: 'New feature requirements',
+  content: `We hope to add a user analytics panel....`,
   day: 3,
   isRead: false, // 添加 isRead 字段
   replies: [
     {
       id: 'agree',
-      text: '加入当前Sprint',
+      text: 'Join Current Sprint',
       nextEventId: 'add_analytics_task',
     },
     {
       id: 'delay',
-      text: '下个Sprint处理',
+      text: 'Next Sprint Processing',
     }
   ],
   metadata: {

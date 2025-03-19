@@ -7,7 +7,7 @@
           <!-- 左侧图标和标题 -->
           <div class="header-left">
             <a-tag color="#1890ff" class="divider-tag">
-              <rocket-outlined /> 优先级看板
+              <rocket-outlined /> Priority board
             </a-tag>
           </div>
 
@@ -88,7 +88,7 @@
     <!-- 任务列表区域 -->
     <div class="task-section">
       <a-divider orientation="left" class="custom-divider">
-        <a-tag color="#52c41a" class="divider-tag">任务列表</a-tag>
+        <a-tag color="#52c41a" class="divider-tag">task list</a-tag>
       </a-divider>
 
       <div class="task-controls">
@@ -98,7 +98,7 @@
           danger
           class="control-button"
         >
-          <delete-outlined /> 清空测试任务
+          <delete-outlined /> Clear test tasks
         </a-button>
       </div>
 
@@ -125,7 +125,7 @@
             <div class="task-meta">
               <span class="meta-item">
                 <clock-circle-outlined />
-                优先级：{{ task.priority }}
+                Priority:{{ task.priority }}
               </span>
               <a-tag v-if="task.dependencies" color="purple" class="dependency-tag">
                 {{ task.dependencies }}
@@ -150,9 +150,9 @@ const taskStore = useTaskStore();
 // 响应式状态
 const activeTab = ref<TaskPriority>('urgent');
 const priorityTabs = ref<{value:TaskPriority,label:string,color:string}[]>([
-  { value: 'urgent', label: '紧急任务', color: '#ff4d4f' },
-  { value: 'high', label: '重要任务', color: '#faad14' },
-  { value: 'low', label: '一般任务', color: '#52c41a' }
+  { value: 'urgent', label: 'urgent tasks', color: '#ff4d4f' },
+  { value: 'high', label: 'important tasks', color: '#faad14' },
+  { value: 'low', label: 'General tasks', color: '#52c41a' }
 ]);
 
 // 任务数据
@@ -283,11 +283,6 @@ const getPriorityClass = (priority: TaskPriority): string => {
 // Transfer组件项渲染器
 const renderFunc = (item: { title: string }) => item.title;
 
-// 新增按钮点击事件
-const handleButtonClick = () => {
-  // 在这里处理按钮点击逻辑
-  console.log('新增任务按钮被点击');
-};
 </script>
 
 <style scoped lang="less">
