@@ -4,9 +4,16 @@ import MeetingData from './meetings'
 
 /** 游戏事件配置 */
 export const GAME_EVENTS: Record<string, GameEvent> = {
+  daily_check:{
+    id:'daily_check',
+    actions:[
+      {type:'daily_check'}
+    ]
+  },
+
+
   first_reply_message:{
     id: 'first_reply_message',
-    trigger: 'email_reply:accept',
     actions: [
       {type:'add_personal_task',taskId:'first_reply'},
       {type:'finish_personal_task',taskId:"first_email"},
@@ -16,7 +23,6 @@ export const GAME_EVENTS: Record<string, GameEvent> = {
   },
   finish_first_reply:{
     id: 'finish_first_reply',
-    trigger: 'email_reply:send',
     actions: [
       {type:'finish_personal_task',taskId:"first_reply"},
       {type:'remove_sent_format',replyId:"first_reply"},
@@ -25,7 +31,6 @@ export const GAME_EVENTS: Record<string, GameEvent> = {
   },
   do_first_kanban:{
     id: 'do_first_kanban',
-    trigger: 'email_reply:accept',
     actions: [
       {type:'add_personal_task',taskId:'first_kanban_work'},
       {type:'add_task',taskId:'analytics'},
@@ -35,17 +40,25 @@ export const GAME_EVENTS: Record<string, GameEvent> = {
   },
   finish_firsh_kanban:{
     id:'finish_firsh_kanban',
-    trigger:'special',
     actions:[
       {type:'do_first_kanban'}
     ]
   },
   do_first_meeting:{
     id:'do_first_meeting',
-    trigger:"email_reply:accept",
     actions:[
+      {type:'add_personal_task',taskId:'first_meeting'},
       {type:'add_sent_format',replyId:'make_meeting'},
       {type:'add_meeting_can_use',meetingFrom:MeetingData.FRESH_MEETINGS,meetingId:'fresher_meeting'}
+    ]
+  },
+  finish_first_meeting:{
+    id:'finish_first_meeting',
+    actions:[
+      {type:'finish_personal_task',taskId:"first_meeting"},
+      {type:'remove_meeting_can_use',meetingId:'fresher_meeting'},
+      {type:'add_personal_task',taskId:"first_day"},
+      {type:'unlock_next_day_btn'}
     ]
   }
 }

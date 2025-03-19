@@ -10,6 +10,8 @@ export const useUIStore = defineStore('ui', {
     sendingEmailModalOpen:false,
     configModalOpen:false,
 
+    nextDayBtnCanUse:false,
+
     emailFilter: {
       unreadOnly: false,
       category: undefined
@@ -24,6 +26,9 @@ export const useUIStore = defineStore('ui', {
     }
   }),
   actions: {
+    toggleNextDatBtn(state:boolean){
+      this.nextDayBtnCanUse = state
+    },
     toggleConfig(state:boolean){
       this.configModalOpen = state
     },

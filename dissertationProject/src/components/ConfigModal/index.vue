@@ -30,6 +30,13 @@ const testmeeting = () =>{
   useEmailStore().addSentFormat('make_meeting')
 }
 
+const quickMeeting = ()=>{
+  const {id,completed,day,...newEvent} = meetings.FRESH_MEETINGS[0]
+  useCalendarStore().scheduleMeeting(newEvent,0)
+}
+
+
+
 // 触发事件通知父组件状态变化
 const emit = defineEmits(["update:open"]);
 
@@ -51,6 +58,7 @@ const handleCancel = () => {
 
       <a-button danger @click = "resetGame()">reset game</a-button>
       <a-button danger @click = "testmeeting()">添加会议选项和联络人</a-button>
+      <a-button danger @click = "quickMeeting">快速添加一场迎新会</a-button>
     </p>
     <!-- 如果Content是HTML字符串，可以使用 v-html -->
     <!-- <p v-html="Content"></p> -->

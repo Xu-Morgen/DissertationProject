@@ -50,7 +50,7 @@
             v-model:data-source="datalist1"
             v-model:target-keys="list2"
             :render="renderFunc"
-            @change="(t, d, m) => handleChange('urgent',t, d, m,1)"
+            @change="(t: string[], d: string, m: string[]) => handleChange('urgent',t, d, m,1)"
             class="custom-transfer"
           />
         </div>
@@ -64,7 +64,7 @@
             v-model:data-source="datalist2"
             v-model:target-keys="list3"
             :render="renderFunc"
-            @change="(t, d, m) => handleChange('high',t, d, m,2)"
+            @change="(t: string[], d: string, m: string[]) => handleChange('high',t, d, m,2)"
             class="custom-transfer"
           />
         </div>
@@ -78,7 +78,7 @@
             v-model:data-source="datalist3"
             v-model:target-keys="list4"
             :render="renderFunc"
-            @change="(t, d, m) => handleChange('low',t, d, m,3)"
+            @change="(t: string[], d: string, m: string[]) => handleChange('low',t, d, m,3)"
             class="custom-transfer"
           />
         </div>

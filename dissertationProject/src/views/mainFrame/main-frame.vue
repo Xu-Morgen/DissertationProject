@@ -47,8 +47,10 @@ const visibleTasks = computed(() =>
 
 // 处理每日推进
 const advanceDay = () => {
-  calendarStore.advanceDay();
+
   eventStore.triggerEvent('daily_check', GAME_EVENTS);
+  calendarStore.advanceDay();
+
 };
 
 
@@ -162,6 +164,8 @@ const advanceDay = () => {
           </a-button-group>
           
           <a-button 
+            :style="{ backgroundColor: uiStore.nextDayBtnCanUse ? 'blue' : 'gray', color: 'white' }"
+            :disabled="!uiStore.nextDayBtnCanUse"
             type="primary" 
             @click="advanceDay"
           >

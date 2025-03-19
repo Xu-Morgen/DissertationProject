@@ -13,11 +13,8 @@ export interface Email {
   isRead: boolean;
   day: GameDate;      // 邮件所属游戏天数
   replies?: Reply[];   // 可用的回复选项
-  triggers?: string[]; // 触发的事件ID列表
   metadata: {
     requiresAction: boolean;    // 是否需要玩家操作
-    associatedTask?: string;    // 关联的任务ID
-    autoReply?: boolean;        // 是否为自动生成回复
     category: 'system' | 'client' | 'boss' | 'team' ; // 邮件分类
   };
 }
@@ -26,17 +23,11 @@ export interface Reply {
   id: string;
   text: string;                 // 显示的回复文本
   nextEventId?: string;         // 触发的后续事件ID
-  affectsSatisfaction?: number; // 客户满意度变化值（-10 ~ +10）
-  unlocksTask?: string;         // 解锁的新任务ID
-  requiresDays?: number;        // 需要消耗的游戏天数
 }
 
 export interface Recipient {
   id: string;
   name: string;
-  email: string;
-  isUnlocked: boolean;          // 是否已解锁
-  signature?: string;           // 邮件签名
 }
 
 export interface SentFormat{
@@ -91,6 +82,7 @@ export interface CalendarEvent {
   participants: Recipient;
   completed: boolean;
   scripts?: ScriptStep[]; // 替换outcome为scripts
+  finishEventId?:string
 }
 
 // 更新ScriptStep类型
@@ -131,20 +123,22 @@ export type GameEventAction =
   | { type: 'remove_recipient';recipientId:string} //删去不再可用的联系人
   | { type: 'add_meeting_can_use';meetingId:string;meetingFrom:CalendarEvent[]} //增加可用的会议类型
   | { type: 'remove_meeting_can_use';meetingId:string} // 删去某些特定的会议类型
+  | { type: 'add_daily_mail';templateId:string} //每日添加邮件
+  | { type:'daily_check'} // 每日检查，按照顺序添加邮件和客户会议
   //特殊任务列表
   | {type:'do_first_kanban'}//第一次kanban任务
-
+  | {type:"log_to_console",message:string}
+  | {type:'unlock_next_day_btn'}
 
 export interface GameEvent {
   id: string;
-  trigger: string;             // 触发条件（例："email_reply:accept_welcome"）
   actions: GameEventAction[];  // 触发后的行为列表
-  isOnce?: boolean;            // 是否只能触发一次
 }
 
 /* ================= UI状态 ================= */
 export interface UIState {
   configModalOpen:boolean,
+  nextDayBtnCanUse:boolean,
   readingEmailModalOpen:boolean,
   sendingEmailModalOpen:boolean,
   activeView: 'mail' | 'kanban' | 'calendar';

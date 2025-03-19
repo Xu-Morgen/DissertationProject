@@ -84,9 +84,6 @@ const formattedContent = computed(() => {
           class="reply-button"
         >
           {{ reply.text }}
-          <span v-if="reply.requiresDays" class="days-cost">
-            (需要{{ reply.requiresDays }}天)
-          </span>
         </a-button>
       </div>
 

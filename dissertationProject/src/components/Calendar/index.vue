@@ -37,8 +37,9 @@
             :key="event.id"
             class="event"
             :class="getEventClass(day.number, event.id)"
-            @click="handleEventClick(day.number, event.id)"
+
           >
+          <a-button @click="handleEventClick(day.number, event.id)">
             <div class="event-title">{{ event.title }}</div>
             <div class="event-meta">
               <a-tag :color="eventStatusColor(event)">
@@ -48,59 +49,51 @@
                 <check-outlined />
               </span>
             </div>
+          </a-button> 
           </div>
         </div>
       </div>
     </div>
 
-    <!-- 会议室区域（直接嵌入在日历网格下方） -->
-    <div v-if="calendarStore.activeMeeting" class="meeting-room">
-      <div class="meeting-header">
-        <h3>{{ calendarStore.activeMeeting.title }}</h3>
-        <a-tag :color="meetingTagColor">
-          {{ meetingStatusText }}
-        </a-tag>
-      </div>
+      <div v-if="calendarStore.inMeeting">
+        <!-- 会议室区域（直接嵌入在日历网格下方） -->
+        <div v-if="calendarStore.activeMeeting" class="meeting-room">
+          <div class="meeting-header">
+            <h3>{{ calendarStore.activeMeeting.title }}</h3>
+            <a-tag :color="meetingTagColor">
+              {{ meetingStatusText }}
+            </a-tag>
+          </div>
 
-      <!-- 显示会议聊天记录（剧本流程） -->
-      <div class="script-flow">
-        <div 
-          v-for="(log, index) in calendarStore.meetingHistory" 
-          :key="index"
-          class="script-step"
-        >
-          {{ log }}
-        </div>
-      </div>
+          <!-- 显示会议聊天记录（剧本流程） -->
+          <div class="script-flow">
+            <div 
+              v-for="(log, index) in calendarStore.meetingHistory" 
+              :key="index"
+              class="script-step"
+            >
+              {{ log }}
+            </div>
+          </div>
 
-      <!-- 玩家选项（当前剧本步骤选项） -->
-      <div v-if="currentOptions.length > 0" class="player-options">
-        <a-button 
-          v-for="(option, idx) in currentOptions"
-          :key="idx"
-          @click="handleOptionSelect(option)"
-          class="option-button"
-        >
-          {{ option.text }}
-        </a-button>
-      </div>
-
-      <!-- 会议控制：完成会议 -->
-      <div class="meeting-controls">
-        <a-button 
-          @click="calendarStore.completeMeeting"
-          type="primary"
-          :disabled="!canComplete"
-        >
-          完成会议
-        </a-button>
+          <!-- 玩家选项（当前剧本步骤选项） -->
+          <div v-if="currentOptions.length > 0" class="player-options">
+            <a-button 
+              v-for="(option, idx) in currentOptions"
+              :key="idx"
+              @click="handleOptionSelect(option)"
+              class="option-button"
+            >
+              {{ option.text }}
+            </a-button>
+          </div>
       </div>
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { ref, computed, onMounted, onUnmounted } from 'vue';
+import { ref, computed, onMounted, onUnmounted, watch } from 'vue';
 import { 
   useCalendarStore, 
   useTaskStore, 
@@ -121,8 +114,9 @@ const uiStore = useUIStore();
 // ---------------------- 日历逻辑 ----------------------
 // 当前显示的日期范围（这里显示当前天前后各3天）
 const visibleDays = computed(() => {
-  const start = (calendarStore.currentDay - 3 <= 0) ? 1 : calendarStore.currentDay - 3;
+  const start = (calendarStore.currentDay - 3 <= 0) ? 0 : calendarStore.currentDay - 3;
   const end = calendarStore.currentDay + 6;
+
   return Array.from({ length: end - start + 1 }).map((_, i) => ({
     number: start + i,
     events: calendarStore.events.filter(e => e.day === start + i)
@@ -154,10 +148,16 @@ const eventStatusColor = (event: any) => {
 
 // 处理事件点击：如果当天的事件且未点击，则启动会议
 const handleEventClick = (dayNumber: number, eventId: string) => {
+  if(calendarStore.inMeeting != true){
+    calendarStore.inMeeting = true
+  }else{
+    console.log('请先完成当前会议 ')
+  }
+  
   if (dayNumber !== calendarStore.currentDay || isEventClicked(eventId)) return;
-  calendarStore.markEventClicked(eventId);
   // 如果事件包含剧本，则启动会议
   const event = calendarStore.events.find(e => e.id === eventId);
+
   if (event && event.scripts) {
     calendarStore.startMeeting(eventId);
     calendarStore.proceedMeeting();
@@ -183,62 +183,53 @@ const isSprintDay = (dayNumber: number) => {
          dayNumber <= taskStore.currentSprint.endDay;
 };
 const sprintDayNumber = (dayNumber: number) => {
-  return dayNumber - (taskStore.currentSprint?.startDay || 0) + 1;
+  return dayNumber - (taskStore.currentSprint?.startDay || 0);
 };
 
 // ---------------------- 会议室逻辑 ----------------------
 // 计算当前会议剧本选项：使用 store 中的 getter currentScriptStep
-const currentOptions = computed(() => 
-  calendarStore.currentScriptStep?.options || []
-);
+// 前端组件
+const currentOptions = computed(() => {
+  if (!calendarStore.currentScriptStep) return [];
+  
+  const step = calendarStore.currentScriptStep;
+  const isLastStep = calendarStore.meetingStep === calendarStore.activeMeeting?.scripts.length - 1;
 
-// 当当前剧本步骤没有选项时，允许完成会议
-const canComplete = computed(() =>
-  !calendarStore.currentScriptStep?.options
-);
+  // 自动生成选项逻辑
+  if (step.options) return step.options;
+  
+  return [{
+    text: isLastStep ? "完成会议" : "继续",
+    effects: []
+  }];
+});
 
 // 计算会议标签颜色（根据会议是否完成）
-const meetingTagColor = computed(() =>
-  calendarStore.activeMeeting?.completed ? '#52c41a' : '#1890ff'
+const meetingTagColor = computed(() =>{
+  return calendarStore.activeMeeting?.completed ? '#52c41a' : '#1890ff'
+}
 );
 
 // 会议状态文字
 const meetingStatusText = computed(() =>
-  calendarStore.activeMeeting?.completed ? '已完成' : '进行中'
+{  
+  return calendarStore.activeMeeting?.completed ? '已完成' : '进行中'}
+
 );
 
 // 处理玩家选项选择
 const handleOptionSelect = (option: ScriptStep['options'][number]) => {
   // 调用 store 方法处理选项效果，并推进剧本
-  calendarStore.selectOption(option.effects);
+  return calendarStore.selectOption(option.effects);
 };
 
-// ---------------------- 加载会议剧本 ----------------------
-// 当会议启动后，加载当前会议剧本，根据当前天数加载对应的脚本（这里使用 sampleScripts 作为示例）
-const loadScript = () => {
-  const day = calendarStore.currentDay;
-  const script = sampleScripts[day] || [];
-  // 重置会议历史记录
-  calendarStore.meetingHistory = [];
-  // 如果脚本存在，则从第一步开始
-  if (script.length > 0) {
-    calendarStore.meetingStep = 0;
-    calendarStore.currentScriptStep = script[0];
-    calendarStore.meetingHistory.push(script[0].sys);
-  }
-};
 
-onMounted(() => {
-  // 如果有 activeMeeting，则加载会议剧本
-  if (calendarStore.activeMeeting) {
-    loadScript();
-  }
-});
 
-onUnmounted(() => {
-  // 清理会议状态
-  calendarStore.resetMeetingState();
-});
+
+
+
+
+
 </script>
 
 <style scoped lang="less">

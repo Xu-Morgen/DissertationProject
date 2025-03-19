@@ -12,9 +12,7 @@ const SYSTEM_EMAILS: Email[] = [{
     id: 'accept',
     text: '好的主人',
     nextEventId: 'first_reply_message',
-    affectsSatisfaction: +5
   }],
-  triggers: ['event1'],
   metadata: {
     requiresAction: true,
     category: 'system'
@@ -31,9 +29,7 @@ const SYSTEM_EMAILS: Email[] = [{
     id: 'accept',
     text: '好的主人',
     nextEventId: 'do_first_kanban',
-    affectsSatisfaction: +5
   }],
-  triggers: ['event1'],
   metadata: {
     requiresAction: true,
     category: 'system'
@@ -64,14 +60,12 @@ const SYSTEM_EMAILS: Email[] = [{
     id: 'accept',
     text: '好的主人',
     nextEventId: 'do_first_meeting',
-    affectsSatisfaction: +5
   }],
-  triggers: ['event1'],
   metadata: {
     requiresAction: true,
     category: 'system'
   }
-}
+},
 
 ];
 
@@ -90,20 +84,16 @@ const SYSTEM_EMAILS: Email[] = [{
       id: 'agree',
       text: '加入当前Sprint',
       nextEventId: 'add_analytics_task',
-      requiresDays: 2
     },
     {
       id: 'delay',
       text: '下个Sprint处理',
-      affectsSatisfaction: -10
     }
   ],
   metadata: {
     requiresAction: true,
     category: 'client',
-    associatedTask: 'task_user_analytics'
   },
-  triggers: ["new requirements analyse"]
 }];
 
 export default {SYSTEM_EMAILS,CLIENT_EMAILS} 

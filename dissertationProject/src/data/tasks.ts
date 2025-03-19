@@ -55,7 +55,15 @@ const PERSONAL_TASK:PersonalTask[]=[
     status:'todo',
     creator:'client',
     createdAt:0
-  }
+  },
+  { 
+    id:'first_day',
+    title:"新手教程已经结束",
+    description:"请点击下一天来正式开始游戏,点击右下角的下一天按钮",
+    status:'todo',
+    creator:'client',
+    createdAt:0
+  },
 ]
 
 export default {INITIAL_TASKS,TASK_TEMPLATES,PERSONAL_TASK} 

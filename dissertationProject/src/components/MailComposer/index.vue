@@ -112,7 +112,16 @@
       }
     }
   })
-  
+
+  watch(selectedRecipient, () => {
+    // 清空表单内容
+    selectedSubject.value = '';
+    emailContent.value = '';
+    isMeeting.value = false;
+    meetingDay.value = 0;
+    selectedMeeting.value = undefined;
+  });
+    
   //会议选项
   const meetingOptions = computed(()=>{
     const chooseSubject = subject.value.find(t=>t.subject === selectedSubject.value)
@@ -132,8 +141,7 @@
 
   // 收件人选项
   const recipientOptions = computed(() => 
-    emailStore.contacts 
-      .filter(c => c.isUnlocked)
+    emailStore.contacts
       .map(c => ({
         value: c.id,
         label: c.name
@@ -179,11 +187,9 @@
       content: emailContent.value,
       day: useCalendarStore().currentDay,
       replies: [],
-      triggers: [],
       metadata: {
         requiresAction: false,
         category: 'system',
-        autoReply: false,
       },
     };
     // 添加邮件
@@ -194,20 +200,18 @@
         eventStore.triggerEvent(format.nextEventId, GAME_EVENTS);
       }
     }
-//会议邮件发送逻辑
+  //会议邮件发送逻辑
     else if(subject.value.find(t=>t.subject === selectedSubject.value)?.type == 'meeting'){
     const newEmail: Omit<Email, 'id' | 'isRead'> = {
         from: 'player',
         to: [selectedRecipient.value as string],
         subject: selectedSubject.value,
-        content: `${emailContent.value}<br><br>会议将在${meetingDay}举行,会议主题为${selectedMeeting}`,
+        content: `${emailContent.value}<br><br>会议将在${meetingDay.value}举行,会议主题为${selectedMeeting.value}`,
         day: useCalendarStore().currentDay,
         replies: [],
-        triggers: [],
         metadata: {
           requiresAction: false,
           category: 'system',
-          autoReply: false,
         },
       }
       emailStore.sentEmail(newEmail);

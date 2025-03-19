@@ -1,5 +1,6 @@
 import type { CalendarEvent } from '@/types';
 import contacts from './contacts';
+import {GAME_EVENTS} from './events'
 
 const MEETING_TEMPLATES: CalendarEvent[] = [{
   id: 'daily_standup',
@@ -73,18 +74,29 @@ const FRESH_MEETINGS: CalendarEvent[] = [{
   day:0,
   participants: contacts.CONTACTS[0],
   completed: false,
+  finishEventId:"finish_first_meeting",
   scripts: [
     {
       sys: "欢迎开会欢迎开会：",
       options: [
         {
           text: "不开心不开心呢",
-          effects: [
 
-          ]
+        }
+      ]
+    },
+    {
+      sys:"不管开不开心都得开会哦"
+    },
+    {
+      sys:"那么就此散会",
+      options:[
+        {
+          text:"散会好耶",
         }
       ]
     }
+
   ]
 }];
 
