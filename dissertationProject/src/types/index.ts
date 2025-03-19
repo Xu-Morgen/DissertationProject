@@ -45,6 +45,8 @@ export interface SentFormat{
   content:string;//内容
   relate:Recipient;//能对谁发送这份内容
   nextEventId?: string;         // 触发的后续事件ID
+  type:"normal" | "meeting";
+  meetingid?:string;
 }
 
 /* ================= 任务系统 ================= */
@@ -80,20 +82,24 @@ export interface PersonalTask {
 /* ================= 日历系统 ================= */
 export type MeetingType = 'daily' | 'sprint' | 'client' | 'personal';
 
+// 更新CalendarEvent类型
 export interface CalendarEvent {
   id: string;
   type: MeetingType;
   title: string;
-  day: GameDate;                // 预定在第几天
-  participants: string[];       // 参会者ID列表
-  requiredTasks?: string[];     // 会前需完成的任务ID
-  completed: boolean;           // 是否已完成
-  outcome?: {
-    progressReport?: string;    // 进度报告内容
-    resolvedBlockers?: string[]; // 解决的阻塞问题列表
-    satisfactionChange?: number; // 客户满意度变化
-    unlockedTasks?: string[];   // 解锁的新任务ID
-  };
+  day: GameDate;
+  participants: Recipient;
+  completed: boolean;
+  scripts?: ScriptStep[]; // 替换outcome为scripts
+}
+
+// 更新ScriptStep类型
+export interface ScriptStep {
+  sys: string;
+  options?: Array<{
+    text: string;
+    effects?: GameEventAction[]; // 改为GameEventAction数组
+  }>;
 }
 
 /* ================= Sprint系统 ================= */
@@ -123,6 +129,8 @@ export type GameEventAction =
   | { type: 'remove_sent_format';replyId:string} //删去不再可用的发送格式
   | { type: 'add_recipient';recipientId:string} //增加新的可联系人
   | { type: 'remove_recipient';recipientId:string} //删去不再可用的联系人
+  | { type: 'add_meeting_can_use';meetingId:string;meetingFrom:CalendarEvent[]} //增加可用的会议类型
+  | { type: 'remove_meeting_can_use';meetingId:string} // 删去某些特定的会议类型
   //特殊任务列表
   | {type:'do_first_kanban'}//第一次kanban任务
 

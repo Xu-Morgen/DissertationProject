@@ -1,5 +1,6 @@
 // src/data/events.ts
 import type { GameEvent } from '@/types';
+import MeetingData from './meetings'
 
 /** 游戏事件配置 */
 export const GAME_EVENTS: Record<string, GameEvent> = {
@@ -37,6 +38,14 @@ export const GAME_EVENTS: Record<string, GameEvent> = {
     trigger:'special',
     actions:[
       {type:'do_first_kanban'}
+    ]
+  },
+  do_first_meeting:{
+    id:'do_first_meeting',
+    trigger:"email_reply:accept",
+    actions:[
+      {type:'add_sent_format',replyId:'make_meeting'},
+      {type:'add_meeting_can_use',meetingFrom:MeetingData.FRESH_MEETINGS,meetingId:'fresher_meeting'}
     ]
   }
 }

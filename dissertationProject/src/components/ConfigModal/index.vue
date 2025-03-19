@@ -3,6 +3,7 @@
 
 import { useRouter } from 'vue-router';
 import {useCalendarStore,useEmailStore,useEventStore,useRootStore,useTaskStore,useUIStore} from "@/stores/index"
+import meetings from '@/data/meetings';
 const router = useRouter();
 
 
@@ -21,6 +22,12 @@ const resetGame = () =>{
     useUIStore().$reset()
     useRootStore().$reset()
     router.replace({ path: '/' });
+}
+
+const testmeeting = () =>{
+  useCalendarStore().addMeetingCanUse('fresher_meeting',meetings.FRESH_MEETINGS)
+  useEmailStore().addRecipient('team')
+  useEmailStore().addSentFormat('make_meeting')
 }
 
 // 触发事件通知父组件状态变化
@@ -43,7 +50,7 @@ const handleCancel = () => {
     <p>
 
       <a-button danger @click = "resetGame()">reset game</a-button>
-
+      <a-button danger @click = "testmeeting()">添加会议选项和联络人</a-button>
     </p>
     <!-- 如果Content是HTML字符串，可以使用 v-html -->
     <!-- <p v-html="Content"></p> -->

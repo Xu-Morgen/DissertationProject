@@ -29,6 +29,8 @@
         option-filter-prop="label"
       />
   
+      
+
       <!-- 邮件正文 -->
       <a-textarea
         v-model:value="emailContent"
@@ -37,6 +39,34 @@
         style="width: 100%; margin-bottom: 10px"
         readonly
       />
+
+      <!-- 下方是会议选项 -->
+      <!--选择开会日期-->
+      <div v-if = 'isMeeting' class="meeting-day">
+      第
+      <a-input-number
+        
+        v-model:value="meetingDay"
+        placeholder="请输入数字"
+        :rows="6"
+        style="width:30%; margin-bottom: 10px"
+        :min="0" :max="30"
+      />
+      天
+      </div>
+
+      <!-- 会议主题选择 -->
+      <a-select
+        v-if = 'isMeeting'
+        v-model:value="selectedMeeting"
+        placeholder="选择主题"
+        style="width: 100%; margin-bottom: 10px"
+        :options="meetingOptions"
+        mode='single'
+        show-search
+        option-filter-prop="label"
+      />
+  
   
       <template #footer>
         <a-button @click="handleCancel">取消</a-button>
@@ -60,13 +90,46 @@
   const emailStore = useEmailStore();
   const taskStore = useTaskStore();
   const eventStore = useEventStore();
+  const calendarStore = useCalendarStore();
   
   // 选中的收件人和主题
   const selectedRecipient = ref<string>();  
   const selectedSubject = ref<string>("");
   const emailContent = ref<string>("");
   let subject = ref<SentFormat[]>([]);
+  const isMeeting = ref(false);
+  const meetingDay = ref(0);
+  const selectedMeeting = ref<string>();
+
+  watch(selectedSubject,()=>{
+    const chooseSubject = subject.value.find(t=>t.subject === selectedSubject.value)
+    if (chooseSubject){
+      if(chooseSubject.type === 'meeting'){
+        isMeeting.value = true
+      }
+      else{
+        isMeeting.value = false
+      }
+    }
+  })
   
+  //会议选项
+  const meetingOptions = computed(()=>{
+    const chooseSubject = subject.value.find(t=>t.subject === selectedSubject.value)
+    if(chooseSubject){
+      if(chooseSubject.meetingid){
+        const filterlist = calendarStore.meetingCanUse.filter(m=>m.id == chooseSubject.meetingid)
+        console.log(filterlist)
+        return filterlist.map((c)=>({
+          value:c.id,
+          label:c.title,
+        }))
+      }
+    }
+    return []
+  })
+
+
   // 收件人选项
   const recipientOptions = computed(() => 
     emailStore.contacts 
@@ -82,15 +145,15 @@
     console.log("sentFormat:", emailStore.sentFormat);
     console.log("selectedRecipient id:", selectedRecipient.value  );
 
-  if (!selectedRecipient.value) return [];
-  const recipientId = selectedRecipient.value; // 直接获取收件人 id
-  subject.value = emailStore.getSubjectsByRecipient(recipientId);
-  console.log(subject.value)
-  return subject.value.map((c) => ({
-    value: c.subject, 
-    label: c.subject
-  }));
-});
+    if (!selectedRecipient.value) return [];
+    const recipientId = selectedRecipient.value; // 直接获取收件人 id
+    subject.value = emailStore.getSubjectsByRecipient(recipientId);
+    console.log(subject.value)
+    return subject.value.map((c) => ({
+      value: c.subject, 
+      label: c.subject
+    }));
+  });
 
 
 
@@ -107,8 +170,9 @@
   // 发送邮件
   const handleSend = () => {
     if (!validateForm()) return;
-  
-    const newEmail: Omit<Email, 'id' | 'isRead'> = {
+  //常规邮件发送流程
+    if(subject.value.find(t=>t.subject === selectedSubject.value)?.type == 'normal'){
+      const newEmail: Omit<Email, 'id' | 'isRead'> = {
       from: 'player',
       to: [selectedRecipient.value as string],
       subject: selectedSubject.value,
@@ -122,16 +186,42 @@
         autoReply: false,
       },
     };
-
-    console.log(newEmail)
-  
     // 添加邮件
     emailStore.sentEmail(newEmail);
   
     const format = subject.value.find(t=>t.subject === selectedSubject.value)
-    if(format?.nextEventId){
-      eventStore.triggerEvent(format.nextEventId, GAME_EVENTS);
+      if(format?.nextEventId){
+        eventStore.triggerEvent(format.nextEventId, GAME_EVENTS);
+      }
     }
+//会议邮件发送逻辑
+    else if(subject.value.find(t=>t.subject === selectedSubject.value)?.type == 'meeting'){
+    const newEmail: Omit<Email, 'id' | 'isRead'> = {
+        from: 'player',
+        to: [selectedRecipient.value as string],
+        subject: selectedSubject.value,
+        content: `${emailContent.value}<br><br>会议将在${meetingDay}举行,会议主题为${selectedMeeting}`,
+        day: useCalendarStore().currentDay,
+        replies: [],
+        triggers: [],
+        metadata: {
+          requiresAction: false,
+          category: 'system',
+          autoReply: false,
+        },
+      }
+      emailStore.sentEmail(newEmail);
+      const meetingfind = calendarStore.meetingCanUse.find(t=>t.id == selectedMeeting.value)
+      if(meetingfind){
+        const {day,id,completed,...event} = meetingfind
+        calendarStore.scheduleMeeting(event,meetingDay.value)
+      }
+    }
+    else{
+      console.log("发送邮件报错")
+    }
+
+
 
     resetForm();
   };
@@ -151,6 +241,7 @@
   
   // 重置表单
   const resetForm = () => {
+    isMeeting.value = false
     selectedRecipient.value = undefined 
     selectedSubject.value = ''
     emailContent.value = '';
@@ -172,5 +263,14 @@
   
   .ant-select, .ant-input, .ant-textarea {
     margin-bottom: 16px;
+  }
+
+  .meeting-day{
+    display: flex;
+    flex-wrap: wrap;
+    align-content: center;
+    justify-content: flex-start;
+    flex-direction: row;
+    align-items: center;
   }
   </style>

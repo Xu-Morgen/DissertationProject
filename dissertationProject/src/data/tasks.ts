@@ -47,6 +47,14 @@ const PERSONAL_TASK:PersonalTask[]=[
     status:'todo',
     creator:'client',
     createdAt:0
+  },
+  { 
+    id:'first_meeting',
+    title:"通过邮件安排一次会议",
+    description:"点击发送邮件按钮，选择Scrum团队，然后在今天举行一次迎新会",
+    status:'todo',
+    creator:'client',
+    createdAt:0
   }
 ]
 

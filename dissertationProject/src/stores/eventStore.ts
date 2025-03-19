@@ -99,9 +99,16 @@ export const useEventStore = defineStore('events', {
           break
 
         case 'remove_sent_format':
-          console.log(123)
-          console.log(action.replyId)
           emailStore.removeSentFormat(action.replyId)
+          break
+
+
+        case 'add_meeting_can_use':
+          calendarStore.addMeetingCanUse(action.meetingId,action.meetingFrom)
+          break
+
+        case 'remove_meeting_can_use':
+          calendarStore.removeMeetingCanUse(action.meetingId)
           break
         //需验证动作处理
 
@@ -113,6 +120,7 @@ export const useEventStore = defineStore('events', {
               {type:'finish_personal_task',taskId:"first_kanban_work"},
               {type:'remove_sent_format',replyId:"first_kanban"},
               {type:'add_email',templateId:"first_kanban_succeed"},
+              {type:'add_personal_task',taskId:'first_meeting'}
             ]
             for (const action of actions) {
               await this.executeAction(action);
