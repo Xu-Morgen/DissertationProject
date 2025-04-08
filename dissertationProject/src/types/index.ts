@@ -82,7 +82,8 @@ export interface CalendarEvent {
   participants: Recipient;
   completed: boolean;
   scripts?: ScriptStep[]; // 替换outcome为scripts
-  finishEventId?:string
+  finishEventId?:string;
+  canDelete:boolean;
 }
 
 // 更新ScriptStep类型

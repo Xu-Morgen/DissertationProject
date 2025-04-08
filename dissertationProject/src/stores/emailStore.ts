@@ -105,7 +105,7 @@ export const useEmailStore = defineStore('email', {
         to: [email.from],
         content: reply.text,
         isRead: true,
-        metadata: { ...email.metadata, autoReply: true }
+        metadata: { ...email.metadata }
       });
 
       // 移除非持续型邮件

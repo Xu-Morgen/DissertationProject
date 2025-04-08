@@ -1,7 +1,9 @@
 {
   "dependencies": {
     "@ant-design/icons-vue": "^7.0.1",
+    "@types/date-fns": "^2.6.3",
     "ant-design-vue": "^4.0.0-rc.6",
+    "date-fns": "^4.1.0",
     "pinia": "^2.3.0",
     "pinia-plugin-persistedstate": "^4.2.0",
     "vue-router": "^4.5.0",

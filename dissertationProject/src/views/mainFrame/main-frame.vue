@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { ref, computed, watch, h } from 'vue';
+import { ref, computed, watch, h, createVNode } from 'vue';
 import { 
   useEmailStore, 
   useTaskStore, 
@@ -10,13 +10,15 @@ import {
 } from '@/stores';
 import { GAME_EVENTS } from '@/data/events';
 import Inbox from '@/components/Inbox/index.vue';
+import { onMounted, nextTick } from 'vue'
 
 import Kanban from '@/components/Kanban/index.vue';
 import CalendarView from '@/components/Calendar/index.vue';
 import ConfigModal from '@/components/ConfigModal/index.vue';
-import { MailOutlined, AppstoreOutlined, CalendarOutlined,ToolOutlined } from '@ant-design/icons-vue';
+import { MailOutlined, AppstoreOutlined, CalendarOutlined,ToolOutlined,QuestionOutlined} from '@ant-design/icons-vue';
 import {statusColor} from '@/data/Global'
 import type { Email } from '@/types';
+import type { TourProps } from 'ant-design-vue';
 // Store 实例
 const emailStore = useEmailStore();
 const taskStore = useTaskStore();
@@ -31,6 +33,63 @@ const currentView = ref<'mail' | 'kanban' | 'calendar'>('mail');
 // 邮件相关状态
 const activeEmail = ref<Email | null>(null);
 
+//新手引导
+const tourStep = ref(0)
+const tourStep1 = ref(null);
+const tourStep2 = ref(null);
+const tourStep3 = ref(null);
+const tourStep4 = ref(null);
+const tourStep5 = ref(null);
+const tourStep6 = ref(null);
+
+
+
+
+const steps: TourProps['steps'] = [
+  // 步骤1 - 任务面板
+  {
+    title: 'Task Panel',
+    description: 'View and manage your current tasks here, track deadlines and progress',
+    target: () => tourStep1.value && tourStep1.value.$el,
+  },
+  // 步骤2 - 邮件视图
+  {
+    title: 'Mail Center',
+    description: 'Check unread emails and handle important client communications',
+    target: () => tourStep2.value && tourStep2.value.$el,
+  },
+  // 步骤3 - 看板视图
+  {
+    title: 'Kanban Board',
+    description: 'Visualize task flow and manage work progress using kanban view',
+    target: () => tourStep3.value && tourStep3.value.$el,
+  },
+  // 步骤4 - 日历视图
+  {
+    title: 'Project Calendar',
+    description: 'Check meeting schedules and project timelines',
+    target: () => tourStep4.value && tourStep4.value.$el,
+  },
+  // 步骤5 - 推进天数
+  {
+    title: 'Advance Day',
+    description: 'Click here to advance game day after completing daily work',
+    target: () => tourStep5.value && tourStep5.value.$el,
+  },
+  // 步骤6 - 帮助按钮
+  {
+    title: 'Help Center',
+    description: 'Click the question mark anytime to review this tutorial',
+    target: () => tourStep6.value && tourStep6.value.$el,
+  }
+];
+const playTour = () => {
+    tourStep.value = 0
+    rootStore.handleTour(true)
+
+};
+
+
 
 
 //选择meeting
@@ -43,15 +102,24 @@ const visibleTasks = computed(() =>
   taskStore.personaltTask.filter(t => t.status !== 'done')
 );
 
-
-
 // 处理每日推进
 const advanceDay = () => {
-
   eventStore.triggerEvent('daily_check', GAME_EVENTS);
   calendarStore.advanceDay();
-
 };
+
+onMounted(() => {
+
+  setTimeout(() => {
+
+  if(rootStore.isFristTour){
+    playTour();
+    rootStore.handleFirstTour()
+  }
+
+  }, 200);
+
+});
 
 
 </script>
@@ -66,6 +134,13 @@ const advanceDay = () => {
           shape="circle" 
           @click="uiStore.toggleConfig(true)"
           :icon="h(ToolOutlined)" 
+        />
+        <a-button 
+          ref = 'tourStep6'
+          type="primary" 
+          shape="circle" 
+          @click="playTour();"
+          :icon="h(QuestionOutlined)" 
         />
         <span class="progress">
           Progres: {{ rootStore.workflowProgress }}%
@@ -98,10 +173,12 @@ const advanceDay = () => {
         </a-layout-content>
 
         <!-- 右侧任务侧边栏 -->
-        <a-layout-sider class="sider">
-          <div class="task-panel">
-            <h3>Task List: ({{ visibleTasks.length }})</h3>
-            <div class="task-list">
+        <a-layout-sider class="sider" ref ="tourStep1">
+          <div class="task-panel" >
+            <div >
+            <h3 >Task List: ({{ visibleTasks.length }})</h3>
+            </div>
+            <div class="task-list" >
               <a-card
                 v-for="task in visibleTasks" 
                 :key="task.id"
@@ -135,6 +212,7 @@ const advanceDay = () => {
         <div class="nav-bar">
           <a-button-group>
             <a-button 
+              ref ="tourStep2"
               type="primary"
               :class="{ active: currentView === 'mail' }"
               @click="currentView = 'mail'"
@@ -145,6 +223,7 @@ const advanceDay = () => {
             </a-button>
 
             <a-button
+              ref ="tourStep3"
               type="primary"
               :class="{ active: currentView === 'kanban' }"
               @click="currentView = 'kanban'"
@@ -154,6 +233,7 @@ const advanceDay = () => {
             </a-button>
 
             <a-button
+              ref = 'tourStep4'
               type="primary"
               :class="{ active: currentView === 'calendar' }"
               @click="currentView = 'calendar'"
@@ -164,6 +244,7 @@ const advanceDay = () => {
           </a-button-group>
           
           <a-button 
+            ref = 'tourStep5'
             :style="{ backgroundColor: uiStore.nextDayBtnCanUse ? 'blue' : 'gray', color: 'white' }"
             :disabled="!uiStore.nextDayBtnCanUse"
             type="primary" 
@@ -175,6 +256,8 @@ const advanceDay = () => {
       </a-layout-footer>
     </a-layout>
   </div>
+  <a-tour v-model:current="tourStep" :open="rootStore.openTour" :steps="steps" @close="rootStore.handleTour(false)" />
+
 </template>
 
 

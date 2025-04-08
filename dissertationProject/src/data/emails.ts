@@ -65,6 +65,20 @@ const SYSTEM_EMAILS: Email[] = [{
     requiresAction: true,
     category: 'system'
   }
+},{
+  
+  id: 'error',
+  from: 'system',
+  to: ['player'],
+  subject: 'there is an error',
+  content: `there is an error`,
+  day: 0,
+  isRead: false, 
+  replies: [],
+  metadata: {
+    requiresAction: false,
+    category: 'system'
+  }
 },
 
 ];

@@ -4,10 +4,11 @@ import {GAME_EVENTS} from './events'
 
 const MEETING_TEMPLATES: CalendarEvent[] = [{
   id: 'daily_standup',
-  type: 'daily',
   title: '每日站会',
   day: 0,
+  type: 'daily',
   participants: contacts.CONTACTS[2],
+  canDelete:true,
   completed: false,
   scripts: [
     {
@@ -47,6 +48,7 @@ const CLIENT_MEETINGS: CalendarEvent[] = [{
   id: 'sprint_review',
   type: 'client',
   title: 'Sprint评审会议',
+  canDelete:true,
   day: 7,
   participants: contacts.CONTACTS[0],
   completed: false,
@@ -71,33 +73,32 @@ const FRESH_MEETINGS: CalendarEvent[] = [{
   id: 'fresher_meeting',
   type: 'client',
   title: 'Orientation party',
-  day:0,
+  day: 0,
   participants: contacts.CONTACTS[0],
   completed: false,
-  finishEventId:"finish_first_meeting",
+  finishEventId: "finish_first_meeting",
   scripts: [
     {
       sys: "Welcome to our team：",
       options: [
         {
           text: "Hello everyone ",
-
         }
       ]
     },
     {
-      sys:"Theoretically I should explain some background of the game now, but I am lazy, so I will write it later."
+      sys: "Theoretically I should explain some background of the game now, but I am lazy, so I will write it later."
     },
     {
-      sys:"So the meeting ends here.",
-      options:[
+      sys: "So the meeting ends here.",
+      options: [
         {
-          text:"goodbye",
+          text: "goodbye",
         }
       ]
     }
-
-  ]
+  ],
+  canDelete: true,
 }];
 
 export default { MEETING_TEMPLATES, CLIENT_MEETINGS,FRESH_MEETINGS };
