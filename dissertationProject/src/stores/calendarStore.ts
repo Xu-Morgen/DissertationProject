@@ -1,7 +1,9 @@
 import { defineStore } from 'pinia';
 import type { CalendarEvent, Email, GameEventAction, ScriptStep } from '@/types';
 import { useEmailStore } from '@/stores/emailStore';
-import emails from '@/data/emails';
+import meetings from '@/data/meetings';
+import { useEventStore } from './eventStore';
+import { GAME_EVENTS } from '@/data/events';
 
 export const useCalendarStore = defineStore('calendar', {
   state: () => ({
@@ -13,7 +15,8 @@ export const useCalendarStore = defineStore('calendar', {
     meetingStep: 0,
     effectQueue: [] as GameEventAction[],
     meetingHistory: [] as string[],
-    userChoices: [] as string[]
+    userChoices: [] as string[],
+    
   }),
 
   actions: {
@@ -29,22 +32,26 @@ export const useCalendarStore = defineStore('calendar', {
       const addMeeting = meetingtype.find(t => t.id == meetingId);
       if (addMeeting) {
         this.meetingCanUse.push({ ...addMeeting, day: 0 });
-      }
+      } 
     },
 
-    removeMeetingCanUse(meetingId: string) {
-      this.meetingCanUse = this.meetingCanUse.filter(t => t.id != meetingId);
+    removeMeetingCanUse(meetingId: CalendarEvent) {
+      this.meetingCanUse = this.meetingCanUse.filter(t => t!=meetingId);
     },
 
     advanceDay(days: number = 1) {
+      //TODO A LOT
+
+
+
       this.currentDay += days;
+      this.scheduleMeeting(meetings.dailyMeeting([],[]),this.currentDay)
     },
 
-    scheduleMeeting(event: Omit<CalendarEvent, 'id' | 'completed' | 'day'>, day: number) {
+    scheduleMeeting(event: Omit<CalendarEvent, 'completed' | 'day'>, day: number) {
       this.events.push({
         ...event,
         day: day,
-        id: `meeting_${Date.now()}`,
         completed: false
       });
     },
@@ -102,6 +109,9 @@ export const useCalendarStore = defineStore('calendar', {
 
         if (this.activeMeeting) {
           emailStore.addEmail(this.generateMeetingEmail());
+        }
+        if(this.activeMeeting?.finishEventId){
+          useEventStore().triggerEvent(this.activeMeeting.finishEventId,GAME_EVENTS)
         }
       } finally {
         if (this.activeMeeting) {

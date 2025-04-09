@@ -8,7 +8,8 @@ const INITIAL_TASKS: Task[] = [{
   priority: 'none',
   creator: 'boss', // 修改为 'boss' 或 'client'
   createdAt: 0,
-  blocked: false
+  blocked: false,
+  progress:0,
 }];
 
 const TASK_TEMPLATES: Record<string, Omit<Task, 'id' | 'createdAt'>> = {
@@ -20,6 +21,16 @@ const TASK_TEMPLATES: Record<string, Omit<Task, 'id' | 'createdAt'>> = {
     storyPoints: 8,
     creator: 'client', // 仅允许 'player' | 'boss' | 'client'
     blocked: false,
+    progress:0,
+  },
+  test:{
+    title: "test task",
+    description: 'this is a test task',
+    status: 'backlog',
+    priority: 'none',
+    blocked: false,
+    creator: 'boss',
+    progress:0
   }
 };
 

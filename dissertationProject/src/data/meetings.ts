@@ -1,13 +1,12 @@
-import type { CalendarEvent } from '@/types';
+import type { CalendarEvent, Task } from '@/types';
 import contacts from './contacts';
-import {GAME_EVENTS} from './events'
 
 const MEETING_TEMPLATES: CalendarEvent[] = [{
   id: 'daily_standup',
   title: '每日站会',
   day: 0,
   type: 'daily',
-  participants: contacts.CONTACTS[2],
+  participants: contacts.CONTACTS['team'],
   canDelete:true,
   completed: false,
   scripts: [
@@ -50,7 +49,7 @@ const CLIENT_MEETINGS: CalendarEvent[] = [{
   title: 'Sprint评审会议',
   canDelete:true,
   day: 7,
-  participants: contacts.CONTACTS[0],
+  participants: contacts.CONTACTS['team'],
   completed: false,
   scripts: [
     {
@@ -74,12 +73,12 @@ const FRESH_MEETINGS: CalendarEvent[] = [{
   type: 'client',
   title: 'Orientation party',
   day: 0,
-  participants: contacts.CONTACTS[0],
+  participants: contacts.CONTACTS['client'],
   completed: false,
   finishEventId: "finish_first_meeting",
   scripts: [
     {
-      sys: "Welcome to our team：",
+      sys: "Welcome to our team",
       options: [
         {
           text: "Hello everyone ",
@@ -101,4 +100,32 @@ const FRESH_MEETINGS: CalendarEvent[] = [{
   canDelete: true,
 }];
 
-export default { MEETING_TEMPLATES, CLIENT_MEETINGS,FRESH_MEETINGS };
+const dailyMeeting = (tasks:Task[],meetings:CalendarEvent[]):CalendarEvent =>{
+    const returnMeeting:CalendarEvent = {
+      id: 'daily meeting',
+      type: 'daily',
+      title: '每日会议',
+      canDelete:true,
+      day: 7,
+      participants: contacts.CONTACTS['team'],
+      completed: false,
+      scripts: [
+        {
+          sys: `昨日完成内容,${tasks[0].id}`,
+          options: [
+            {
+              text: "我已知晓",
+              effects: [
+                { type: 'modify_satisfaction', value: 10 },
+                { type: 'finish_task', taskId: 'login_module' }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+    return returnMeeting
+  }
+
+
+export default { MEETING_TEMPLATES, CLIENT_MEETINGS,FRESH_MEETINGS,dailyMeeting};

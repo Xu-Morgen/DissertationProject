@@ -57,7 +57,7 @@ export interface Task {
   creator: 'player' | 'boss' | 'client'; // 任务来源
   createdAt: GameDate;
   deadline?: GameDate;          // 截止天数（可选）
-  dependencies?: string[];      // 依赖的任务ID列表
+  progress:number;
 }
 
 export interface PersonalTask {
@@ -93,6 +93,22 @@ export interface ScriptStep {
     text: string;
     effects?: GameEventAction[]; // 改为GameEventAction数组
   }>;
+}
+
+export interface MeetingTemplate {
+  id: string;
+  type: 'daily' | 'retro' | 'planning';
+  scripts: ScriptStep[];
+  variables: {
+    completedTasks: string[];
+    todaysMeetings: string[];
+  };
+}
+
+export interface DailyMeetingConfig {
+  autoCreate: boolean;
+  time: 'start' | 'end'; // 每日开始或结束时自动创建
+  participants: string[];
 }
 
 /* ================= Sprint系统 ================= */

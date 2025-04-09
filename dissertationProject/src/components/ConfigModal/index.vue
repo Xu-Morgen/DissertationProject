@@ -4,6 +4,7 @@
 import { useRouter } from 'vue-router';
 import {useCalendarStore,useEmailStore,useEventStore,useRootStore,useTaskStore,useUIStore} from "@/stores/index"
 import meetings from '@/data/meetings';
+import tasks from '@/data/tasks';
 const router = useRouter();
 
 
@@ -31,8 +32,14 @@ const testmeeting = () =>{
 }
 
 const quickMeeting = ()=>{
-  const {id,completed,day,...newEvent} = meetings.FRESH_MEETINGS[0]
+  const {completed,day,...newEvent} = meetings.FRESH_MEETINGS[0]
   useCalendarStore().scheduleMeeting(newEvent,0)
+}
+
+const quickTask = ()=>{
+  const newTask = tasks.TASK_TEMPLATES['test']
+  useTaskStore().upsertTask({...newTask,id: `email_${Date.now()}`,
+    createdAt: useCalendarStore().currentDay})
 }
 
 
@@ -59,6 +66,8 @@ const handleCancel = () => {
       <a-button danger @click = "resetGame()">reset game</a-button>
       <a-button danger @click = "testmeeting()">添加会议选项和联络人</a-button>
       <a-button danger @click = "quickMeeting">快速添加一场迎新会</a-button>
+      <a-button danger @click = "quickTask">快速添加一个客户任务</a-button>
+
     </p>
     <!-- 如果Content是HTML字符串，可以使用 v-html -->
     <!-- <p v-html="Content"></p> -->

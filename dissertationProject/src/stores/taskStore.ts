@@ -1,6 +1,7 @@
 // stores/taskStore.ts
 import { defineStore } from 'pinia';
 import type { Task, Sprint, PersonalTask, TaskPriority } from '@/types';
+import { notification } from 'ant-design-vue';
 
 export const useTaskStore = defineStore('tasks', {
   state: () => ({
@@ -27,10 +28,27 @@ export const useTaskStore = defineStore('tasks', {
      */
     upsertTask(task: Task) {
       const index = this.backlog.findIndex(t => t.id === task.id);
+      
+      const isNewTask = index === -1;
+      
       if (index >= 0) {
         this.backlog.splice(index, 1, task);
       } else {
         this.backlog.push(task);
+      }
+    
+      // 仅在添加新任务时显示通知
+      if (isNewTask) {
+        notification.success({
+          message: '任务已添加',
+          description: `"${task.title}" 已添加至Backlog`,
+          placement: 'bottomRight',
+          duration: 3,
+          style: {
+            marginBottom: '24px',
+            borderRadius: '8px'
+          }
+        });
       }
     },
     /**

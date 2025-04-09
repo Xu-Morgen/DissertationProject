@@ -217,7 +217,10 @@
       emailStore.sentEmail(newEmail);
       const meetingfind = calendarStore.meetingCanUse.find(t=>t.id == selectedMeeting.value)
       if(meetingfind){
-        const {day,id,completed,...event} = meetingfind
+        const {day,completed,...event} = meetingfind
+        console.log(meetingfind)
+        console.log(calendarStore.meetingCanUse)
+        calendarStore.removeMeetingCanUse(meetingfind)
         calendarStore.scheduleMeeting(event,meetingDay.value)
       }
     }

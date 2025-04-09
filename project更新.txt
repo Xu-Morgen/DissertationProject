@@ -1,9 +1,10 @@
 
-在进行下一天之前先检查kanban内的内容是否都已经被安排好了,\
-新增task的时候右下角气泡提示
-在kanban上添加Spring内容
+在进行下一天之前先检查kanban内的内容是否都已经被安排好了,
 正式完成每日日报模版内容
 完成客户会议中内容检查
 每日会议最大数量不能超过10个
-
 添加promise系统，在客户会议中检查promise//考虑用task代替
+
+
+
+calendar的advanceday中添加完成任务检查，今日会议检查，在meeting中添加一个const returnDaily(tasks:Task[],meetings:[])作为模板

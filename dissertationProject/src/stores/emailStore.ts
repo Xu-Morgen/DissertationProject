@@ -45,7 +45,7 @@ export const useEmailStore = defineStore('email', {
    * @param RecipientId 收信人的id
    */
     addRecipient(RecipientId:string) {
-      const newRecipient = contacts.CONTACTS.find(c=>c.id == RecipientId)
+      const newRecipient = contacts.CONTACTS[RecipientId]
       if (newRecipient){
         this.contacts.push(newRecipient)
       }
@@ -55,7 +55,7 @@ export const useEmailStore = defineStore('email', {
    * @param RecipientId 收信人的id
    */
       removeRecipient(RecipientId:string) {
-        const removeRecipient = contacts.CONTACTS.find(c=>c.id == RecipientId)
+        const removeRecipient = contacts.CONTACTS[RecipientId]
         if (removeRecipient){
           this.contacts = this.contacts.filter(t=>t != removeRecipient)
         }
