@@ -150,17 +150,15 @@ export const useEventStore = defineStore('events', {
           break
         
         case 'daily_check':
-          switch (calendarStore.currentDay){
-            case 0:
-              console.log("heretrigger")
-              this.executeAction({type:'finish_personal_task',taskId:"first_day"})
-              this.executeAction({type:'add_sent_format',replyId:'daily_standup'})
-              this.executeAction({type:'add_recipient',recipientId:'client'})
-              this.executeAction({type:'add_daily_mail',templateId:"client_request"})
-              break
-            case 1:
-
-              break
+          if(calendarStore.currentDay == 0){
+            this.executeAction({type:'finish_personal_task',taskId:"first_day"})
+            this.executeAction({type:'add_sent_format',replyId:'daily_standup'})
+            this.executeAction({type:'add_recipient',recipientId:'client'})
+            this.executeAction({type:'add_daily_mail',templateId:"client_request"})
+            calendarStore.advanceDay()
+          }
+          else{
+            calendarStore.advanceDay()
           }
           break
           // 其他动作类型处理...

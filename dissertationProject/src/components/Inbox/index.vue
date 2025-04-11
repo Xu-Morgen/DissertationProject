@@ -11,88 +11,78 @@ const emailStore = useEmailStore();
 const eventStore = useEventStore();
 const uiStore = useUIStore();
 
-// 当前选中的邮件
 const activeEmail = ref<Email | null>(null);
+const isInbox = ref(true);
 
-// 控制收件箱和发件箱的显示
-const isInbox = ref(true); // 默认为显示收件箱
-
-// 邮件列表
 const emails = computed(() => {
-  return isInbox.value ? emailStore.inbox : emailStore.sent; // 根据 isInbox 显示不同的邮箱
+  return isInbox.value ? emailStore.inbox : emailStore.sent;
 });
 
-// 处理邮件点击
 const handleEmailClick = (email: Email) => {
   activeEmail.value = email;
   emailStore.markAsRead(email.id);
   uiStore.toggleReading(true);
 };
-
 </script>
 
 <template>
-  <!-- 切换收件箱和发件箱 -->
   <div class="email-switch-container">
     <a-switch
       v-model:checked="isInbox"
-      :checkedChildren="'Inbox'"
-      :unCheckedChildren="'Outbox'"
+      checked-children="Inbox"
+      un-checked-children="Outbox"
       style="margin-right: 16px;"
     />
-    
-    <!-- 发送按钮 -->
     <a-button 
       type="primary" 
       @click="uiStore.sendingEmailModalOpen = true"
-      style="height: 32px;">
+      style="height: 32px;"
+    >
       Send
     </a-button>
   </div>
 
-  <!-- 邮件阅读器 -->
   <MailModal
     v-model:open="uiStore.readingEmailModalOpen"
     :email="activeEmail"
   />
-
-  <!-- 邮件编辑器 -->
   <MailComposer
     v-model:open="uiStore.sendingEmailModalOpen"
   />
 
   <div class="inbox-container">
-    <!-- 邮件列表 -->
-    <a-list
-      :data-source="emails"
-      item-layout="horizontal"
-      class="email-list"
-    >
-      <template #renderItem="{ item }">
-        <a-list-item
-          :class="['email-item', { unread: !item.isRead }]"
-          @click="handleEmailClick(item)"
-        >
-          <template #actions>
-            <a-tag :color="categoryColors[item.metadata.category]">
-              {{ item.metadata.category }}
-            </a-tag>
-          </template>
-          <a-list-item-meta>
-            <template #title>
-              <span class="subject">{{ item.subject }}</span>
-              <span v-if="!item.isRead" class="unread-badge" />
+    <div class="email-scroll-wrapper">
+      <a-list
+        :data-source="emails"
+        item-layout="horizontal"
+        class="email-list"
+      >
+        <template #renderItem="{ item }">
+          <a-list-item
+            :class="['email-item', { unread: !item.isRead }]"
+            @click="handleEmailClick(item)"
+          >
+            <template #actions>
+              <a-tag :color="categoryColors[item.metadata.category]">
+                {{ item.metadata.category }}
+              </a-tag>
             </template>
-            <template #description>
-              <span class="sender">
-                {{ emailStore.getContactName(item.from) }}
-              </span>
-              <span class="day">Day:{{ item.day }} </span>
-            </template>
-          </a-list-item-meta>
-        </a-list-item>
-      </template>
-    </a-list>
+            <a-list-item-meta>
+              <template #title>
+                <span class="subject">{{ item.subject }}</span>
+                <span v-if="!item.isRead" class="unread-badge" />
+              </template>
+              <template #description>
+                <span class="sender">
+                  {{ emailStore.getContactName(item.from) }}
+                </span>
+                <span class="day">Day:{{ item.day }} </span>
+              </template>
+            </a-list-item-meta>
+          </a-list-item>
+        </template>
+      </a-list>
+    </div>
   </div>
 </template>
 
@@ -103,62 +93,92 @@ const handleEmailClick = (email: Email) => {
   border-radius: 8px;
   padding: 16px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
 
-  .email-list {
-    .email-item {
-      cursor: pointer;
-      padding: 12px;
-      border-bottom: 1px solid #f0f0f0;
-      transition: background 0.3s;
+  .email-scroll-wrapper {
+    flex: 1;
+    overflow-y: auto;
+    margin: -16px;
+    padding: 16px;
 
-      &:hover {
-        background: #fafafa;
-      }
+    &::-webkit-scrollbar {
+      width: 8px;
+      background: #f5f5f5;
+    }
 
-      &.unread {
-        font-weight: 500;
-      }
+    &::-webkit-scrollbar-thumb {
+      background: rgba(0, 0, 0, 0.2);
+      border-radius: 4px;
+    }
 
-      .subject {
-        margin-right: 8px;
-      }
+    .email-list {
+      min-width: 600px;
 
-      .unread-badge {
-        display: inline-block;
-        width: 8px;
-        height: 8px;
-        background: #1890ff;
-        border-radius: 50%;
-      }
+      :deep(.ant-list-item) {
+        padding: 12px 8px;
+        border-bottom: 1px solid #f0f0f0;
+        transition: background 0.2s;
+        cursor: pointer;
 
-      .sender {
-        color: #666;
-        margin-right: 8px;
-      }
+        &:hover {
+          background: #fafafa;
+        }
 
-      .day {
-        color: #999;
-        font-size: 0.9em;
+        .ant-list-item-meta {
+          align-items: center;
+
+          &-title {
+            margin-bottom: 0;
+            display: flex;
+            align-items: center;
+          }
+
+          &-description {
+            display: flex;
+            align-items: center;
+            margin-top: 4px;
+          }
+        }
       }
     }
   }
 }
 
-// 分类颜色映射
-@category-colors: {
-  system: #1890ff;
-  client: #faad14;
-  boss: #52c41a;
-  team: #722ed1;
+.email-switch-container {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 16px;
+  align-items: center;
 }
 
-.email-switch-container {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 16px;
-    flex-wrap: nowrap;
-    align-content: center;
-    align-items: center;
+.unread-badge {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  background: #1890ff;
+  border-radius: 50%;
+  margin-left: 8px;
+}
 
+.subject {
+  font-weight: 500;
+  color: rgba(0, 0, 0, 0.85);
+}
+
+.sender {
+  color: rgba(0, 0, 0, 0.65);
+  margin-right: 12px;
+}
+  
+.day {
+  color: rgba(0, 0, 0, 0.45);
+  font-size: 0.9em;
+}
+
+.email-item.unread {
+  .subject {
+    font-weight: 600;
+  }
 }
 </style>

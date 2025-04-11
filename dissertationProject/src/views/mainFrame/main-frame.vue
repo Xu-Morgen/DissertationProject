@@ -104,8 +104,8 @@ const visibleTasks = computed(() =>
 
 // 处理每日推进
 const advanceDay = () => {
-  eventStore.triggerEvent('daily_check', GAME_EVENTS);
-  calendarStore.advanceDay();
+  eventStore.triggerEvent('daily_check', GAME_EVENTS); 
+  currentView.value = 'mail'
 };
 
 onMounted(() => {

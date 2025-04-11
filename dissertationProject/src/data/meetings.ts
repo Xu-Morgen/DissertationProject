@@ -1,4 +1,4 @@
-import type { CalendarEvent, Task } from '@/types';
+import type { CalendarEvent, Task,MeetingType } from '@/types';
 import contacts from './contacts';
 
 const MEETING_TEMPLATES: CalendarEvent[] = [{
@@ -100,32 +100,130 @@ const FRESH_MEETINGS: CalendarEvent[] = [{
   canDelete: true,
 }];
 
-const dailyMeeting = (tasks:Task[],meetings:CalendarEvent[]):CalendarEvent =>{
-    const returnMeeting:CalendarEvent = {
-      id: 'daily meeting',
+
+
+
+
+  const dailyMeeting = (
+    tasks: { id: string; title: string; status: string; progress: number }[]
+  ): CalendarEvent => {
+    const doneTasks = tasks.filter(task => task.status === 'done');
+    const progressedTasks = tasks.filter(task => task.status !== 'done' && task.progress > 0);
+  
+    const doneText = doneTasks.length > 0
+      ? doneTasks.map(task => `【${task.title}】`).join('、')
+      : '无';
+  
+    const progressText = progressedTasks.length > 0
+      ? progressedTasks.map(task => `【${task.title}】：${task.progress}%`).join('，')
+      : '暂无明显进展';
+  
+    const scripts: CalendarEvent['scripts'] = [
+      {
+        sys: `昨日完成任务：${doneText}`,
+        options: [
+          {
+            text: '收到',
+          }
+        ]
+      },
+      {
+        sys: `进展中的任务：${progressText}`,
+        options: [
+          {
+            text: '继续努力！',
+          }
+        ]
+      }
+    ];
+  
+    const returnMeeting: CalendarEvent = {
+      id: 'daily_meeting_' + Date.now(),
       type: 'daily',
       title: '每日会议',
-      canDelete:true,
+      canDelete: true,
       day: 7,
       participants: contacts.CONTACTS['team'],
       completed: false,
+      scripts
+    };
+  
+    return returnMeeting;
+  };
+  
+  export const CUSTOMER_MEETINGS: CalendarEvent[] = [
+    {
+      id: "customer_review",
+      title: "支付系统安全升级评审",
+      day: 3,
+      completed: false,
       scripts: [
         {
-          sys: `昨日完成内容,${tasks[0].id}`,
+          sys: "CTO：我们需要验证支付系统的安全升级进度",
           options: [
-            {
-              text: "我已知晓",
-              effects: [
-                { type: 'modify_satisfaction', value: 10 },
-                { type: 'finish_task', taskId: 'login_module' }
-              ]
-            }
+            { text: "展示已完成工作" },
+            { text: "请求更多时间" }
           ]
         }
-      ]
+      ],
+      canDelete: false,
+      type: 'daily',
+      participants: {id:'client',name:'client'}
     }
-    return returnMeeting
+  ];
+
+  const customCustomerMeeting = (params:{id:string,title:string,taskIsComplete:Task}):CalendarEvent=>{
+    let scripts = []
+    if(params.taskIsComplete.status == 'done'){
+      scripts = [
+        {
+        sys: `CTO：我们需要验证${params.taskIsComplete.title}进度`,
+        options: [
+          { text: "展示已完成工作" },
+        ]
+      },
+      {
+        sys: `CTO：干的不错，希望你们继续努力`,
+        options: [
+          { text: "合作愉快" },
+        ]
+      }
+    ]
+    }
+    else{
+      scripts = [
+        {
+        sys: `CTO：我们需要验证${params.taskIsComplete.title}进度`,
+        options: [
+          { text: "请求更多时间" },
+        ]
+      },
+      {
+        sys: `CTO：我们是否希望贵方能拿出更多成果`,
+        options: [
+          { text: "我们会多加努力" },
+        ]
+      }
+    ]
+    }
+    
+    const meeting = {
+      id: params.id,
+      title: params.title,
+      day: 0,
+      completed: false,
+      scripts: scripts,
+      canDelete: false,
+      type: 'client' as MeetingType,
+      participants: {id:'client',name:'client'},
+      linkedTaskId:params.taskIsComplete.id
+      
+    }
+
+    return meeting
+
+
   }
+  
 
-
-export default { MEETING_TEMPLATES, CLIENT_MEETINGS,FRESH_MEETINGS,dailyMeeting};
+export default { MEETING_TEMPLATES, CLIENT_MEETINGS,FRESH_MEETINGS,dailyMeeting,CUSTOMER_MEETINGS,customCustomerMeeting };

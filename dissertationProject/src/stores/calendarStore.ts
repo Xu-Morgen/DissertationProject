@@ -4,6 +4,9 @@ import { useEmailStore } from '@/stores/emailStore';
 import meetings from '@/data/meetings';
 import { useEventStore } from './eventStore';
 import { GAME_EVENTS } from '@/data/events';
+import { useTaskStore } from './taskStore';
+import tasks from '@/data/tasks';
+import emails from '@/data/emails';
 
 export const useCalendarStore = defineStore('calendar', {
   state: () => ({
@@ -35,18 +38,42 @@ export const useCalendarStore = defineStore('calendar', {
       } 
     },
 
-    removeMeetingCanUse(meetingId: CalendarEvent) {
-      this.meetingCanUse = this.meetingCanUse.filter(t => t!=meetingId);
+    removeMeetingCanUse(meetingId: string) {
+      this.meetingCanUse = this.meetingCanUse.filter(t => t.id!=meetingId);
     },
 
     advanceDay(days: number = 1) {
       //TODO A LOT
 
-
-
+      console.log("advacnde")
+      const taskStore = useTaskStore() 
+      const mailStore = useEmailStore()
       this.currentDay += days;
-      this.scheduleMeeting(meetings.dailyMeeting([],[]),this.currentDay)
+
+      //汇总每日日报
+      taskStore.workingBacklog()
+      this.scheduleMeeting(meetings.dailyMeeting(taskStore.yesterdayTask),this.currentDay)
+      taskStore.clearYesterdayTask
+
+
+      //汇总每日会议
+      const todayMeetings = this.events.filter(t=>t.day==this.currentDay)
+      const {id,isRead,...todayMeetingEmail} = emails.dailyEmail(todayMeetings,this.currentDay)
+      mailStore.addEmail(todayMeetingEmail)
+
+      //更改当日客户会议脚本
+      this.events.filter
+
+      
+      
+    }, 
+
+    changeCustomMeeting(){
+      const todayMeetings = this.events.filter(t=>t.day = this.currentDay)
+
     },
+
+
 
     scheduleMeeting(event: Omit<CalendarEvent, 'completed' | 'day'>, day: number) {
       this.events.push({
@@ -151,8 +178,6 @@ generateMeetingEmail(): Omit<Email, 'id' | 'isRead'> {
       Full Logs:
       ${combinedLogs.join('\n      ')}
       
-      Decisions:
-      ${this.effectQueue.map(e => `• ${e.type}`).join('\n')}
     `,
     day:this.currentDay,
     metadata: {

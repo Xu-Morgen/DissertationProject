@@ -50,7 +50,7 @@ export interface Task {
   description: string;
   status: TaskStatus;
   priority: TaskPriority;
-  storyPoints?: number;         // 故事点数（用于Sprint计算）
+  storyPoints: number;         // 故事点数（用于Sprint计算）
   sprintId?: string;            // 所属Sprint的ID
   blocked: boolean;             // 是否被阻塞
   blockerReason?: string;       // 阻塞原因
@@ -58,6 +58,10 @@ export interface Task {
   createdAt: GameDate;
   deadline?: GameDate;          // 截止天数（可选）
   progress:number;
+  dueDay?: number; // 添加这个属性
+  isCustomerTask?: boolean;
+  linkedMeetingId?: string; // 关联的会议ID
+  linkedPersonalTaskId?: string; // 关联的个人任务ID
 }
 
 export interface PersonalTask {
@@ -68,6 +72,8 @@ export interface PersonalTask {
   creator: 'player' | 'boss' | 'client'; // 任务来源
   createdAt: GameDate;
   deadline?: GameDate;          // 截止天数（可选）
+  linkedTaskId?: string; // 关联的客户任务ID
+
 }
 
 /* ================= 日历系统 ================= */
@@ -84,6 +90,7 @@ export interface CalendarEvent {
   scripts?: ScriptStep[]; // 替换outcome为scripts
   finishEventId?:string;
   canDelete:boolean;
+  linkedTaskId?:string;
 }
 
 // 更新ScriptStep类型

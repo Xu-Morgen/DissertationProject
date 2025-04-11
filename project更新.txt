@@ -5,6 +5,15 @@
 每日会议最大数量不能超过10个
 添加promise系统，在客户会议中检查promise//考虑用task代替
 
+每日会议任务内容重复，tasklist中的任务完成了没有额外效果,可以进行并非今天的会议
+点完advanceday后进入mail页面
 
+突发事件
+提出事件，解决事件的模板
 
-calendar的advanceday中添加完成任务检查，今日会议检查，在meeting中添加一个const returnDaily(tasks:Task[],meetings:[])作为模板
+客户会议
+初始个人任务和任务列表
+
+客户任务，生成个人任务提示用户目标任务需要率先完成，生成任务放入kanban
+在每日更新时更新当日会议脚本
+

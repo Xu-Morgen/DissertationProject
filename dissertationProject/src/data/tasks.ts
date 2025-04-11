@@ -10,6 +10,7 @@ const INITIAL_TASKS: Task[] = [{
   createdAt: 0,
   blocked: false,
   progress:0,
+  storyPoints:10,
 }];
 
 const TASK_TEMPLATES: Record<string, Omit<Task, 'id' | 'createdAt'>> = {
@@ -30,7 +31,8 @@ const TASK_TEMPLATES: Record<string, Omit<Task, 'id' | 'createdAt'>> = {
     priority: 'none',
     blocked: false,
     creator: 'boss',
-    progress:0
+    progress:0,
+    storyPoints:18,
   }
 };
 
@@ -76,5 +78,7 @@ const PERSONAL_TASK:PersonalTask[]=[
     createdAt:0
   },
 ]
+
+
 
 export default {INITIAL_TASKS,TASK_TEMPLATES,PERSONAL_TASK} 

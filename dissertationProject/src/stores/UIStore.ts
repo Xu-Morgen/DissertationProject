@@ -54,4 +54,8 @@ export const useUIStore = defineStore('ui', {
       });
     }
   },
-});
+  persist:true,
+},
+
+
+);

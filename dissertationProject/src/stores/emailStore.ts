@@ -1,6 +1,6 @@
 // stores/emailStore.ts
 import { defineStore } from 'pinia';
-import type { Email, Recipient, Reply,  SentFormat } from '@/types';
+import type { CalendarEvent, Email, Recipient, Reply,  SentFormat } from '@/types';
 import contacts from '@/data/contacts';
 
 import sentFormat from '@/data/sentFormat';
@@ -15,6 +15,17 @@ export const useEmailStore = defineStore('email', {
   }),
 
   actions: {
+    
+    /**
+     * 接受会议信息数组生成每日邮件
+     */
+
+    formatDailyEmail(meetings:CalendarEvent[]){
+
+    },
+
+
+    
     /**
      * 添加新邮件到收件箱
      * @param email 不包含id和isRead的新邮件对象

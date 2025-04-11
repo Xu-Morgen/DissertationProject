@@ -9,6 +9,7 @@ export const useRootStore = defineStore('root', {
     openTour:false,
     isFristTour:true,
     workflowProgress:0,
+    worker:5
   }),
 
   actions: {
@@ -21,6 +22,9 @@ export const useRootStore = defineStore('root', {
     handleFirstTour(){
       this.isFristTour = false
     },
+    changeWorker(changes:number){
+      this.worker += changes
+    }
 
   },
 

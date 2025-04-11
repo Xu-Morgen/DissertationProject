@@ -1,4 +1,4 @@
-import type { Email, Reply } from '@/types';
+import type { CalendarEvent, Email, Reply } from '@/types';
 
 const SYSTEM_EMAILS: Email[] = [{
   id: 'welcome',
@@ -110,4 +110,53 @@ const SYSTEM_EMAILS: Email[] = [{
   },
 }];
 
-export default {SYSTEM_EMAILS,CLIENT_EMAILS} 
+const dailyEmail = (meetings: CalendarEvent[], day: number): Email => {
+  // 生成邮件内容HTML
+  const generateMeetingHTML = (meeting: CalendarEvent) => {
+    const status = meeting.completed ? 
+      '<span style="color: #52c41a;">✓ 已完成</span>' : 
+      '<span style="color: #ff4d4f;">◷ 进行中</span>';
+    const scriptProgress = `进度：${meeting.completed ? '完成' : `待进行`}`
+
+    return `
+      <div ">
+        <h3>${meeting.title}</h3>
+          <div>类型：${meeting.type}</div>
+          <div>参与方：${meeting.participants.name}</div>
+          <div>状态：${status} ${scriptProgress}</div>
+
+      </div>
+    `;
+  };
+
+  // 构建邮件内容
+  const content = `
+        Day ${day} 会议安排概览
+      
+      ${meetings.length > 0 ? 
+        meetings.map(generateMeetingHTML).join('') : 
+        `<div style="text-align: center; color: rgba(0,0,0,0.25);">
+          今日无会议安排
+        </div>`
+      }
+
+  `;
+
+  const dailyEmail: Email = {
+    id: `day${day}_meetings_${Date.now()}`,
+    from: '系统日程助手',
+    to: ['player'],
+    subject: `Day ${day} 会议安排（共${meetings.length}个会议）`,
+    content: content,
+    isRead: false,
+    day: day,
+    metadata: {
+      requiresAction: meetings.some(m => !m.completed),
+      category: 'system',
+    }
+  };
+
+  return dailyEmail;
+};
+
+export default {SYSTEM_EMAILS,CLIENT_EMAILS,dailyEmail} 
