@@ -28,16 +28,18 @@ export interface Reply {
 export interface Recipient {
   id: string;
   name: string;
+  isEmergency: boolean,
 }
 
-export interface SentFormat{
-  id:string;
-  subject:string;//标题
-  content:string;//内容
-  relate:Recipient;//能对谁发送这份内容
-  nextEventId?: string;         // 触发的后续事件ID
-  type:"normal" | "meeting";
-  meetingid?:string;
+export interface SentFormat {
+  id: string;
+  subject: string;
+  content: string;
+  relate: Recipient;
+  nextEventId?: string;
+  type: "normal" | "meeting" | "emergency"; // 新增紧急类型
+  meetingid?: string;
+  emergencyLevel?: number; // 紧急程度
 }
 
 /* ================= 任务系统 ================= */
@@ -63,18 +65,19 @@ export interface Task {
   linkedMeetingId?: string; // 关联的会议ID
   linkedPersonalTaskId?: string; // 关联的个人任务ID
 }
-
 export interface PersonalTask {
   id: string;
   title: string;
   description: string;
   status: TaskStatus;
-  creator: 'player' | 'boss' | 'client'; // 任务来源
+  creator: 'player' | 'boss' | 'client' | 'system'; // 扩展creator类型
   createdAt: GameDate;
-  deadline?: GameDate;          // 截止天数（可选）
-  linkedTaskId?: string; // 关联的客户任务ID
-
+  deadline?: GameDate;
+  linkedTaskId?: string;
+  emergencyTemplateId?: string;
 }
+
+
 
 /* ================= 日历系统 ================= */
 export type MeetingType = 'daily' | 'sprint' | 'client' | 'personal';
@@ -158,6 +161,25 @@ export interface GameEvent {
   id: string;
   actions: GameEventAction[];  // 触发后的行为列表
 }
+
+export interface EmergencyTemplate {
+  id: string
+  title: string
+  // 关联系统
+  relatedTaskId?: string       // 关联的客户任务ID
+  autoGenerate: {
+    email: {
+      subject: string
+      content: string
+      recipients: string[]    // 自动添加的联系人ID
+    }
+    meeting?: {
+      templateId: string     // 会议模板ID
+      daysAfter: number      // 几天后自动安排会议
+    }
+  }
+}
+
 
 /* ================= UI状态 ================= */
 export interface UIState {

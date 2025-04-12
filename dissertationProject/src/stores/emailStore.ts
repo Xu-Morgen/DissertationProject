@@ -15,14 +15,6 @@ export const useEmailStore = defineStore('email', {
   }),
 
   actions: {
-    
-    /**
-     * 接受会议信息数组生成每日邮件
-     */
-
-    formatDailyEmail(meetings:CalendarEvent[]){
-
-    },
 
 
     
@@ -83,6 +75,10 @@ export const useEmailStore = defineStore('email', {
       if (newSentFormat){
         this.sentFormat.push(newSentFormat)
       }
+  },
+
+  addNewSentFormat(newSentFormat:SentFormat){
+    this.sentFormat.push(newSentFormat)
   },
 
 

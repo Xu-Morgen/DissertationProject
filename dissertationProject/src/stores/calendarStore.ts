@@ -38,6 +38,9 @@ export const useCalendarStore = defineStore('calendar', {
       }
     },
 
+    addNewMeetingCanUse(meetingCanUse:CalendarEvent){
+      this.meetingCanUse.push(meetingCanUse)
+    },
     removeMeetingCanUse(meetingId: string) {
       this.meetingCanUse = this.meetingCanUse.filter(t => t.id != meetingId);
     },

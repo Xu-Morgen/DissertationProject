@@ -2,47 +2,32 @@ import type { CalendarEvent, Task,MeetingType, ScriptStep } from '@/types';
 import contacts from './contacts';
 import { effect } from 'vue';
 
-const MEETING_TEMPLATES: CalendarEvent[] = [{
-  id: 'daily_standup',
-  title: '每日站会',
-  day: 0,
-  type: 'daily',
-  participants: contacts.CONTACTS['team'],
-  canDelete:true,
-  completed: false,
-  scripts: [
-    {
-      sys: "团队每日站会开始，请选择要进行的操作：",
-      options: [
-        { 
-          text: "正常进行任务汇报",
-          effects: [
-            { type: 'advance_day', days: 1 },
-            { type: 'add_task', taskId: 'daily_report' }
-          ]
-        },
-        {
-          text: "缩短会议时间",
-          effects: [
-            { type: 'advance_day', days: 1 },
-            { type: 'modify_satisfaction', value: -5 }
-          ]
-        }
-      ]
+export const MEETING_TEMPLATES = {
+  tech_emergency: {
+    id: "tech_emergency",
+    type: 'client',
+    title: "技术紧急会议",
+    participants: {  // 添加缺失的participants属性
+      id: "tech_team",
+      name: "技术应急小组",
+      isEmergency:true
     },
-    {
-      sys: "请总结今日计划：",
-      options: [
-        {
-          text: "明确三个主要任务",
-          effects: [
-            { type: 'unlock_feature', feature: 'task_prioritization' }
-          ]
-        }
-      ]
-    }
-  ]
-}];
+    scripts: [
+      {
+        sys: "CTO：当前恢复进度如何？",
+        options: [
+          { 
+            text: "已启用备用集群", 
+            effects: [
+              { type: 'modify_satisfaction', value: 20 }
+            ]
+          }
+        ]
+      }
+    ],
+    canDelete: false
+  }
+} satisfies Record<string, Omit<CalendarEvent, "completed" | "day">>;
 
 const CLIENT_MEETINGS: CalendarEvent[] = [{
   id: 'sprint_review',
@@ -169,7 +154,7 @@ const FRESH_MEETINGS: CalendarEvent[] = [{
       ],
       canDelete: false,
       type: 'daily',
-      participants: {id:'client',name:'client'}
+      participants: {id:'client',name:'client',isEmergency:false}
     }
   ];
 
@@ -216,9 +201,8 @@ const FRESH_MEETINGS: CalendarEvent[] = [{
       scripts: scripts,
       canDelete: false,
       type: 'client' as MeetingType,
-      participants: {id:'client',name:'client'},
+      participants: {id:'client',name:'client',isEmergency:false},
       linkedTaskId:params.taskIsComplete.id,
-      
     }
 
     return meeting

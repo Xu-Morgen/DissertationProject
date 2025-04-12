@@ -32,6 +32,7 @@ const currentView = ref<'mail' | 'kanban' | 'calendar'>('mail');
 
 // 邮件相关状态
 const activeEmail = ref<Email | null>(null);
+const forceUpdate = ref(0);
 
 //新手引导
 const tourStep = ref(0)
@@ -98,13 +99,18 @@ const handleMeetingSelect = () => {
 }
 
 // 任务过滤
-const visibleTasks = computed(() => 
-  taskStore.personaltTask.filter(t => t.status !== 'done')
-);
+const visibleTasks = computed(() => {
+  // 确认store中的个人任务数组名称正确
+  return taskStore.personaltTask.filter(t => 
+    t.status !== 'done' 
+  );
+});
 
 // 处理每日推进
-const advanceDay = () => {
+const advanceDay = async () => {
   eventStore.triggerEvent('daily_check', GAME_EVENTS); 
+  await nextTick();
+  forceUpdate.value++; // 触发重新渲染
   currentView.value = 'mail'
 };
 
@@ -124,7 +130,7 @@ onMounted(() => {
 
 </script>
 <template>
-  <div class="main-layout">
+  <div class="main-layout" :key="forceUpdate">
     <a-layout>
       <!-- 头部 -->
       <a-layout-header class="header">

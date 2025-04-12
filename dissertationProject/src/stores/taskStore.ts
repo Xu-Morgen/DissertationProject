@@ -1,10 +1,12 @@
 // stores/taskStore.ts
 import { defineStore } from 'pinia';
-import type { Task, Sprint, PersonalTask, TaskPriority } from '@/types';
+import type { Task, Sprint, PersonalTask, TaskPriority, SentFormat, Recipient } from '@/types';
 import { notification } from 'ant-design-vue';
 import { useRootStore } from './rootStore';
-import { useCalendarStore } from '.';
-
+import { useCalendarStore, useEmailStore } from '.';
+import { EMERGENCY_TEMPLATES } from '@/data/emergency';
+import { MEETING_TEMPLATES } from '@/data/meetings';
+import contacts from '@/data/contacts';
 export const useTaskStore = defineStore('tasks', {
   state: () => ({
     backlog: [] as Task[],
@@ -16,6 +18,80 @@ export const useTaskStore = defineStore('tasks', {
   }),
 
   actions: {   
+
+    generateEmergencyTask(params: {
+      emergencyId: string
+      baseTaskId: string
+    }) {
+      const baseTask = this.backlog.find(t => t.id === params.baseTaskId);
+      
+      // 严格检查deadline存在性
+      
+      if (!baseTask ) {
+        console.log(baseTask)
+        console.error('基准任务不存在或未设置截止日');
+        return;
+      }
+
+      const personalTask: PersonalTask = {  
+        id: `emergency_${Date.now()}`,
+        title: `[突发事件] ${baseTask.title}`,
+        description: `需要紧急处理的任务关联问题`,
+        status: 'backlog',
+        linkedTaskId: baseTask.id,
+        emergencyTemplateId: params.emergencyId,
+        createdAt: useCalendarStore().currentDay,
+        creator: 'system' // 使用扩展后的类型
+      };
+
+      this.attachEmergencyResources(personalTask);
+      this.upsertPersoanlTask(personalTask);
+    },
+
+    attachEmergencyResources(task: PersonalTask) {
+      const emailStore = useEmailStore();
+      const calendarStore = useCalendarStore();
+
+      // 安全访问模板ID
+      if (!task.emergencyTemplateId) return;
+      
+      // 类型安全的模板访问
+      const template = EMERGENCY_TEMPLATES[task.emergencyTemplateId as keyof typeof EMERGENCY_TEMPLATES];
+      if (!template) return;
+
+      // 完整的SentFormat对象
+      const sentFormat: SentFormat = {
+        id: `emergency_${task.id}`,
+        subject: template.autoGenerate.email.subject,
+        content: template.autoGenerate.email.content,
+        relate: contacts.CONTACTS[template.autoGenerate.email.recipients],
+        type: 'meeting',
+        meetingid: template.autoGenerate.meeting?.templateId,
+        nextEventId: undefined
+      };
+      emailStore.addNewSentFormat(sentFormat);
+
+      // 明确的类型注解
+      emailStore.addRecipient(template.autoGenerate.email.recipients)
+
+
+      console.error(template.autoGenerate.meeting)
+      // 安全的会议模板访问
+      if (template.autoGenerate.meeting) {
+        const meetingTemplate = MEETING_TEMPLATES[
+          template.autoGenerate.meeting.templateId as keyof typeof MEETING_TEMPLATES
+        ];
+        console.error(meetingTemplate)
+        if (meetingTemplate) {
+          calendarStore.addNewMeetingCanUse(
+            {...meetingTemplate,day:0,completed:false}
+          )
+        }
+      }
+    },
+  
+
+
 
     /**
      * 检查客户任务完成状态（在会议中调用）
@@ -219,7 +295,7 @@ export const useTaskStore = defineStore('tasks', {
       const index = this.personaltTask.findIndex(t => t.id === task.id);
       if (index >= 0) {
         this.personaltTask.splice(index, 1, task);
-      } else {
+      } else {  
         this.personaltTask.push(task);
       }
     },

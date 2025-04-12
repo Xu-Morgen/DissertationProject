@@ -6,7 +6,6 @@ import {useCalendarStore,useEmailStore,useEventStore,useRootStore,useTaskStore,u
 import meetings from '@/data/meetings';
 import tasks from '@/data/tasks';
 import { notification } from 'ant-design-vue';
-import { GAME_EVENTS } from '@/data/events';
 const router = useRouter();
 
 
@@ -49,6 +48,7 @@ const quickUnlockND = () =>{
 }
 
 const testCustomerTask = () => {
+  
   // 先创建一个测试客户会议
   let customerMeeting = {
     ...meetings.CUSTOMER_MEETINGS[0], 
@@ -85,6 +85,51 @@ const testCustomerTask = () => {
   });
 };
 
+// 新增紧急事件测试方法
+const testEmergency = () => {
+  const taskStore = useTaskStore()
+
+  try {
+    // 获取第一个客户任务作为基准任务
+    const baseTask = taskStore.backlog.find(t => t.isCustomerTask);
+    
+    if (!baseTask) {
+      notification.error({
+        message: '测试失败',
+        description: '请先创建客户任务',
+        placement: 'bottomRight'
+      });
+      return;
+    }
+
+    // 生成突发事件任务
+    taskStore.generateEmergencyTask({
+      emergencyId: 'server_down',  // 使用预定义的紧急事件模板
+      baseTaskId: baseTask.id,
+    });
+
+    notification.success({
+      message: '紧急事件已生成',
+      description: `
+        已创建：
+        1. 应急个人任务
+        2. 技术团队联系人
+        3. 紧急会议模板
+      `,
+      placement: 'bottomRight'
+    });
+
+  } catch (error) {
+    console.error('紧急事件测试失败:', error);
+    notification.error({
+      message: '测试失败',
+      description: '生成紧急事件时发生错误',
+      placement: 'bottomRight'
+    });
+  }
+};
+
+
 
 // 触发事件通知父组件状态变化
 const emit = defineEmits(["update:open"]);
@@ -104,9 +149,11 @@ const handleCancel = () => {
     destroyOnClose
   >
     <p>
-      <!-- 在现有按钮后添加 -->
+
       
-      <!-- 原有其他按钮... -->
+       <a-button danger @click="testEmergency">
+        测试经济任务
+      </a-button>
       <a-button danger @click = "resetGame()">reset game</a-button>
       <a-button danger @click = "testmeeting()">添加会议选项和联络人</a-button>
       <a-button danger @click = "quickMeeting">快速添加一场迎新会</a-button>
