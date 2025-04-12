@@ -60,5 +60,14 @@ export const GAME_EVENTS: Record<string, GameEvent> = {
       {type:'add_personal_task',taskId:"first_day"},
       {type:'unlock_next_day_btn'}
     ]
+  },
+  server_down: {
+    id: 'server_down',
+    actions: [
+      { type: 'add_email', templateId: 'emergency_notification' },
+      { type: 'add_recipient', recipientId: 'cto' },
+      { type: 'add_recipient', recipientId: 'devops' },
+      { type: 'add_sent_format', replyId: 'emergency_meeting_request' }
+    ]
   }
 }

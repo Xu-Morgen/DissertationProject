@@ -1,5 +1,6 @@
-import type { CalendarEvent, Task,MeetingType } from '@/types';
+import type { CalendarEvent, Task,MeetingType, ScriptStep } from '@/types';
 import contacts from './contacts';
+import { effect } from 'vue';
 
 const MEETING_TEMPLATES: CalendarEvent[] = [{
   id: 'daily_standup',
@@ -173,7 +174,7 @@ const FRESH_MEETINGS: CalendarEvent[] = [{
   ];
 
   const customCustomerMeeting = (params:{id:string,title:string,taskIsComplete:Task}):CalendarEvent=>{
-    let scripts = []
+    let scripts: ScriptStep[] = []
     if(params.taskIsComplete.status == 'done'){
       scripts = [
         {
@@ -185,7 +186,7 @@ const FRESH_MEETINGS: CalendarEvent[] = [{
       {
         sys: `CTO：干的不错，希望你们继续努力`,
         options: [
-          { text: "合作愉快" },
+          { text: "合作愉快",effects:[{type: 'finish_personal_task',taskId:params.taskIsComplete.linkedPersonalTaskId as string}] },
         ]
       }
     ]
@@ -216,7 +217,7 @@ const FRESH_MEETINGS: CalendarEvent[] = [{
       canDelete: false,
       type: 'client' as MeetingType,
       participants: {id:'client',name:'client'},
-      linkedTaskId:params.taskIsComplete.id
+      linkedTaskId:params.taskIsComplete.id,
       
     }
 
@@ -225,5 +226,6 @@ const FRESH_MEETINGS: CalendarEvent[] = [{
 
   }
   
+
 
 export default { MEETING_TEMPLATES, CLIENT_MEETINGS,FRESH_MEETINGS,dailyMeeting,CUSTOMER_MEETINGS,customCustomerMeeting };

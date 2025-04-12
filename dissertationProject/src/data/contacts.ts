@@ -15,4 +15,20 @@ const CONTACTS: Record<string,Recipient> =  {
     }
 }
 
+export const EMERGENCY_CONTACTS:Record<string,Recipient> = {
+    cto: {
+      id: 'cto',
+      name: '首席技术官 (CTO)'
+    },
+    devops: {
+      id: 'devops',
+      name: '运维团队'
+    },
+    security_lead: {
+      id: 'security_lead',
+      name: '安全负责人'
+    }
+  };
+  
+
 export default {CONTACTS}

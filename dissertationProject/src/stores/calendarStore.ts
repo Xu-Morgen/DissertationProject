@@ -19,7 +19,7 @@ export const useCalendarStore = defineStore('calendar', {
     effectQueue: [] as GameEventAction[],
     meetingHistory: [] as string[],
     userChoices: [] as string[],
-    
+
   }),
 
   actions: {
@@ -35,42 +35,92 @@ export const useCalendarStore = defineStore('calendar', {
       const addMeeting = meetingtype.find(t => t.id == meetingId);
       if (addMeeting) {
         this.meetingCanUse.push({ ...addMeeting, day: 0 });
-      } 
+      }
     },
 
     removeMeetingCanUse(meetingId: string) {
-      this.meetingCanUse = this.meetingCanUse.filter(t => t.id!=meetingId);
+      this.meetingCanUse = this.meetingCanUse.filter(t => t.id != meetingId);
     },
 
     advanceDay(days: number = 1) {
       //TODO A LOT
 
       console.log("advacnde")
-      const taskStore = useTaskStore() 
+      const taskStore = useTaskStore()
       const mailStore = useEmailStore()
       this.currentDay += days;
 
       //汇总每日日报
       taskStore.workingBacklog()
-      this.scheduleMeeting(meetings.dailyMeeting(taskStore.yesterdayTask),this.currentDay)
+      this.scheduleMeeting(meetings.dailyMeeting(taskStore.yesterdayTask), this.currentDay)
       taskStore.clearYesterdayTask
 
 
       //汇总每日会议
-      const todayMeetings = this.events.filter(t=>t.day==this.currentDay)
-      const {id,isRead,...todayMeetingEmail} = emails.dailyEmail(todayMeetings,this.currentDay)
+      const todayMeetings = this.events.filter(t => t.day == this.currentDay)
+      const { id, isRead, ...todayMeetingEmail } = emails.dailyEmail(todayMeetings, this.currentDay)
       mailStore.addEmail(todayMeetingEmail)
 
       //更改当日客户会议脚本
-      this.events.filter
+      this.changeCustomMeeting()
 
-      
-      
-    }, 
 
-    changeCustomMeeting(){
-      const todayMeetings = this.events.filter(t=>t.day = this.currentDay)
 
+    },
+
+
+    /**
+    * 更新当日客户会议脚本
+    */
+    changeCustomMeeting() {
+      const todayMeetings = this.events.filter(t => t.day == this.currentDay)
+      todayMeetings.forEach(meeting => {
+        if (meeting.linkedTaskId) {
+          // 根据 taskId 获取任务
+          const task = useTaskStore().backlog.find(t => t.id == meeting.linkedTaskId);
+          if (task) {
+
+              // 如果任务已完成，则更新 meeting 的 scripts
+              let scripts:ScriptStep[] = []
+              if (task.status == 'done') {
+                scripts = [
+                  {
+                    sys: `CTO：我们需要验证${task.title}进度`,
+                    options: [
+                      { text: "展示已完成工作" },
+                    ]
+                  },
+                  {
+                    sys: `CTO：干的不错，希望你们继续努力`,
+                    options: [
+                      { text: "合作愉快" ,effects:[{type: 'finish_personal_task',taskId:task.linkedPersonalTaskId as string}]},
+                    ]
+                  }
+                ]
+              }
+              else {
+                scripts = [
+                  {
+                    sys: `CTO：我们需要验证${task.title}进度`,
+                    options: [
+                      { text: "请求更多时间" },
+                    ]
+                  },
+                  {
+                    sys: `CTO：我们是否希望贵方能拿出更多成果`,
+                    options: [
+                      { text: "我们会多加努力" },
+                    ]
+                  }
+                ]
+              }
+              meeting.scripts = scripts;
+            
+          } else {
+            console.warn(`没有找到 taskId 为 ${meeting.linkedTaskId} 的任务。`);
+          }
+        }
+      });
     },
 
 
@@ -85,8 +135,8 @@ export const useCalendarStore = defineStore('calendar', {
 
     removeMeeting(meetingId: string) {
       const thisMeeting = this.events.find(e => e.id == meetingId)
-      if(thisMeeting){
-        this.meetingCanUse.push({...thisMeeting,day:0})
+      if (thisMeeting) {
+        this.meetingCanUse.push({ ...thisMeeting, day: 0 })
       }
       this.events = this.events.filter(e => e.id !== meetingId);
       if (this.activeMeeting?.id === meetingId) {
@@ -117,7 +167,7 @@ export const useCalendarStore = defineStore('calendar', {
       this.effectQueue.push(...effects);
       this.userChoices.push(text || '');
       this.meetingStep++;
-      
+
       if (this.meetingStep >= (this.activeMeeting?.scripts?.length || 0)) {
         this.completeMeeting();
       } else {
@@ -137,13 +187,13 @@ export const useCalendarStore = defineStore('calendar', {
         if (this.activeMeeting) {
           emailStore.addEmail(this.generateMeetingEmail());
         }
-        if(this.activeMeeting?.finishEventId){
-          useEventStore().triggerEvent(this.activeMeeting.finishEventId,GAME_EVENTS)
+        if (this.activeMeeting?.finishEventId) {
+          useEventStore().triggerEvent(this.activeMeeting.finishEventId, GAME_EVENTS)
         }
       } finally {
         if (this.activeMeeting) {
           this.activeMeeting.completed = true;
-          this.events = this.events.map(e => 
+          this.events = this.events.map(e =>
             e.id === this.activeMeeting?.id ? this.activeMeeting : e
           );
         }
@@ -153,25 +203,25 @@ export const useCalendarStore = defineStore('calendar', {
 
     applyMeetingEffect(effect: GameEventAction) {
       console.log('Applying effect:', effect);
-      // 具体效果实现逻辑
+      useEventStore().executeAction(effect)
     },
 
-// 保持之前的所有方法不变，仅修改completeMeeting方法中的邮件生成
-generateMeetingEmail(): Omit<Email, 'id' | 'isRead'> {
-  if (!this.activeMeeting) {
-    throw new Error('No active meeting to generate email');
-  }
+    // 保持之前的所有方法不变，仅修改completeMeeting方法中的邮件生成
+    generateMeetingEmail(): Omit<Email, 'id' | 'isRead'> {
+      if (!this.activeMeeting) {
+        throw new Error('No active meeting to generate email');
+      }
 
-  const combinedLogs = this.meetingHistory.flatMap((sysLog, index) => [
-    `System: ${sysLog}`,
-    ...(this.userChoices[index] ? [`User: ${this.userChoices[index]}`] : [])
-  ]);
+      const combinedLogs = this.meetingHistory.flatMap((sysLog, index) => [
+        `System: ${sysLog}`,
+        ...(this.userChoices[index] ? [`User: ${this.userChoices[index]}`] : [])
+      ]);
 
-  return {
-    from: 'system@company.com',
-    to: ['user@company.com'],
-    subject: `[Meeting Record] ${this.activeMeeting.title}`,
-    content: `
+      return {
+        from: 'system@company.com',
+        to: ['user@company.com'],
+        subject: `[Meeting Record] ${this.activeMeeting.title}`,
+        content: `
       Meeting Title: ${this.activeMeeting.title}
       Date: Day ${this.currentDay}
       -------------------------------
@@ -179,13 +229,13 @@ generateMeetingEmail(): Omit<Email, 'id' | 'isRead'> {
       ${combinedLogs.join('\n      ')}
       
     `,
-    day:this.currentDay,
-    metadata: {
-      requiresAction: false,
-      category: 'system'
-    }
-  };
-},
+        day: this.currentDay,
+        metadata: {
+          requiresAction: false,
+          category: 'system'
+        }
+      };
+    },
 
     resetMeetingState() {
       this.activeMeeting = null;
@@ -210,6 +260,6 @@ generateMeetingEmail(): Omit<Email, 'id' | 'isRead'> {
       return this.activeMeeting.scripts[this.meetingStep];
     }
   },
-  
+
   persist: true
 });

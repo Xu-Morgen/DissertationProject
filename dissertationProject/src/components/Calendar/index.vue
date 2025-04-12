@@ -225,9 +225,10 @@ const handleEventClick = (event: CalendarEvent) => {
     }
   }
 };
-const handleOptionSelect = (option: ScriptStep['options'][number]) => {
-  calendarStore.selectOption(option.effects, option.text);
-};
+
+  const handleOptionSelect = (option: ScriptStep['options'][number]) => {
+    calendarStore.selectOption(option.effects, option.text);
+  };
 
 const deleteMeeting = (meetingId: string) => {
   calendarStore.removeMeeting(meetingId);
@@ -273,7 +274,7 @@ onMounted(() => {
   .calendar-content {
     display: flex;
     flex-direction: column;
-    overflow: hidden;
+    height: calc(100vh - 25vh); /* 根据 debug-controls 等高度调整 */
   }
 
   .calendar-grid {
@@ -355,14 +356,16 @@ onMounted(() => {
   }
 
   .meeting-area {
-    height: 300px;
-    border: 2px dashed #e8e8e8;
-    border-radius: 8px;
-    padding: 16px;
-    transition: all 0.3s;
-    overflow: hidden;
-    position: relative;
-
+    /* 保持固定的高度 */
+  height: 300px;
+  /* 移除 transform，使其保持在正常文档流中 */
+  transform: none;
+  transition: all 0.3s;
+  border: 2px dashed #e8e8e8;
+  border-radius: 8px;
+  padding: 16px;
+  position: relative;
+  background: #f0f5ff; /* 可选：激活时可以有背景色 */
     &.active {
       border-color: #1890ff;
       background: #f0f5ff;

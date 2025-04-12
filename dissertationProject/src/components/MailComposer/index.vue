@@ -67,6 +67,7 @@
         option-filter-prop="label"
       />
   
+
   
       <template #footer>
         <a-button @click="handleCancel">Cancel</a-button>
@@ -80,7 +81,7 @@
   import { useEmailStore, useTaskStore, useEventStore, useCalendarStore, useUIStore } from '@/stores';
   import { GAME_EVENTS } from '@/data/events';
   import type { Email, Recipient, SentFormat } from '@/types';
-  
+
   const props = defineProps<{
     open: boolean;
   }>();
@@ -137,6 +138,7 @@
     }
     return []
   })
+
 
 
   // 收件人选项
@@ -220,7 +222,7 @@
         const {day,completed,...event} = meetingfind
         console.log(meetingfind)
         console.log(calendarStore.meetingCanUse)
-        calendarStore.removeMeetingCanUse(meetingfind)
+        calendarStore.removeMeetingCanUse(meetingfind.id)
         calendarStore.scheduleMeeting(event,meetingDay.value)
       }
     }

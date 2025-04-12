@@ -6,6 +6,7 @@ import {useCalendarStore,useEmailStore,useEventStore,useRootStore,useTaskStore,u
 import meetings from '@/data/meetings';
 import tasks from '@/data/tasks';
 import { notification } from 'ant-design-vue';
+import { GAME_EVENTS } from '@/data/events';
 const router = useRouter();
 
 
@@ -104,7 +105,6 @@ const handleCancel = () => {
   >
     <p>
       <!-- 在现有按钮后添加 -->
-      <a-button danger @click = "testCustomerTask">测试客户任务生成</a-button>
       
       <!-- 原有其他按钮... -->
       <a-button danger @click = "resetGame()">reset game</a-button>
@@ -112,6 +112,8 @@ const handleCancel = () => {
       <a-button danger @click = "quickMeeting">快速添加一场迎新会</a-button>
       <a-button danger @click = "quickTask">快速添加一个客户任务</a-button>
       <a-button danger @click = "quickUnlockND">快速解锁下一天</a-button>
+      <a-button danger @click = "testCustomerTask">测试客户任务生成</a-button>
+
     </p>
   </a-modal>
 </template>
