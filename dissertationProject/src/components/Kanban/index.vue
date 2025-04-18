@@ -27,14 +27,6 @@
               </div>
             </div>
 
-            <!-- 新增按钮 -->
-            <!-- <a-button 
-              type="primary" 
-              class="custom-button"
-              @click="handleButtonClick"
-            >
-              <plus-outlined /> 保存安排
-            </a-button> -->
           </div>
         </div>
       </a-divider>
@@ -107,7 +99,7 @@
           v-for="(task, index) in tasks" 
           :key="task.id"
           class="task-card"
-          :class="getPriorityClass(task.priority)"
+          :class="getPriorityClass(task)"
         >
           <template #title>     
             <div class="card-header">
@@ -115,6 +107,7 @@
                 TASK-{{ index + 1 }}
               </a-tag>
               <span class="task-title">{{ task.title }}</span>
+              <a-tag v-if="task.status === 'done'" color="green" class="done-tag">done</a-tag>
             </div>
           </template>
           
@@ -127,9 +120,6 @@
                 <clock-circle-outlined />
                 Priority:{{ task.priority }}
               </span>
-              <a-tag v-if="task.dependencies" color="purple" class="dependency-tag">
-                {{ task.dependencies }}
-              </a-tag>
             </div>
           </div>
         </a-card>
@@ -142,7 +132,7 @@
 <script lang="ts" setup>
 import { ref, computed, onMounted } from 'vue';
 import { useTaskStore } from '@/stores';
-import type { TaskPriority } from '@/types';
+import type { Task, TaskPriority } from '@/types';
 import { DeleteOutlined, ClockCircleOutlined, RocketOutlined, PlusOutlined } from '@ant-design/icons-vue';
 
 const taskStore = useTaskStore();
@@ -276,8 +266,10 @@ const getPriorityColor = (priority: TaskPriority): string => {
   }[priority];
 };
 
-const getPriorityClass = (priority: TaskPriority): string => {
-  return `priority-${priority}`;
+const getPriorityClass = (task: Task): string => {
+  return task.status === 'done'
+    ? 'task-done' // 新样式
+    : `priority-${task.priority}`;
 };
 
 // Transfer组件项渲染器
@@ -491,5 +483,11 @@ const renderFunc = (item: { title: string }) => item.title;
   .task-card {
     /* 保持原有卡片样式 */
   }
+}
+
+.task-done {
+  border: 2px solid #52c41a;
+  background: #f6ffed;
+  opacity: 0.8;
 }
 </style>

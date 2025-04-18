@@ -188,64 +188,60 @@ export const useTaskStore = defineStore('tasks', {
 
      return { mainTask, personalTask };
    },
-
-    /**
-     * 每一次工作增加的进度 
-     * 同时将完成的工作添加至yesterdayTask中
-     */
-    workingBacklog() {
-      let worker = useRootStore().worker;
-      const priorityLevels: TaskPriority[] = ['urgent', 'high', 'low'];
-      const markedTasks: { id: string; title: string; status: 'done' | 'inProgress'; progress: number }[] = [];
-    
-      // 创建 backlog 的副本用于更新
-      const updatedTasks = this.backlog.map(task => ({ ...task }));
-    
-      // 封装处理逻辑为函数
-      const processTasksByPriority = (priority: TaskPriority) => {
+   workingBacklog() {
+    const worker = useRootStore().worker; // ✅ 只读取，不修改
+    let availableWorkers = worker;
+  
+    const priorityLevels: TaskPriority[] = ['urgent', 'high', 'low'];
+  
+    const markedMap = new Map<string, { id: string; title: string; status: 'done' | 'inProgress'; progress: number }>();
+  
+    const updatedTasks = this.backlog.map(task => ({ ...task }));
+  
+    const processTasksByPriority = (priority: TaskPriority) => {
+      while (availableWorkers > 0) {
         const eligibleTasks = updatedTasks.filter(
-          (task) => task.status !== 'done' && task.priority === priority && task.progress <= 100
+          (task) => task.status !== 'done' && task.priority === priority && task.progress < 100
         );
-        console.log(eligibleTasks)
-        for (let i = 0; i < 5 && worker > 0; i++) {
-          const candidates = eligibleTasks.filter(task => task.progress <= 100);
-          if (candidates.length === 0) break;
-    
-          const randomIndex = Math.floor(Math.random() * candidates.length);
-          const target = candidates[randomIndex];
-    
-          const updateValue = Math.floor(Math.random() * 41) + 40; // 40 ~ 80
-          const updatedProgress = target.progress + updateValue;
-    
-          const targetIndex = updatedTasks.findIndex(t => t.id === target.id);
-          if (targetIndex !== -1) {
-            updatedTasks[targetIndex].progress = updatedProgress;
-    
-            const newStatus = updatedProgress > 100 ? 'done' : 'inProgress';
-            updatedTasks[targetIndex].status = newStatus;
-    
-            markedTasks.push({
+        if (eligibleTasks.length === 0) break;
+  
+        const randomIndex = Math.floor(Math.random() * eligibleTasks.length);
+        const target = eligibleTasks[randomIndex];
+  
+        const updateValue = Math.floor(Math.random() * 41) + 40; // 40~80
+        const newProgress = Math.min(target.progress + updateValue, 100);
+        const newStatus: 'done' | 'inProgress' = newProgress >= 100 ? 'done' : 'inProgress';
+  
+        const targetIndex = updatedTasks.findIndex(t => t.id === target.id);
+        if (targetIndex !== -1) {
+          updatedTasks[targetIndex].progress = newProgress;
+          updatedTasks[targetIndex].status = newStatus;
+  
+          const existing = markedMap.get(target.id);
+          if (!existing || newProgress > existing.progress) {
+            markedMap.set(target.id, {
               id: target.id,
               title: target.title,
               status: newStatus,
-              progress: updatedProgress
+              progress: newProgress,
             });
-    
-            worker--;
           }
+  
+          availableWorkers--;
         }
-      };
-    
-      // 按优先级顺序处理任务
-      for (const priority of priorityLevels) {
-        if (worker <= 0) break;
-        processTasksByPriority(priority);
       }
-    
-      // 更新 backlog 和保存处理记录
-      this.backlog = updatedTasks;
-      this.yesterdayTask = markedTasks; 
-    },
+    };
+  
+    for (const priority of priorityLevels) {
+      if (availableWorkers <= 0) break;
+      processTasksByPriority(priority);
+    }
+  
+    this.backlog = updatedTasks;
+    this.yesterdayTask = Array.from(markedMap.values()); // ✅ 每个任务最多一条
+  },
+  
+
     
     clearYesterdayTask(){
       this.yesterdayTask = []

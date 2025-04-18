@@ -1,17 +1,6 @@
 import type { PersonalTask, Task } from '@/types';
 
-const INITIAL_TASKS: Task[] = [{
-  id: 'tutorial',
-  title: '完成新手引导',
-  description: '通过邮件系统学习基本操作',
-  status: 'backlog',
-  priority: 'none',
-  creator: 'boss', // 修改为 'boss' 或 'client'
-  createdAt: 0,
-  blocked: false,
-  progress:0,
-  storyPoints:10,
-}];
+
 
 const TASK_TEMPLATES: Record<string, Omit<Task, 'id' | 'createdAt'>> = {
   analytics: {
@@ -81,4 +70,4 @@ const PERSONAL_TASK:PersonalTask[]=[
 
 
 
-export default {INITIAL_TASKS,TASK_TEMPLATES,PERSONAL_TASK} 
+export default {TASK_TEMPLATES,PERSONAL_TASK} 

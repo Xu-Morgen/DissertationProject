@@ -195,7 +195,7 @@ const sprintDayNumber = (dayNumber: number): number => {
 const getEventClass = (event: CalendarEvent) => ({
   'event-completed': event.completed,
   'event-active': calendarStore.activeMeeting?.id === event.id,
-  'event-disabled': event.completed // 新增禁用样式
+  'event-disabled': event.day !== calendarStore.currentDay // 新增禁用样式
 });
 
 const eventStatus = (event: CalendarEvent) => {
@@ -212,7 +212,9 @@ const eventStatusColor = (event: CalendarEvent) => {
 
 const handleEventClick = (event: CalendarEvent) => {
   if (event.completed) return; // 阻止已完成会议的点击
-
+  if (event.day !== calendarStore.currentDay) {
+  return; // 阻止非当天会议进入
+}
   if (calendarStore.inMeeting && calendarStore.activeMeeting?.id !== event.id) {
     alert('please finish current meeting');
     return;
@@ -460,5 +462,10 @@ onMounted(() => {
       }
     }
   }
+}
+.event-disabled {
+  opacity: 0.4;
+  pointer-events: none;
+  cursor: not-allowed;
 }
 </style>
