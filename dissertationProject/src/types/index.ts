@@ -6,29 +6,29 @@ export type GameDate = number; // 表示游戏开始后的天数
 /* ================= 邮件系统 ================= */
 export interface Email {
   id: string;
-  from: string;       // 发件人ID（对应contacts中的ID）
-  to: string[];       // 收件人ID列表
+  from: string;
+  to: string[];
   subject: string;
-  content: string;    // 支持HTML格式
+  content: string;
   isRead: boolean;
-  day: GameDate;      // 邮件所属游戏天数
-  replies?: Reply[];   // 可用的回复选项
+  day: GameDate;
+  replies?: Reply[];
   metadata: {
-    requiresAction: boolean;    // 是否需要玩家操作
-    category: 'system' | 'client' | 'boss' | 'team' ; // 邮件分类
+    requiresAction: boolean;
+    category: 'system' | 'client' | 'boss' | 'team';
   };
 }
 
 export interface Reply {
   id: string;
-  text: string;                 // 显示的回复文本
-  nextEventId?: string;         // 触发的后续事件ID
+  text: string;
+  nextEventId?: string;
 }
 
 export interface Recipient {
   id: string;
   name: string;
-  isEmergency: boolean,
+  isEmergency: boolean;
 }
 
 export interface SentFormat {
@@ -37,14 +37,14 @@ export interface SentFormat {
   content: string;
   relate: Recipient;
   nextEventId?: string;
-  type: "normal" | "meeting" | "emergency"; // 新增紧急类型
+  type: "normal" | "meeting" | "emergency";
   meetingid?: string;
-  emergencyLevel?: number; // 紧急程度
+
 }
 
 /* ================= 任务系统 ================= */
 export type TaskStatus = 'backlog' | 'todo' | 'inProgress' | 'done';
-export type TaskPriority = 'none'|'low' | 'medium' | 'high' | 'urgent';
+export type TaskPriority = 'none' | 'low' | 'medium' | 'high' | 'urgent';
 
 export interface Task {
   id: string;
@@ -52,37 +52,34 @@ export interface Task {
   description: string;
   status: TaskStatus;
   priority: TaskPriority;
-  storyPoints: number;         // 故事点数（用于Sprint计算）
-  sprintId?: string;            // 所属Sprint的ID
-  blocked: boolean;             // 是否被阻塞
-  blockerReason?: string;       // 阻塞原因
-  creator: 'player' | 'boss' | 'client'; // 任务来源
+  storyPoints: number;
+  sprintId?: string;
+  blocked: boolean;
+  creator: 'player' | 'boss' | 'client';
   createdAt: GameDate;
-  deadline?: GameDate;          // 截止天数（可选）
-  progress:number;
-  dueDay?: number; // 添加这个属性
+  deadline?: GameDate;
+  progress: number;
+  dueDay?: number;
   isCustomerTask?: boolean;
-  linkedMeetingId?: string; // 关联的会议ID
-  linkedPersonalTaskId?: string; // 关联的个人任务ID
+  linkedMeetingId?: string;
+  linkedPersonalTaskId?: string;
 }
+
 export interface PersonalTask {
   id: string;
   title: string;
   description: string;
   status: TaskStatus;
-  creator: 'player' | 'boss' | 'client' | 'system'; // 扩展creator类型
+  creator: 'player' | 'boss' | 'client' | 'system';
   createdAt: GameDate;
   deadline?: GameDate;
   linkedTaskId?: string;
   emergencyTemplateId?: string;
 }
 
-
-
 /* ================= 日历系统 ================= */
 export type MeetingType = 'daily' | 'sprint' | 'client' | 'personal';
 
-// 更新CalendarEvent类型
 export interface CalendarEvent {
   id: string;
   type: MeetingType;
@@ -90,18 +87,17 @@ export interface CalendarEvent {
   day: GameDate;
   participants: Recipient;
   completed: boolean;
-  scripts?: ScriptStep[]; // 替换outcome为scripts
-  finishEventId?:string;
-  canDelete:boolean;
-  linkedTaskId?:string;
+  scripts?: ScriptStep[];
+  finishEventId?: string;
+  canDelete: boolean;
+  linkedTaskId?: string;
 }
 
-// 更新ScriptStep类型
 export interface ScriptStep {
   sys: string;
   options?: Array<{
     text: string;
-    effects?: GameEventAction[]; // 改为GameEventAction数组
+    effects?: GameEventAction[];
   }>;
 }
 
@@ -117,76 +113,72 @@ export interface MeetingTemplate {
 
 export interface DailyMeetingConfig {
   autoCreate: boolean;
-  time: 'start' | 'end'; // 每日开始或结束时自动创建
+  time: 'start' | 'end';
   participants: string[];
 }
 
 /* ================= Sprint系统 ================= */
 export interface Sprint {
   id: string;
-  name: string;                 // Sprint名称（例："Sprint 1 - 登录模块"）
-  startDay: GameDate;           // 开始天数
-  endDay: GameDate;             // 结束天数
-  goal: string;                 // Sprint目标描述
-  velocity: number;             // 团队速率（points/day）
-  committedTasks: string[];     // 承诺的任务ID列表
-  completedPoints: number;      // 已完成故事点
+  name: string;
+  startDay: GameDate;
+  endDay: GameDate;
+  goal: string;
+  committedTasks: string[]; 
+  completedPoints: number;
 }
 
 /* ================= 事件系统 ================= */
-export type GameEventAction = 
-  | { type: 'add_email'; templateId: string }      // 添加邮件
-  | { type: 'modify_satisfaction'; value: number } // 修改满意度
-  | { type: 'unlock_feature'; feature: string }    // 解锁功能
-  | { type: 'schedule_meeting'; meetingId: string }// 安排会议
-  | { type: 'advance_day'; days: number }         // 推进天数
-  | { type: 'add_task'; taskId: string }           // 添加任务
-  | { type: "add_personal_task";taskId: string} //添加个人任务
-  | { type: 'finish_personal_task';taskId:string} //完成个人任务 
-  | { type: 'finish_task';taskId:string} //完成任务 
-  | { type: 'add_sent_format';replyId:string} //增加可用的发送格式
-  | { type: 'remove_sent_format';replyId:string} //删去不再可用的发送格式
-  | { type: 'add_recipient';recipientId:string} //增加新的可联系人
-  | { type: 'remove_recipient';recipientId:string} //删去不再可用的联系人
-  | { type: 'add_meeting_can_use';meetingId:string;meetingFrom:CalendarEvent[]} //增加可用的会议类型
-  | { type: 'remove_meeting_can_use';meetingId:string} // 删去某些特定的会议类型
-  | { type: 'add_daily_mail';templateId:string} //每日添加邮件
-  | { type:'daily_check'} // 每日检查，按照顺序添加邮件和客户会议
-  //特殊任务列表
-  | {type:'do_first_kanban'}//第一次kanban任务
-  | {type:"log_to_console",message:string}
-  | {type:'unlock_next_day_btn'}
+export type GameEventAction =
+  | { type: 'add_email'; templateId: string }
+  | { type: 'modify_satisfaction'; value: number }
+  | { type: 'unlock_feature'; feature: string }
+  | { type: 'schedule_meeting'; meetingId: string }
+  | { type: 'advance_day'; days: number }
+  | { type: 'add_task'; taskId: string }
+  | { type: 'add_personal_task'; taskId: string }
+  | { type: 'finish_personal_task'; taskId: string }
+  | { type: 'finish_task'; taskId: string }
+  | { type: 'add_sent_format'; replyId: string }
+  | { type: 'remove_sent_format'; replyId: string }
+  | { type: 'add_recipient'; recipientId: string }
+  | { type: 'remove_recipient'; recipientId: string }
+  | { type: 'add_meeting_can_use'; meetingId: string; meetingFrom: CalendarEvent[] }
+  | { type: 'remove_meeting_can_use'; meetingId: string }
+  | { type: 'add_daily_mail'; templateId: string }
+  | { type: 'daily_check' }
+  | { type: 'do_first_kanban' }
+  | { type: 'log_to_console'; message: string }
+  | { type: 'unlock_next_day_btn' };
 
 export interface GameEvent {
   id: string;
-  actions: GameEventAction[];  // 触发后的行为列表
+  actions: GameEventAction[];
 }
 
 export interface EmergencyTemplate {
-  id: string
-  title: string
-  // 关联系统
-  relatedTaskId?: string       // 关联的客户任务ID
+  id: string;
+  title: string;
+  relatedTaskId?: string;
   autoGenerate: {
     email: {
-      subject: string
-      content: string
-      recipients: string[]    // 自动添加的联系人ID
-    }
+      subject: string;
+      content: string;
+      recipients: string[];
+    };
     meeting?: {
-      templateId: string     // 会议模板ID
-      daysAfter: number      // 几天后自动安排会议
-    }
-  }
+      templateId: string;
+      // daysAfter: number; // ❌ 未使用
+    };
+  };
 }
-
 
 /* ================= UI状态 ================= */
 export interface UIState {
-  configModalOpen:boolean,
-  nextDayBtnCanUse:boolean,
-  readingEmailModalOpen:boolean,
-  sendingEmailModalOpen:boolean,
+  configModalOpen: boolean;
+  nextDayBtnCanUse: boolean;
+  readingEmailModalOpen: boolean;
+  sendingEmailModalOpen: boolean;
   activeView: 'mail' | 'kanban' | 'calendar';
   emailFilter: {
     unreadOnly: boolean;
