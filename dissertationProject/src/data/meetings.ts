@@ -6,18 +6,18 @@ export const MEETING_TEMPLATES = {
   tech_emergency: {
     id: "tech_emergency",
     type: 'client',
-    title: "技术紧急会议",
+    title: "tech emergency meeting",
     participants: {  // 添加缺失的participants属性
       id: "tech_team",
-      name: "技术应急小组",
+      name: "tech team",
       isEmergency:true
     },
     scripts: [
       {
-        sys: "CTO：当前恢复进度如何？",
+        sys: "CTO：how is everything going on？",
         options: [
           { 
-            text: "已启用备用集群", 
+            text: "has apply second server", 
             effects: [
               { type: 'modify_satisfaction', value: 20 }
             ]
@@ -98,26 +98,26 @@ const FRESH_MEETINGS: CalendarEvent[] = [{
   
     const doneText = doneTasks.length > 0
       ? doneTasks.map(task => `【${task.title}】`).join('、')
-      : '无';
+      : 'none';
   
     const progressText = progressedTasks.length > 0
       ? progressedTasks.map(task => `【${task.title}】：${task.progress}%`).join('，')
-      : '暂无明显进展';
+      : 'no progress';
   
     const scripts: CalendarEvent['scripts'] = [
       {
-        sys: `昨日完成任务：${doneText}`,
+        sys: `yesterday finish：${doneText}`,
         options: [
           {
-            text: '收到',
+            text: 'got it',
           }
         ]
       },
       {
-        sys: `进展中的任务：${progressText}`,
+        sys: `task in progress：${progressText}`,
         options: [
           {
-            text: '继续努力！',
+            text: 'hurry up！',
           }
         ]
       }
@@ -140,15 +140,15 @@ const FRESH_MEETINGS: CalendarEvent[] = [{
   export const CUSTOMER_MEETINGS: CalendarEvent[] = [
     {
       id: "customer_review",
-      title: "支付系统安全升级评审",
+      title: "system check",
       day: 3,
       completed: false,
       scripts: [
         {
-          sys: "CTO：我们需要验证支付系统的安全升级进度",
+          sys: "CTO：we need to check system",
           options: [
-            { text: "展示已完成工作" },
-            { text: "请求更多时间" }
+            { text: "show work" },
+            { text: "ask for time" }
           ]
         }
       ],
@@ -163,15 +163,15 @@ const FRESH_MEETINGS: CalendarEvent[] = [{
     if(params.taskIsComplete.status == 'done'){
       scripts = [
         {
-        sys: `CTO：我们需要验证${params.taskIsComplete.title}进度`,
+        sys: `CTO：we need to check${params.taskIsComplete.title}`,
         options: [
-          { text: "展示已完成工作" },
+          { text: "show work" },
         ]
       },
       {
-        sys: `CTO：干的不错，希望你们继续努力`,
+        sys: `CTO：good job`,
         options: [
-          { text: "合作愉快",effects:[{type: 'finish_personal_task',taskId:params.taskIsComplete.linkedPersonalTaskId as string}] },
+          { text: "thanks",effects:[{type: 'finish_personal_task',taskId:params.taskIsComplete.linkedPersonalTaskId as string}] },
         ]
       }
     ]
@@ -179,15 +179,15 @@ const FRESH_MEETINGS: CalendarEvent[] = [{
     else{
       scripts = [
         {
-        sys: `CTO：我们需要验证${params.taskIsComplete.title}进度`,
+        sys: `CTO：we need to check ${params.taskIsComplete.title}`,
         options: [
-          { text: "请求更多时间" },
+          { text: "ask for time" },
         ]
       },
       {
-        sys: `CTO：我们是否希望贵方能拿出更多成果`,
+        sys: `CTO：ask for more work`,
         options: [
-          { text: "我们会多加努力" },
+          { text: "we'll do better" },
         ]
       }
     ]

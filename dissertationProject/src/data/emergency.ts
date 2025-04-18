@@ -5,8 +5,8 @@ export const EMERGENCY_TEMPLATES = {
     id: "server_down",
     autoGenerate: {
       email: {
-        subject: "[紧急] 服务器故障处理",
-        content: "需要立即处理的服务器宕机事件",
+        subject: "[emergency] server killed",
+        content: "please fix server",
         recipients: "devops"
       },
       meeting: {

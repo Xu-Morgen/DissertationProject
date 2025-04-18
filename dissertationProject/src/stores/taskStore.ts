@@ -35,8 +35,8 @@ export const useTaskStore = defineStore('tasks', {
 
       const personalTask: PersonalTask = {  
         id: `emergency_${Date.now()}`,
-        title: `[突发事件] ${baseTask.title}`,
-        description: `需要紧急处理的任务关联问题`,
+        title: `[emergency] ${baseTask.title}`,
+        description: `need to solve emergency`,
         status: 'backlog',
         linkedTaskId: baseTask.id,
         emergencyTemplateId: params.emergencyId,
@@ -150,7 +150,7 @@ export const useTaskStore = defineStore('tasks', {
      const mainTask: Task = {
        id: taskId,
        title: params.title,
-       description: `在Day ${params.dueDay}前完成${params.title}`,
+       description: `finish ${params.title} before Day ${params.dueDay}`,
        status: 'todo',
        priority: 'high',
        progress: 0,
@@ -167,8 +167,8 @@ export const useTaskStore = defineStore('tasks', {
      // 创建关联的个人任务（任务B）
      const personalTask: PersonalTask = {
        id: personalTaskId,
-       title: `客户需求：${params.title}`,
-       description: `需在Day ${params.dueDay}前完成客户任务：【${params.title}】`,
+       title: `client：${params.title}`,
+       description: `finish ${params.title} before Day ${params.dueDay}`,
        status: 'backlog',
        linkedTaskId: taskId,
        deadline: params.dueDay,
@@ -181,8 +181,8 @@ export const useTaskStore = defineStore('tasks', {
      this.upsertPersoanlTask(personalTask);
 
      notification.info({
-       message: '新客户任务',
-       description: `已创建关联任务【${params.title}】`,
+       message: 'new client task',
+       description: `create【${params.title}】`,
        placement: 'bottomRight'
      });
 

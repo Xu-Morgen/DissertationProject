@@ -33,12 +33,9 @@ const SENT: SentFormat[] = [
 export const EMERGENCY_FORMATS = {
     server_emergency: {
       id: "emergency_server",
-      subject: "[紧急] 服务器故障处理",
-      content: `## 服务器紧急故障处理流程
-            1. 立即联系运维团队
-            2. 启动备用服务器集群
-            3. 进行故障诊断`,
-      relate: { id: "devops", name: "运维团队" },
+      subject: "[ermergency] server killed",
+      content: `do someting`,
+      relate: { id: "devops", name: "devops" },
       type: "emergency",
       meetingid: "tech_emergency",
       nextEventId: "trigger_tech_meeting",

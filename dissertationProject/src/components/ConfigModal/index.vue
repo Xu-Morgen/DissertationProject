@@ -59,7 +59,7 @@ const testCustomerTask = () => {
   // 生成关联的客户任务
   const {mainTask} = useTaskStore().generateCustomerTask({
     meetingId: customerMeeting.id,
-    title: "紧急客户需求：支付系统升级",
+    title: "client ask: system update",
     dueDay: 3,
     storyPoints: 8
   });
@@ -79,8 +79,8 @@ const testCustomerTask = () => {
 
 
   notification.success({
-    message: '测试客户任务已创建',
-    description: `已关联到会议【${customerMeeting.title}】`,
+    message: 'test client task add',
+    description: `connet to【${customerMeeting.title}】`,
     placement: 'bottomRight'
   });
 };
@@ -95,8 +95,8 @@ const testEmergency = () => {
     
     if (!baseTask) {
       notification.error({
-        message: '测试失败',
-        description: '请先创建客户任务',
+        message: 'test failed',
+        description: 'create client task first',
         placement: 'bottomRight'
       });
       return;
@@ -109,12 +109,12 @@ const testEmergency = () => {
     });
 
     notification.success({
-      message: '紧急事件已生成',
+      message: 'emergency task added',
       description: `
-        已创建：
-        1. 应急个人任务
-        2. 技术团队联系人
-        3. 紧急会议模板
+        create：
+        1. emergency personal task
+        2. emergency recipient
+        3. emergency meeting
       `,
       placement: 'bottomRight'
     });
@@ -150,16 +150,17 @@ const handleCancel = () => {
   >
     <p>
 
-      
-       <a-button danger @click="testEmergency">
-        测试经济任务
-      </a-button>
+
       <a-button danger @click = "resetGame()">reset game</a-button>
-      <a-button danger @click = "testmeeting()">添加会议选项和联络人</a-button>
-      <a-button danger @click = "quickMeeting">快速添加一场迎新会</a-button>
-      <a-button danger @click = "quickTask">快速添加一个客户任务</a-button>
-      <a-button danger @click = "quickUnlockND">快速解锁下一天</a-button>
-      <a-button danger @click = "testCustomerTask">测试客户任务生成</a-button>
+      <a-button danger @click = "testmeeting()">add meeting and addRecipient</a-button>
+      <a-button danger @click = "quickMeeting">add fresh meeting</a-button>
+      <a-button danger @click = "quickTask">quick add client task</a-button>
+      <a-button danger @click = "quickUnlockND">unlock next day</a-button>
+      <a-button danger @click = "testCustomerTask">test client meeting generataion</a-button>
+            
+      <a-button danger @click="testEmergency">
+        test emergency task
+      </a-button>
 
     </p>
   </a-modal>

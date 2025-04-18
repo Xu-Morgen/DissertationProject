@@ -114,16 +114,16 @@ const dailyEmail = (meetings: CalendarEvent[], day: number): Email => {
   // 生成邮件内容HTML
   const generateMeetingHTML = (meeting: CalendarEvent) => {
     const status = meeting.completed ? 
-      '<span style="color: #52c41a;">✓ 已完成</span>' : 
-      '<span style="color: #ff4d4f;">◷ 进行中</span>';
-    const scriptProgress = `进度：${meeting.completed ? '完成' : `待进行`}`
+      '<span style="color: #52c41a;">✓ finished</span>' : 
+      '<span style="color: #ff4d4f;">◷ in progress</span>';
+    const scriptProgress = `status：${meeting.completed ? 'finish' : `in progress`}`
 
     return `
       <div ">
         <h3>${meeting.title}</h3>
-          <div>类型：${meeting.type}</div>
-          <div>参与方：${meeting.participants.name}</div>
-          <div>状态：${status} ${scriptProgress}</div>
+          <div>type：${meeting.type}</div>
+          <div>viewver：${meeting.participants.name}</div>
+          <div>status：${status} ${scriptProgress}</div>
 
       </div>
     `;
@@ -131,12 +131,12 @@ const dailyEmail = (meetings: CalendarEvent[], day: number): Email => {
 
   // 构建邮件内容
   const content = `
-        Day ${day} 会议安排概览
+        Day ${day} meetingn schedule
       
       ${meetings.length > 0 ? 
         meetings.map(generateMeetingHTML).join('') : 
         `<div style="text-align: center; color: rgba(0,0,0,0.25);">
-          今日无会议安排
+          no meeting today
         </div>`
       }
 
@@ -144,9 +144,9 @@ const dailyEmail = (meetings: CalendarEvent[], day: number): Email => {
 
   const dailyEmail: Email = {
     id: `day${day}_meetings_${Date.now()}`,
-    from: '系统日程助手',
+    from: 'daily system helper',
     to: ['player'],
-    subject: `Day ${day} 会议安排（共${meetings.length}个会议）`,
+    subject: `Day ${day} meeting arrangement（have ${meetings.length} meetings）`,
     content: content,
     isRead: false,
     day: day,

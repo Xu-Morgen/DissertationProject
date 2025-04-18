@@ -88,15 +88,15 @@ export const useCalendarStore = defineStore('calendar', {
               if (task.status == 'done') {
                 scripts = [
                   {
-                    sys: `CTO：我们需要验证${task.title}进度`,
+                    sys: `CTO：we need to check ${task.title}进度`,
                     options: [
-                      { text: "展示已完成工作" },
+                      { text: "show work" },
                     ]
                   },
                   {
-                    sys: `CTO：干的不错，希望你们继续努力`,
+                    sys: `CTO：good job`,
                     options: [
-                      { text: "合作愉快" ,effects:[{type: 'finish_personal_task',taskId:task.linkedPersonalTaskId as string}]},
+                      { text: "thanks" ,effects:[{type: 'finish_personal_task',taskId:task.linkedPersonalTaskId as string}]},
                     ]
                   }
                 ]
@@ -104,15 +104,15 @@ export const useCalendarStore = defineStore('calendar', {
               else {
                 scripts = [
                   {
-                    sys: `CTO：我们需要验证${task.title}进度`,
+                    sys: `CTO：we need to check${task.title}`,
                     options: [
-                      { text: "请求更多时间" },
+                      { text: "ask for time" },
                     ]
                   },
                   {
-                    sys: `CTO：我们是否希望贵方能拿出更多成果`,
+                    sys: `CTO：we hope to see more work`,
                     options: [
-                      { text: "我们会多加努力" },
+                      { text: "we will do better" },
                     ]
                   }
                 ]

@@ -18,17 +18,17 @@ const CONTACTS: Record<string,Recipient> =  {
     },
     cto: {
       id: 'cto',
-      name: '首席技术官 (CTO)',
+      name: '(CTO)',
       isEmergency:true,
     },
     devops: {
       id: 'devops',
-      name: '运维团队',
+      name: 'tech team',
       isEmergency:true,
     },
     security_lead: {
       id: 'security_lead',
-      name: '安全负责人',
+      name: 'security_lead',
       isEmergency:true,
     }
 }

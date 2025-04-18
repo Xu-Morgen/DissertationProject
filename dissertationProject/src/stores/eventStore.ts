@@ -30,7 +30,7 @@ export const useEventStore = defineStore('events', {
         }
 
       } catch (error) {
-        console.error(`事件处理失败: ${eventId}`, error);
+        console.error(`event failed: ${eventId}`, error);
       }
     },
 

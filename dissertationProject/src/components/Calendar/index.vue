@@ -214,7 +214,7 @@ const handleEventClick = (event: CalendarEvent) => {
   if (event.completed) return; // 阻止已完成会议的点击
 
   if (calendarStore.inMeeting && calendarStore.activeMeeting?.id !== event.id) {
-    alert('请先完成当前会议');
+    alert('please finish current meeting');
     return;
   }
 
