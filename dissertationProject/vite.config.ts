@@ -5,6 +5,10 @@ import { resolve } from 'path' // 确保已导入 path 模块
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [vue()],
+  build: {
+    outDir: 'dist',
+    target: 'esnext'
+  },  
   server: {
     host: '0.0.0.0',  // 监听所有网络接口
     port: 3000,       // 端口号
