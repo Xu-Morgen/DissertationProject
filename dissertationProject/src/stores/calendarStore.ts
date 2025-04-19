@@ -19,6 +19,7 @@ export const useCalendarStore = defineStore('calendar', {
     effectQueue: [] as GameEventAction[],
     meetingHistory: [] as string[],
     userChoices: [] as string[],
+    
 
   }),
 
@@ -192,6 +193,8 @@ export const useCalendarStore = defineStore('calendar', {
         }
         if (this.activeMeeting?.finishEventId) {
           useEventStore().triggerEvent(this.activeMeeting.finishEventId, GAME_EVENTS)
+          console.log('[Meeting End] Triggering event:', this.activeMeeting.finishEventId);
+
         }
       } finally {
         if (this.activeMeeting) {

@@ -13,27 +13,34 @@ import { useRootStore } from './rootStore';
 
 export const useEventStore = defineStore('events', {
   state: () => ({
+    events: {} as Record<string, GameEvent>
+
   }),
 
   actions: {
+
+    registerEvent(event: GameEvent) {
+      this.events[event.id] = event;
+    },
+    
+
+
     /**
      * 触发指定事件
      */
-    async triggerEvent(eventId: string,gameEvents:Record<string, GameEvent>,) {
-
-
-      const event = gameEvents[eventId]; // 需要从外部导入预定义事件
+    async triggerEvent(eventId: string, fallbackEvents: Record<string, GameEvent>) {
+      const event = this.events[eventId] || fallbackEvents[eventId]; // ✅ 优先从已注册事件取
       if (!event) return;
-
+    
       try {
         for (const action of event.actions) {
           await this.executeAction(action);
         }
-
       } catch (error) {
         console.error(`event failed: ${eventId}`, error);
       }
     },
+    
 
     /**
      * 执行单个事件动作
@@ -199,7 +206,19 @@ export const useEventStore = defineStore('events', {
           }
 
           case 'unblock_tasks_by_keyword': {
-            taskStore.unblockTasksByKeywords(action.keywords);
+            const keywords = action.keywords as string[];
+            const taskStore = useTaskStore();
+            taskStore.backlog.forEach(task => {
+              const match = keywords.some(kw =>
+                task.title.toLowerCase().includes(kw) ||
+                task.description?.toLowerCase().includes(kw)
+              );
+              if (match) {
+                task.blocked = false;
+              }
+            });
+            console.log(`[GameEvent] Tasks blocked by keywords: ${keywords.join(', ')}`);
+            break;
             break;
           }
       }

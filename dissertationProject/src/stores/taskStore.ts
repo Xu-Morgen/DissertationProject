@@ -83,7 +83,7 @@ export const useTaskStore = defineStore('tasks', {
           canDelete: true,
           scripts: emergencyScripts,
           linkedTaskId: undefined,
-          finishEventId: `event_finish_${template.id}`,
+          finishEventId: `event_emergency_${template.id}`,
           participants: {
             id: 'user',
             name: '你',
@@ -101,7 +101,7 @@ export const useTaskStore = defineStore('tasks', {
           {
             type: 'add_emergency_task_personal', // 👈 统一使用标准事件类型
             task: {
-              id: `emergency_${template.id}_${Date.now()}`,
+              id: `emergency_${template.id}`,
               title: `[紧急] ${template.title}`,
               description: `处理紧急事件：“${template.title}”。`,
               status: 'backlog',
@@ -126,17 +126,21 @@ export const useTaskStore = defineStore('tasks', {
         });
       }
     
-      if (actions.length > 0) {
-        GAME_EVENTS[eventId] = {
-          id: eventId,
-          actions
-        };
-      }
+
 
       const eventStore = useEventStore()
+
+      const finishactions: GameEventAction[] = [];
+
+      if (actions.length > 0) {
+        eventStore.registerEvent({
+          id: eventId,
+          actions: actions
+        });
+      }
+
       eventStore.triggerEvent(eventId, GAME_EVENTS);
       
-      const finishactions: GameEventAction[] = [];
 
       if (template.effects?.blockKeywords?.length) {
         finishactions.push({
@@ -149,33 +153,20 @@ export const useTaskStore = defineStore('tasks', {
           type: 'boost_worker'
         });
       }
-      
+      finishactions.push({type:'finish_personal_task',taskId:`emergency_${template.id}`})
+      console.log(finishactions)
       if(finishactions.length > 0){
-        GAME_EVENTS[`event_finish_${template.id}`] = {
-          id: `event_finish_${template.id}`,
+        eventStore.registerEvent({
+          id: `event_emergency_${template.id}`,
           actions: finishactions
-        }
+        });
       }
       
 
     },  
     
-    unblockTasksByKeywords(keywords: string[]) {
-      this.backlog = this.backlog.map(task => {
-        if (task.blocked) {
-          const matched = keywords.some(keyword =>
-            task.title.includes(keyword) || task.description?.includes(keyword)
-          );
-          if (matched) {
-            return {
-              ...task,
-              status: 'inProgress'
-            };
-          }
-        }
-        return task;
-      });
-    },
+
+
     
     /**
      * 检查客户任务完成状态（在会议中调用）

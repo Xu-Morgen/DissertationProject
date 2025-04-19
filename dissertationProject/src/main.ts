@@ -11,7 +11,7 @@ import 'ant-design-vue/dist/reset.css';
 import './style.css'
 import { useEmailStore, useRootStore, useTaskStore } from './stores';
 import CommonUtils from './utils/utils';
-
+import { initializeGameData } from '@/utils/initialGame';
 //方法定义
 const InitialTheGame = () =>{
     const root = useRootStore();
@@ -31,9 +31,12 @@ const app = createApp(App);
 app.use(pinia);
 app.use(Antd);
 app.use(router)
-app.mount('#app');
+
 
 InitialTheGame()
+
+
+app.mount('#app');
 
 
 

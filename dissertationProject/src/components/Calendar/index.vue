@@ -43,8 +43,8 @@
       <div class="event-header">
         <span class="event-title">{{ event.title }}</span>
         <a-popconfirm
-          v-if="!event.completed && event.canDelete"
-          title="确定要删除此会议吗？"
+          v-if="!event.completed && event.canDelete && event.day >= calendarStore.currentDay"
+          title="are you sure for deleting this meeting？"
           @confirm="deleteMeeting(event.id)"
         >
           <close-outlined class="delete-icon" @click.stop />
@@ -211,15 +211,12 @@ const eventStatusColor = (event: CalendarEvent) => {
 };
 
 const handleEventClick = (event: CalendarEvent) => {
-  if (event.completed) return; // 阻止已完成会议的点击
-  if (event.day !== calendarStore.currentDay) {
-  return; // 阻止非当天会议进入
-}
+  if (event.completed) return;
+  if (event.day !== calendarStore.currentDay) return;
   if (calendarStore.inMeeting && calendarStore.activeMeeting?.id !== event.id) {
     alert('please finish current meeting');
     return;
   }
-
   if (event.scripts) {
     calendarStore.startMeeting(event.id);
     if (!event.completed) {
@@ -228,12 +225,20 @@ const handleEventClick = (event: CalendarEvent) => {
   }
 };
 
+
   const handleOptionSelect = (option: ScriptStep['options'][number]) => {
     calendarStore.selectOption(option.effects, option.text);
   };
 
 const deleteMeeting = (meetingId: string) => {
-  calendarStore.removeMeeting(meetingId);
+  const meeting = calendarStore.events.find(t=>t.id == meetingId)
+  if(meeting?.day){
+    if(meeting?.day <= calendarStore.currentDay){
+      calendarStore.removeMeeting(meetingId);
+    } 
+  }
+
+
 };
 
 // 会议状态计算
@@ -465,7 +470,6 @@ onMounted(() => {
 }
 .event-disabled {
   opacity: 0.4;
-  pointer-events: none;
   cursor: not-allowed;
 }
 </style>
