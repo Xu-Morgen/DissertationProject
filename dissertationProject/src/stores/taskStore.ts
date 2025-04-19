@@ -6,6 +6,7 @@ import { useRootStore } from './rootStore';
 import { useCalendarStore, useEmailStore, useEventStore } from '.';
 
 import { GAME_EVENTS } from '@/data/events';
+import { EMERGENCY_TEMPLATES } from '@/data/emergency';
 
 export const useTaskStore = defineStore('tasks', {
   state: () => ({
@@ -206,6 +207,11 @@ export const useTaskStore = defineStore('tasks', {
     },
 
     
+    getRandomEmergencyTemplate(): EmergencyTemplate {
+      const keys = Object.keys(EMERGENCY_TEMPLATES);
+      const randomKey = keys[Math.floor(Math.random() * keys.length)];
+      return EMERGENCY_TEMPLATES[randomKey];
+    },
     
     /**
     * 生成客户关联任务对
@@ -227,7 +233,7 @@ export const useTaskStore = defineStore('tasks', {
        title: params.title,
        description: `finish ${params.title} before Day ${params.dueDay}`,
        status: 'todo',
-       priority: 'high',
+       priority: 'none',
        progress: 0,
        storyPoints: params.storyPoints,
        dueDay: params.dueDay,

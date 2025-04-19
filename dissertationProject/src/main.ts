@@ -11,7 +11,6 @@ import 'ant-design-vue/dist/reset.css';
 import './style.css'
 import { useEmailStore, useRootStore, useTaskStore } from './stores';
 import CommonUtils from './utils/utils';
-import { initializeGameData } from '@/utils/initialGame';
 //方法定义
 const InitialTheGame = () =>{
     const root = useRootStore();

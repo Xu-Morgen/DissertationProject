@@ -73,10 +73,6 @@ const testCustomerTask = () => {
     taskIsComplete: mainTask
   })
   
-  console.log(mainTask.id,customerMeeting.id)
-  console.log(mainTask)
-  console.log(customerMeeting)
-
   // 安排到测试日
   useCalendarStore().scheduleMeeting(customerMeeting, useCalendarStore().currentDay+1);
 
