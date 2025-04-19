@@ -166,12 +166,12 @@ const remainingMeetings = computed(() => {
       <!-- 头部 -->
       <a-layout-header class="header">
         <ConfigModal :open="uiStore.configModalOpen"/>
-        <!-- <a-button 
+        <a-button 
           type="primary" 
           shape="circle" 
           @click="uiStore.toggleConfig(true)"
           :icon="h(ToolOutlined)" 
-        /> -->
+        />
         <a-button 
           ref = 'tourStep6'
           type="primary" 

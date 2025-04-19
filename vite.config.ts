@@ -4,7 +4,7 @@ import { resolve } from 'path' // 确保已导入 path 模块
 
 // https://vite.dev/config/
 export default defineConfig({
-  base: '/DissertationProject/dissertationProject',
+  base: '/',
   plugins: [vue()],
   build: {
     outDir: 'dist',
