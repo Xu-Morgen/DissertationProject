@@ -23,10 +23,18 @@ export const EMERGENCY_TEMPLATES: Record<string, EmergencyTemplate> = {
   ai_speed_boost: {
     id: 'ai_speed_boost',
     title: 'AI Code Optimizer Deployed',
+    autoGenerate: {
+      email: {
+        subject: '[系统提示] AI加速器上线',
+        content: 'AI辅助编程工具已部署，生产力将大幅提升！',
+        recipients: ['team']
+      }
+    },
     effects: {
       boostWorker: true
     }
   },
+  
   db_corruption: {
     id: 'db_corruption',
     title: 'Database Corruption Detected',
@@ -151,6 +159,13 @@ export const EMERGENCY_TEMPLATES: Record<string, EmergencyTemplate> = {
   positive_press: {
     id: 'positive_press',
     title: 'Positive Press Coverage',
+    autoGenerate: {
+      email: {
+        subject: '[新闻快报] 本公司获得积极媒体报道',
+        content: '最新新闻赞扬我们团队的创新表现，士气大涨！',
+        recipients: ['team']
+      }
+    },
     effects: {
       boostWorker: true
     }
@@ -179,6 +194,13 @@ export const EMERGENCY_TEMPLATES: Record<string, EmergencyTemplate> = {
   team_building: {
     id: 'team_building',
     title: 'Team Building Day',
+    autoGenerate: {
+      email: {
+        subject: '[提醒] 团建活动今日开启',
+        content: '今天下午安排团建活动，请放松并享受乐趣！',
+        recipients: ['team']
+      }
+    },
     effects: {
       boostWorker: true
     }
@@ -228,6 +250,13 @@ export const EMERGENCY_TEMPLATES: Record<string, EmergencyTemplate> = {
   toolchain_upgrade: {
     id: 'toolchain_upgrade',
     title: 'Toolchain Upgrade Completed',
+    autoGenerate: {
+      email: {
+        subject: '[通知] 工具链更新完成',
+        content: '新版本工具链已启用，开发效率将有所提升。',
+        recipients: ['devops', 'tech_lead']
+      }
+    },
     effects: {
       boostWorker: true
     }

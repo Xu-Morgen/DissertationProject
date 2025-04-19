@@ -85,7 +85,10 @@ const testCustomerTask = () => {
 };
 
 
-
+const day20 = () =>{
+  const calendar = useCalendarStore()
+  calendar.currentDay = 20
+}
 
 
 const triggerEmergency = () => {
@@ -129,6 +132,7 @@ const handleCancel = () => {
       <a-button danger @click = "testCustomerTask">test client meeting generataion</a-button>
       <a-button type="primary" @click="triggerEmergency">测试紧急任务</a-button>
       <a-button type="primary" @click="triggerEmergency2">测试紧急任务2</a-button>
+      <a-button type="primary" @click="day20">day 20</a-button>
 
 
     </p>

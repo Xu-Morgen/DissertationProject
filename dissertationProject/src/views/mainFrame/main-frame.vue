@@ -19,6 +19,9 @@ import { MailOutlined, AppstoreOutlined, CalendarOutlined,ToolOutlined,QuestionO
 import {statusColor} from '@/data/Global'
 import type { Email } from '@/types';
 import type { TourProps } from 'ant-design-vue';
+import CommonUtils from '@/utils/utils';
+import EmailData from '@/data/emails'
+import TaskData from '@/data/tasks'
 // Store 实例
 const emailStore = useEmailStore();
 const taskStore = useTaskStore();
@@ -70,6 +73,7 @@ const steps: TourProps['steps'] = [
     title: 'Project Calendar',
     description: 'Check meeting schedules and project timelines',
     target: () => tourStep4.value && tourStep4.value.$el,
+    
   },
   // 步骤5 - 推进天数
   {
@@ -82,13 +86,28 @@ const steps: TourProps['steps'] = [
     title: 'Help Center',
     description: 'Click the question mark anytime to review this tutorial',
     target: () => tourStep6.value && tourStep6.value.$el,
+    onFinish: () => {
+      InitialTheGame()
+      rootStore.handleTour(false)  // 关闭 tour 状态
+    }
   }
+  
 ];
 const playTour = () => {
     tourStep.value = 0
     rootStore.handleTour(true)
 
 };
+
+const InitialTheGame = () =>{
+    const root = useRootStore();
+    if(root.firstTimePlay){
+        useEmailStore().addEmail(CommonUtils.omitEmail(EmailData.SYSTEM_EMAILS[0]))
+        useTaskStore().upsertPersoanlTask(TaskData.PERSONAL_TASK[0])
+    }
+    root.played()
+}
+
 
 
 
@@ -147,12 +166,12 @@ const remainingMeetings = computed(() => {
       <!-- 头部 -->
       <a-layout-header class="header">
         <ConfigModal :open="uiStore.configModalOpen"/>
-        <a-button 
+        <!-- <a-button 
           type="primary" 
           shape="circle" 
           @click="uiStore.toggleConfig(true)"
           :icon="h(ToolOutlined)" 
-        />
+        /> -->
         <a-button 
           ref = 'tourStep6'
           type="primary" 

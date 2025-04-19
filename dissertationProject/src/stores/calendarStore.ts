@@ -7,6 +7,9 @@ import { GAME_EVENTS } from '@/data/events';
 import { useTaskStore } from './taskStore';
 import tasks from '@/data/tasks';
 import emails from '@/data/emails';
+import router from '@/router';
+
+import { Modal } from 'ant-design-vue';
 
 export const useCalendarStore = defineStore('calendar', {
   state: () => ({
@@ -123,13 +126,29 @@ export const useCalendarStore = defineStore('calendar', {
     checkVictoryOrDefeat() {
       const taskStore = useTaskStore();
       const allTasksCompleted = taskStore.backlog.every(t => t.status === 'done');
-      const dayLimitReached = this.currentDay >= 21;
+      const dayLimitReached = this.currentDay >= 22;
       const lost = taskStore.satisfaction <= 0;
     
       if (lost) {
-        alert("💥 游戏失败：客户满意度过低！");
+        Modal.warn({
+          title: '💥 游戏失败：客户满意度过低！',
+          content: '你完成了所有任务或坚持到了第21天，点击确定前往问卷页面',
+          onOk: () => {
+            router.push('/survey');
+          }
+        });
+
       } else if (allTasksCompleted || dayLimitReached) {
-        alert("🎉 游戏胜利：你完成了所有任务或坚持到了第21天！");
+
+        Modal.success({
+          title: '🎉 游戏胜利！',
+          content: '你完成了所有任务或坚持到了第21天，点击确定前往问卷页面',
+          onOk: () => {
+            router.push('/survey');
+          }
+        });
+        
+        
       }
     },
     

@@ -1,28 +1,22 @@
 import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router';
 import Main from '@/views/mainFrame/main-frame.vue';
 const routes: Array<RouteRecordRaw> = [
-    // {
-    //     path: '/',
-    //     name: 'Home',
-    //     component: Home,
-    // },
     {
         path: '/',
+        name: 'Home',
+        component: () => import('@/views/start/HelloWorld.vue'),
+    },
+    {
+        path: '/main',
         name: 'Main',
         component: Main,
     },
-    // {
-    //     path: '/meeting/:id',
-    //     name: 'MeetingRoom',
-    //     component: () => import('../views/meetingRoom/MeetingRoom.vue'),
-    //     meta: { requiresAuth: true }
-    // },
-    // {
-    //     path: '/test',
-    //     name: 'test',
-    //     component: () => import('../views/test/test.vue'),
-    //     meta: { requiresAuth: true }
-    // },
+    {
+        path: '/survey',
+        name: 'Survey',
+        component: () => import('@/views/survey/Survey.vue') // 你可以自己创建 Survey 页面
+      },
+      
 ];
 
 const router = createRouter({
