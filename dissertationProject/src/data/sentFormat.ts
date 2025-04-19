@@ -45,9 +45,9 @@ export const EMERGENCY_FORMATS = {
       id: "emergency_security",
       subject: "[紧急] 安全漏洞处理",
       content: `## 安全漏洞应急方案
-  1. 隔离受影响系统
-  2. 启动漏洞修复流程
-  3. 安排安全审计会议`,
+        1. 隔离受影响系统
+        2. 启动漏洞修复流程
+        3. 安排安全审计会议`,
       relate: { id: "security", name: "安全团队" },
       type: "emergency",
       meetingid: "security_meeting",

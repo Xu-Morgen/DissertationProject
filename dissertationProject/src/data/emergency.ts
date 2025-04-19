@@ -10,7 +10,7 @@ export const EMERGENCY_TEMPLATES: Record<string, EmergencyTemplate> = {
         subject: '[Alert] Production Server is Down',
         content: 'Our backend service is not responding. Immediate fix needed.',
         recipients: ['devops']
-      },
+      },  
       meeting: {
         templateId: 'server_incident',
         daysAfter: 1

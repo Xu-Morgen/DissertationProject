@@ -49,9 +49,13 @@ export const useEmailStore = defineStore('email', {
    */
     addRecipient(RecipientId:string) {
       const newRecipient = contacts.CONTACTS[RecipientId]
-      if (newRecipient){
-        this.contacts.push(newRecipient)
+      if (newRecipient) {
+        const alreadyExists = this.contacts.some(c => c.id === newRecipient.id);
+        if (!alreadyExists) {
+          this.contacts.push(newRecipient);
+        }
       }
+      
     },
   /**
    * 删去收件人

@@ -1,12 +1,12 @@
 // stores/taskStore.ts
 import { defineStore } from 'pinia';
-import type { Task, Sprint, PersonalTask, TaskPriority, SentFormat, Recipient } from '@/types';
+import type { Task, Sprint, PersonalTask, TaskPriority, SentFormat, Recipient, EmergencyTemplate, GameEvent, GameEventAction, ScriptStep } from '@/types';
 import { notification } from 'ant-design-vue';
 import { useRootStore } from './rootStore';
-import { useCalendarStore, useEmailStore } from '.';
-import { EMERGENCY_TEMPLATES } from '@/data/emergency';
-import { MEETING_TEMPLATES } from '@/data/meetings';
-import contacts from '@/data/contacts';
+import { useCalendarStore, useEmailStore, useEventStore } from '.';
+
+import { GAME_EVENTS } from '@/data/events';
+
 export const useTaskStore = defineStore('tasks', {
   state: () => ({
     backlog: [] as Task[],
@@ -19,80 +19,124 @@ export const useTaskStore = defineStore('tasks', {
 
   actions: {   
 
-    // generateEmergencyTask(params: {
-    //   emergencyId: string
-    //   baseTaskId: string
-    // }) {
-    //   const baseTask = this.backlog.find(t => t.id === params.baseTaskId);
+    generateEmergencyTaskFrom(template: EmergencyTemplate) {
+      const calendar = useCalendarStore();
+      const emailStore = useEmailStore();
+    
+      const currentDay = calendar.currentDay;
+      const eventId = `event_emergency_${template.id}`;
+    
+      // ✅ 添加用户可发邮件的 sentFormat（用于 MailComposer）
+      if (template.autoGenerate?.email && template.autoGenerate?.meeting) {
+        emailStore.addNewSentFormat({
+          id: `emergency_format_${template.id}`,
+          subject: template.autoGenerate.email.subject,
+          content: template.autoGenerate.email.content,
+          relate: {
+            id: template.autoGenerate.email.recipients[0], // 确保这个 ID 在 contacts 中
+            name: template.autoGenerate.email.recipients[0],
+            isEmergency: true
+          },
+          type: 'meeting',
+          meetingid: template.autoGenerate.meeting.templateId, // 👈 用户邮件中选择的会议 id
+          nextEventId: `event_emergency_${template.id}` // 👈 邮件发出后触发
+        });
+        emailStore.addRecipient(template.autoGenerate.email.recipients[0])
+      }
+    
+      // ✅ 添加一封引导邮件，点击打开后触发任务生成事件
+      if (template.autoGenerate?.email) {
+        emailStore.addEmail({
+          from: 'system',
+          to: template.autoGenerate.email.recipients,
+          subject: template.autoGenerate.email.subject,
+          content: template.autoGenerate.email.content,
+          day: currentDay,
+          replies: [],
+          metadata: {
+            requiresAction: true,
+            category: 'system',
+            onOpenEventId: `event_show_task_${template.id}` // 👈 点击邮件时触发添加任务
+          }
+        });
+      }
+      const emergencyScripts: ScriptStep[] = [
+        {
+          sys: `CTO：We've detected an emergency: ${template.title}`,
+          options: [
+            { text: "We'll address it immediately." }
+          ]
+        },
+        {
+          sys: "CTO：Please update me by end of day.",
+          options: [
+            { text: "Understood." }
+          ]
+        }
+      ];
       
-    //   // 严格检查deadline存在性
-      
-    //   if (!baseTask ) {
-    //     console.log(baseTask)
-    //     console.error('基准任务不存在或未设置截止日');
-    //     return;
-    //   }
-
-    //   const personalTask: PersonalTask = {  
-    //     id: `emergency_${Date.now()}`,
-    //     title: `[emergency] ${baseTask.title}`,
-    //     description: `need to solve emergency`,
-    //     status: 'backlog',
-    //     linkedTaskId: baseTask.id,
-    //     emergencyTemplateId: params.emergencyId,
-    //     createdAt: useCalendarStore().currentDay,
-    //     creator: 'system' // 使用扩展后的类型
-    //   };
-
-    //   this.attachEmergencyResources(personalTask);
-    //   this.upsertPersoanlTask(personalTask);
-    // },
-
-    // attachEmergencyResources(task: PersonalTask) {
-      
-    //   const emailStore = useEmailStore();
-    //   const calendarStore = useCalendarStore();
-
-    //   // 安全访问模板ID
-    //   if (!task.emergencyTemplateId) return;
-      
-    //   // 类型安全的模板访问
-    //   const template = EMERGENCY_TEMPLATES[task.emergencyTemplateId as keyof typeof EMERGENCY_TEMPLATES];
-    //   if (!template) return;
-
-    //   // 完整的SentFormat对象
-    //   const sentFormat: SentFormat = {
-    //     id: `emergency_${task.id}`,
-    //     subject: template.autoGenerate.email.subject,
-    //     content: template.autoGenerate.email.content,
-    //     relate: contacts.CONTACTS[template.autoGenerate.email.recipients],
-    //     type: 'meeting',
-    //     meetingid: template.autoGenerate.meeting?.templateId,
-    //     nextEventId: undefined
-    //   };
-    //   emailStore.addNewSentFormat(sentFormat);
-
-    //   // 明确的类型注解
-    //   emailStore.addRecipient(template.autoGenerate.email.recipients)
-
-
-    //   console.error(template.autoGenerate.meeting)
-    //   // 安全的会议模板访问
-    //   if (template.autoGenerate.meeting) {
-    //     const meetingTemplate = MEETING_TEMPLATES[
-    //       template.autoGenerate.meeting.templateId as keyof typeof MEETING_TEMPLATES
-    //     ];
-    //     console.error(meetingTemplate)
-    //     if (meetingTemplate) {
-    //       calendarStore.addNewMeetingCanUse(
-    //         {...meetingTemplate,day:0,completed:false}
-    //       )
-    //     }
-    //   }
-    // },
-  
-
-
+      if (template.autoGenerate?.meeting) {
+        calendar.addNewMeetingCanUse({
+          id: template.autoGenerate.meeting.templateId,
+          title: `[紧急] ${template.title}`,
+          type: 'personal',
+          canDelete: true,
+          scripts: emergencyScripts,
+          linkedTaskId: undefined,
+          finishEventId: eventId,
+          participants: {
+            id: 'user',
+            name: '你',
+            isEmergency: true
+          },
+          day: 0,
+          completed: false
+        });
+      }
+    
+      // ✅ 任务触发事件（用户点开邮件后触发）
+      GAME_EVENTS[`event_show_task_${template.id}`] = {
+        id: `event_show_task_${template.id}`,
+        actions: [
+          {
+            type: 'add_emergency_task_personal', // 👈 统一使用标准事件类型
+            task: {
+              id: `emergency_${template.id}_${Date.now()}`,
+              title: `[紧急] ${template.title}`,
+              description: `处理紧急事件：“${template.title}”。`,
+              status: 'backlog',
+              linkedTaskId: undefined,
+              deadline: undefined,
+              creator: 'system',
+              createdAt: currentDay,
+              emergencyTemplateId: template.id
+            }
+          }
+        ]
+      };
+    
+      // ✅ 事件动作（如 boostWorker 或 blockKeywords）
+      const actions: GameEventAction[] = [];
+    
+      if (template.effects?.boostWorker) {
+        actions.push({ type: 'boost_worker' });
+      }
+    
+      if (template.effects?.blockKeywords?.length) {
+        actions.push({
+          type: 'block_tasks_by_keyword',
+          keywords: template.effects.blockKeywords
+        });
+      }
+    
+      if (actions.length > 0) {
+        GAME_EVENTS[eventId] = {
+          id: eventId,
+          actions
+        };
+      }
+    },
+    
 
     /**
      * 检查客户任务完成状态（在会议中调用）

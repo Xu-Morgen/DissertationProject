@@ -16,6 +16,7 @@ export interface Email {
   metadata: {
     requiresAction: boolean;
     category: 'system' | 'client' | 'boss' | 'team';
+    onOpenEventId?:string
   };
 }
 
@@ -149,7 +150,11 @@ export type GameEventAction =
   | { type: 'daily_check' }
   | { type: 'do_first_kanban' }
   | { type: 'log_to_console'; message: string }
-  | { type: 'unlock_next_day_btn' };
+  | { type: 'unlock_next_day_btn' }
+  | { type: 'boost_worker' }
+  | { type: 'block_tasks_by_keyword'; keywords: string[] }
+  | { type: 'add_emergency_task_personal';task:PersonalTask}
+
 
 export interface GameEvent {
   id: string;

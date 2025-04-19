@@ -9,6 +9,7 @@ import { toRaw } from 'vue';
 import TaskData from '@/data/tasks'
 import EmailData from '@/data/emails'
 import { useUIStore } from './UIStore';
+import { useRootStore } from './rootStore';
 
 export const useEventStore = defineStore('events', {
   state: () => ({
@@ -121,6 +122,13 @@ export const useEventStore = defineStore('events', {
             emailStore.addEmail(newEmail)
           }
           break
+        
+        
+        case 'add_emergency_task_personal':
+          taskStore.upsertPersoanlTask(action.task);
+          break;
+        
+          
 
 
         //需验证动作处理
@@ -152,16 +160,43 @@ export const useEventStore = defineStore('events', {
         case 'daily_check':
           if(calendarStore.currentDay == 0){
             this.executeAction({type:'finish_personal_task',taskId:"first_day"})
-            this.executeAction({type:'add_sent_format',replyId:'daily_standup'})
             this.executeAction({type:'add_recipient',recipientId:'client'})
-            this.executeAction({type:'add_daily_mail',templateId:"client_request"})
+            for (const id in TaskData.TASK_TEMPLATES_AUTO) {
+              const task = TaskData.TASK_TEMPLATES_AUTO[id];
+              taskStore.upsertTask({
+                ...task,
+                id: `${id}_${Date.now()}`,
+                createdAt: calendarStore.currentDay
+              });
+            }
             calendarStore.advanceDay()
           }
           else{
             calendarStore.advanceDay()
           }
           break
-          // 其他动作类型处理...
+        case 'boost_worker': 
+          const rootStore = useRootStore();
+          rootStore.worker *= 2;
+          console.log('[GameEvent] Workers boosted');
+          break;
+        
+          
+          case 'block_tasks_by_keyword': {
+            const keywords = action.keywords as string[];
+            const taskStore = useTaskStore();
+            taskStore.backlog.forEach(task => {
+              const match = keywords.some(kw =>
+                task.title.toLowerCase().includes(kw) ||
+                task.description?.toLowerCase().includes(kw)
+              );
+              if (match) {
+                task.blocked = true;
+              }
+            });
+            console.log(`[GameEvent] Tasks blocked by keywords: ${keywords.join(', ')}`);
+            break;
+          }
       }
     }
   },

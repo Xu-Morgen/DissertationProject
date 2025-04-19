@@ -69,5 +69,6 @@ export const GAME_EVENTS: Record<string, GameEvent> = {
       { type: 'add_recipient', recipientId: 'devops' },
       { type: 'add_sent_format', replyId: 'emergency_meeting_request' }
     ]
-  }
+  },
+  
 }

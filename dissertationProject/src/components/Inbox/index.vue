@@ -22,6 +22,11 @@ const handleEmailClick = (email: Email) => {
   activeEmail.value = email;
   emailStore.markAsRead(email.id);
   uiStore.toggleReading(true);
+
+  const eventId = email.metadata?.onOpenEventId;
+  if (eventId && GAME_EVENTS[eventId]) {
+    eventStore.triggerEvent(eventId, GAME_EVENTS);
+  }
 };
 </script>
 

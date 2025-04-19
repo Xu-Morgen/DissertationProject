@@ -7,6 +7,7 @@ import meetings from '@/data/meetings';
 import tasks from '@/data/tasks';
 import { notification } from 'ant-design-vue';
 import { autoGenerateEmergency } from '@/utils/emergencyHandler';
+import { EMERGENCY_TEMPLATES } from '@/data/emergency';
 
 const router = useRouter();
 
@@ -92,7 +93,9 @@ const testCustomerTask = () => {
 
 
 const triggerEmergency = () => {
-  autoGenerateEmergency('server_down'); // 传入 templateId
+  const taskStore = useTaskStore()
+  taskStore.generateEmergencyTaskFrom(EMERGENCY_TEMPLATES['server_crash']);
+
 };
 
 
