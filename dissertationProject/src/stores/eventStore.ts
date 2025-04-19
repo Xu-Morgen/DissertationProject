@@ -197,6 +197,11 @@ export const useEventStore = defineStore('events', {
             console.log(`[GameEvent] Tasks blocked by keywords: ${keywords.join(', ')}`);
             break;
           }
+
+          case 'unblock_tasks_by_keyword': {
+            taskStore.unblockTasksByKeywords(action.keywords);
+            break;
+          }
       }
     }
   },

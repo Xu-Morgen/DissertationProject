@@ -83,7 +83,7 @@ export const useTaskStore = defineStore('tasks', {
           canDelete: true,
           scripts: emergencyScripts,
           linkedTaskId: undefined,
-          finishEventId: eventId,
+          finishEventId: `event_finish_${template.id}`,
           participants: {
             id: 'user',
             name: '你',
@@ -118,9 +118,6 @@ export const useTaskStore = defineStore('tasks', {
       // ✅ 事件动作（如 boostWorker 或 blockKeywords）
       const actions: GameEventAction[] = [];
     
-      if (template.effects?.boostWorker) {
-        actions.push({ type: 'boost_worker' });
-      }
     
       if (template.effects?.blockKeywords?.length) {
         actions.push({
@@ -135,9 +132,51 @@ export const useTaskStore = defineStore('tasks', {
           actions
         };
       }
+
+      const eventStore = useEventStore()
+      eventStore.triggerEvent(eventId, GAME_EVENTS);
+      
+      const finishactions: GameEventAction[] = [];
+
+      if (template.effects?.blockKeywords?.length) {
+        finishactions.push({
+          type: 'unblock_tasks_by_keyword',
+          keywords: template.effects.blockKeywords
+        });
+      }
+      if(template.effects?.boostWorker){
+        finishactions.push({
+          type: 'boost_worker'
+        });
+      }
+      
+      if(finishactions.length > 0){
+        GAME_EVENTS[`event_finish_${template.id}`] = {
+          id: `event_finish_${template.id}`,
+          actions: finishactions
+        }
+      }
+      
+
+    },  
+    
+    unblockTasksByKeywords(keywords: string[]) {
+      this.backlog = this.backlog.map(task => {
+        if (task.blocked) {
+          const matched = keywords.some(keyword =>
+            task.title.includes(keyword) || task.description?.includes(keyword)
+          );
+          if (matched) {
+            return {
+              ...task,
+              status: 'inProgress'
+            };
+          }
+        }
+        return task;
+      });
     },
     
-
     /**
      * 检查客户任务完成状态（在会议中调用）
      * @param meetingId 会议ID
@@ -246,7 +285,7 @@ export const useTaskStore = defineStore('tasks', {
     const processTasksByPriority = (priority: TaskPriority) => {
       while (availableWorkers > 0) {
         const eligibleTasks = updatedTasks.filter(
-          (task) => task.status !== 'done' && task.priority === priority && task.progress < 100
+          (task) => task.status !== 'done' && task.priority === priority && task.progress < 100 && task.blocked!=true
         );
         if (eligibleTasks.length === 0) break;
   
