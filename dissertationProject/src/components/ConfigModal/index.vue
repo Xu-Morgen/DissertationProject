@@ -97,7 +97,7 @@ const triggerEmergency = () => {
 
 const triggerEmergency2 = () =>{
   const taskStore = useTaskStore()
-  taskStore.generateEmergencyTaskFrom(EMERGENCY_TEMPLATES['ai_speed_boost'])
+  taskStore.generateEmergencyTaskFrom(EMERGENCY_TEMPLATES['staff_sick_leave'])
 }
 
 

@@ -156,6 +156,7 @@ export type GameEventAction =
   | { type: 'add_emergency_task_personal';task:PersonalTask}
   | { type: 'unblock_tasks_by_keyword';keywords:string[]}
   | {type:'change_satisfaction',value:number}
+  | {type:'change_worker',value:number}
 
 
 export interface GameEvent {
@@ -182,6 +183,7 @@ export type EmergencyTemplate = {
   effects?: {
     blockKeywords?: string[]; // 阻塞含关键字任务
     boostWorker?: boolean;    // worker 数量翻倍
+    custom?:string;
   };
 };
 

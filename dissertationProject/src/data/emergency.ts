@@ -231,5 +231,24 @@ export const EMERGENCY_TEMPLATES: Record<string, EmergencyTemplate> = {
     effects: {
       boostWorker: true
     }
+  },
+  staff_sick_leave: {
+    id: 'staff_sick_leave',
+    title: 'Key Developer on Sick Leave',
+    autoGenerate: {
+      email: {
+        subject: '[通知] 员工请病假',
+        content: '开发团队一位关键成员将休假三天，请调整安排。',
+        recipients: ['team']
+      },
+      meeting: {
+        templateId: 'hr_sick_meeting',
+        daysAfter: 2
+      }
+    },
+    effects: {
+      custom: 'decrease_worker_temporarily'
+    }
   }
+  
 };

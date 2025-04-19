@@ -119,7 +119,16 @@ export const useTaskStore = defineStore('tasks', {
       // ✅ 事件动作（如 boostWorker 或 blockKeywords）
       const actions: GameEventAction[] = [];
     
-    
+      if(template.effects?.custom){
+        if(template.effects.custom == 'decrease_worker_temporarily'){
+          actions.push(
+            {
+              type:'change_worker',
+              value:-1
+            }
+          )
+        }
+      }
       if (template.effects?.blockKeywords?.length) {
         actions.push({
           type: 'block_tasks_by_keyword',
@@ -148,6 +157,16 @@ export const useTaskStore = defineStore('tasks', {
           type: 'unblock_tasks_by_keyword',
           keywords: template.effects.blockKeywords
         });
+      }
+      if(template.effects?.custom){
+        if(template.effects.custom == 'decrease_worker_temporarily'){
+          finishactions.push(
+            {
+              type:'change_worker',
+              value:1
+            }
+          )
+        }
       }
       if(template.effects?.boostWorker){
         finishactions.push({

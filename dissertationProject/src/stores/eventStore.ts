@@ -50,7 +50,7 @@ export const useEventStore = defineStore('events', {
       const emailStore = useEmailStore();
       const calendarStore = useCalendarStore();
       const uIStore = useUIStore();
-
+      const rootStore = useRootStore();
       switch (action.type) {
         // 常规动作处理...
         case 'add_email':
@@ -187,7 +187,7 @@ export const useEventStore = defineStore('events', {
           }
           break
         case 'boost_worker': 
-          const rootStore = useRootStore();
+
           rootStore.worker += 1;
           console.log('[GameEvent] Workers boosted');
           break;
@@ -223,8 +223,11 @@ export const useEventStore = defineStore('events', {
             });
             console.log(`[GameEvent] Tasks blocked by keywords: ${keywords.join(', ')}`);
             break;
-            break;
           }
+          case 'change_worker':
+            rootStore.changeWorker( action.value)
+          
+          
       }
     }
   },
