@@ -134,6 +134,10 @@ export const useEventStore = defineStore('events', {
         case 'add_emergency_task_personal':
           taskStore.upsertPersoanlTask(action.task);
           break;
+
+        case 'change_satisfaction':
+          taskStore.satisfaction += action.value
+          break
         
           
 
@@ -184,7 +188,7 @@ export const useEventStore = defineStore('events', {
           break
         case 'boost_worker': 
           const rootStore = useRootStore();
-          rootStore.worker *= 2;
+          rootStore.worker += 1;
           console.log('[GameEvent] Workers boosted');
           break;
         

@@ -67,7 +67,6 @@ export const useCalendarStore = defineStore('calendar', {
       // ✅ Daily 会议安排 + 邮件
       this.scheduleMeeting(meetings.dailyMeeting(yesterdayTasks), this.currentDay);
     
-      const todayMeetings = this.events.filter(t => t.day === this.currentDay);
 
     
       // ✅ 每三日生成一次客户任务 + 客户会议
@@ -112,6 +111,8 @@ export const useCalendarStore = defineStore('calendar', {
       if (emergencyTemplate) {
         taskStore.generateEmergencyTaskFrom(emergencyTemplate);
       }
+      const todayMeetings = this.events.filter(t => t.day === this.currentDay);
+
       const { id, isRead, ...todayMeetingEmail } = emails.dailyEmail(todayMeetings, this.currentDay);
 
       mailStore.addEmail(todayMeetingEmail);
@@ -179,7 +180,13 @@ export const useCalendarStore = defineStore('calendar', {
                   {
                     sys: `CTO：good job`,
                     options: [
-                      { text: "thanks" ,effects:[{type: 'finish_personal_task',taskId:task.linkedPersonalTaskId as string}]},
+                      { text: "thanks" ,
+                        effects:[
+                          {type: 'finish_personal_task',taskId:task.linkedPersonalTaskId as string},
+                          { type: 'change_satisfaction', value: 5 } // ✅ 新增效果
+
+                        ]
+                      },
                     ]
                   }
                 ]
@@ -195,11 +202,14 @@ export const useCalendarStore = defineStore('calendar', {
                   {
                     sys: `CTO：we hope to see more work`,
                     options: [
-                      { text: "we will do better" },
+                      { text: "we will do better",
+                        effects:[{ type: 'change_satisfaction', value: -8 }]
+                      },
                     ]
                   }
                 ]
               }
+              scripts.push()
               meeting.scripts = scripts;
             
           } else {

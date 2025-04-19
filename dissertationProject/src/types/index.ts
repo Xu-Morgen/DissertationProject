@@ -154,7 +154,8 @@ export type GameEventAction =
   | { type: 'boost_worker' }
   | { type: 'block_tasks_by_keyword'; keywords: string[] }
   | { type: 'add_emergency_task_personal';task:PersonalTask}
-  | {type:'unblock_tasks_by_keyword';keywords:string[]}
+  | { type: 'unblock_tasks_by_keyword';keywords:string[]}
+  | {type:'change_satisfaction',value:number}
 
 
 export interface GameEvent {

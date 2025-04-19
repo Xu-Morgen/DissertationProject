@@ -83,16 +83,16 @@
         <a-tag color="#52c41a" class="divider-tag">task list</a-tag>
       </a-divider>
 
-      <div class="task-controls">
+      <!-- <div class="task-controls">
         <a-button 
           @click="taskStore.clearTasks()" 
           type="primary" 
           danger
           class="control-button"
-        >
+        > 
           <delete-outlined /> Clear test tasks
         </a-button>
-      </div>
+      </div> -->
 
       <div v-if="tasks.length > 0" class="task-grid">
         <a-card 

@@ -2,18 +2,18 @@
   <div class="calendar-container">
     <!-- 调试控制栏 -->
     <div class="debug-controls">
-      <a-button @click="changeDay(-1)">
+      <!-- <a-button @click="changeDay(-1)">
         <left-outlined /> Previous Day
-      </a-button>
+      </a-button> -->
       <span class="current-day-label">
         Current Day: {{ calendarStore.currentDay }}
       </span>
-      <a-button @click="changeDay(1)">
+      <!-- <a-button @click="changeDay(1)">
         <right-outlined /> Next Day
       </a-button>
       <a-button @click="resetClickedEvents" type="dashed">
         <reload-outlined /> Reset Events
-      </a-button>
+      </a-button> -->
     </div>
 
     <div class="calendar-content">

@@ -95,6 +95,12 @@ const triggerEmergency = () => {
 };
 
 
+const triggerEmergency2 = () =>{
+  const taskStore = useTaskStore()
+  taskStore.generateEmergencyTaskFrom(EMERGENCY_TEMPLATES['ai_speed_boost'])
+}
+
+
 // 触发事件通知父组件状态变化
 const emit = defineEmits(["update:open"]);
 
@@ -122,6 +128,7 @@ const handleCancel = () => {
       <a-button danger @click = "quickUnlockND">unlock next day</a-button>
       <a-button danger @click = "testCustomerTask">test client meeting generataion</a-button>
       <a-button type="primary" @click="triggerEmergency">测试紧急任务</a-button>
+      <a-button type="primary" @click="triggerEmergency2">测试紧急任务2</a-button>
 
 
     </p>

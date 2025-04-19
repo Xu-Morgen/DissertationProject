@@ -128,6 +128,18 @@ onMounted(() => {
 });
 
 
+const canAdvanceToday = computed(() => {
+  if (calendarStore.currentDay === 0 && uiStore.nextDayBtnCanUse) return true;
+  const todayMeetings = calendarStore.events.filter(e => e.day === calendarStore.currentDay && e.completed === false);
+  return todayMeetings.length === 0 && uiStore.nextDayBtnCanUse;
+});
+
+const remainingMeetings = computed(() => {
+  if (calendarStore.currentDay === 0) return 0;
+  return calendarStore.events.filter(e => e.day === calendarStore.currentDay && e.completed === false).length;
+});
+
+
 </script>
 <template>
   <div class="main-layout" :key="forceUpdate">
@@ -149,7 +161,7 @@ onMounted(() => {
           :icon="h(QuestionOutlined)" 
         />
         <span class="progress">
-          Progres: {{ rootStore.workflowProgress }}%
+          Progres: {{ rootStore.progress }}%
         </span>
         <span class="day">
           Day:{{ calendarStore.currentDay }} 
@@ -249,15 +261,20 @@ onMounted(() => {
             </a-button>
           </a-button-group>
           
-          <a-button 
-            ref = 'tourStep5'
-            :style="{ backgroundColor: uiStore.nextDayBtnCanUse ? 'blue' : 'gray', color: 'white' }"
-            :disabled="!uiStore.nextDayBtnCanUse"
-            type="primary" 
-            @click="advanceDay"
+          <a-tooltip
+            :title="!canAdvanceToday ? `还有 ${remainingMeetings} 个会议未完成` : ''"
           >
-            Next Day
-          </a-button>
+            <a-button 
+              ref="tourStep5"
+              :style="{ backgroundColor: canAdvanceToday ? 'blue' : 'gray', color: 'white' }"
+              :disabled="!canAdvanceToday"
+              type="primary" 
+              @click="advanceDay"
+            >
+              Next Day
+            </a-button>
+          </a-tooltip>
+
         </div>
       </a-layout-footer>
     </a-layout>

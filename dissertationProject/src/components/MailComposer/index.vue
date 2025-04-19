@@ -50,7 +50,7 @@
         placeholder="Please enter a number"
         :rows="6"
         style="width:30%; margin-bottom: 10px"
-        :min="0" :max="30"
+        :min="calendarStore.currentDay" :max="30"
       />
   
       </div>
