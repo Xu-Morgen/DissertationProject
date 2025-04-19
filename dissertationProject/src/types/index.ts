@@ -156,22 +156,27 @@ export interface GameEvent {
   actions: GameEventAction[];
 }
 
-export interface EmergencyTemplate {
+// 类型定义
+export type EmergencyTemplate = {
   id: string;
   title: string;
-  relatedTaskId?: string;
-  autoGenerate: {
-    email: {
+  description?: string;
+  autoGenerate?: {
+    email?: {
       subject: string;
       content: string;
       recipients: string[];
     };
     meeting?: {
       templateId: string;
-      // daysAfter: number; // ❌ 未使用
+      daysAfter: number;
     };
   };
-}
+  effects?: {
+    blockKeywords?: string[]; // 阻塞含关键字任务
+    boostWorker?: boolean;    // worker 数量翻倍
+  };
+};
 
 /* ================= UI状态 ================= */
 export interface UIState {

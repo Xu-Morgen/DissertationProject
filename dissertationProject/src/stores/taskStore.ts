@@ -19,76 +19,77 @@ export const useTaskStore = defineStore('tasks', {
 
   actions: {   
 
-    generateEmergencyTask(params: {
-      emergencyId: string
-      baseTaskId: string
-    }) {
-      const baseTask = this.backlog.find(t => t.id === params.baseTaskId);
+    // generateEmergencyTask(params: {
+    //   emergencyId: string
+    //   baseTaskId: string
+    // }) {
+    //   const baseTask = this.backlog.find(t => t.id === params.baseTaskId);
       
-      // 严格检查deadline存在性
+    //   // 严格检查deadline存在性
       
-      if (!baseTask ) {
-        console.log(baseTask)
-        console.error('基准任务不存在或未设置截止日');
-        return;
-      }
+    //   if (!baseTask ) {
+    //     console.log(baseTask)
+    //     console.error('基准任务不存在或未设置截止日');
+    //     return;
+    //   }
 
-      const personalTask: PersonalTask = {  
-        id: `emergency_${Date.now()}`,
-        title: `[emergency] ${baseTask.title}`,
-        description: `need to solve emergency`,
-        status: 'backlog',
-        linkedTaskId: baseTask.id,
-        emergencyTemplateId: params.emergencyId,
-        createdAt: useCalendarStore().currentDay,
-        creator: 'system' // 使用扩展后的类型
-      };
+    //   const personalTask: PersonalTask = {  
+    //     id: `emergency_${Date.now()}`,
+    //     title: `[emergency] ${baseTask.title}`,
+    //     description: `need to solve emergency`,
+    //     status: 'backlog',
+    //     linkedTaskId: baseTask.id,
+    //     emergencyTemplateId: params.emergencyId,
+    //     createdAt: useCalendarStore().currentDay,
+    //     creator: 'system' // 使用扩展后的类型
+    //   };
 
-      this.attachEmergencyResources(personalTask);
-      this.upsertPersoanlTask(personalTask);
-    },
+    //   this.attachEmergencyResources(personalTask);
+    //   this.upsertPersoanlTask(personalTask);
+    // },
 
-    attachEmergencyResources(task: PersonalTask) {
-      const emailStore = useEmailStore();
-      const calendarStore = useCalendarStore();
-
-      // 安全访问模板ID
-      if (!task.emergencyTemplateId) return;
+    // attachEmergencyResources(task: PersonalTask) {
       
-      // 类型安全的模板访问
-      const template = EMERGENCY_TEMPLATES[task.emergencyTemplateId as keyof typeof EMERGENCY_TEMPLATES];
-      if (!template) return;
+    //   const emailStore = useEmailStore();
+    //   const calendarStore = useCalendarStore();
 
-      // 完整的SentFormat对象
-      const sentFormat: SentFormat = {
-        id: `emergency_${task.id}`,
-        subject: template.autoGenerate.email.subject,
-        content: template.autoGenerate.email.content,
-        relate: contacts.CONTACTS[template.autoGenerate.email.recipients],
-        type: 'meeting',
-        meetingid: template.autoGenerate.meeting?.templateId,
-        nextEventId: undefined
-      };
-      emailStore.addNewSentFormat(sentFormat);
+    //   // 安全访问模板ID
+    //   if (!task.emergencyTemplateId) return;
+      
+    //   // 类型安全的模板访问
+    //   const template = EMERGENCY_TEMPLATES[task.emergencyTemplateId as keyof typeof EMERGENCY_TEMPLATES];
+    //   if (!template) return;
 
-      // 明确的类型注解
-      emailStore.addRecipient(template.autoGenerate.email.recipients)
+    //   // 完整的SentFormat对象
+    //   const sentFormat: SentFormat = {
+    //     id: `emergency_${task.id}`,
+    //     subject: template.autoGenerate.email.subject,
+    //     content: template.autoGenerate.email.content,
+    //     relate: contacts.CONTACTS[template.autoGenerate.email.recipients],
+    //     type: 'meeting',
+    //     meetingid: template.autoGenerate.meeting?.templateId,
+    //     nextEventId: undefined
+    //   };
+    //   emailStore.addNewSentFormat(sentFormat);
+
+    //   // 明确的类型注解
+    //   emailStore.addRecipient(template.autoGenerate.email.recipients)
 
 
-      console.error(template.autoGenerate.meeting)
-      // 安全的会议模板访问
-      if (template.autoGenerate.meeting) {
-        const meetingTemplate = MEETING_TEMPLATES[
-          template.autoGenerate.meeting.templateId as keyof typeof MEETING_TEMPLATES
-        ];
-        console.error(meetingTemplate)
-        if (meetingTemplate) {
-          calendarStore.addNewMeetingCanUse(
-            {...meetingTemplate,day:0,completed:false}
-          )
-        }
-      }
-    },
+    //   console.error(template.autoGenerate.meeting)
+    //   // 安全的会议模板访问
+    //   if (template.autoGenerate.meeting) {
+    //     const meetingTemplate = MEETING_TEMPLATES[
+    //       template.autoGenerate.meeting.templateId as keyof typeof MEETING_TEMPLATES
+    //     ];
+    //     console.error(meetingTemplate)
+    //     if (meetingTemplate) {
+    //       calendarStore.addNewMeetingCanUse(
+    //         {...meetingTemplate,day:0,completed:false}
+    //       )
+    //     }
+    //   }
+    // },
   
 
 

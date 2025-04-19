@@ -6,6 +6,8 @@ import {useCalendarStore,useEmailStore,useEventStore,useRootStore,useTaskStore,u
 import meetings from '@/data/meetings';
 import tasks from '@/data/tasks';
 import { notification } from 'ant-design-vue';
+import { autoGenerateEmergency } from '@/utils/emergencyHandler';
+
 const router = useRouter();
 
 
@@ -85,50 +87,13 @@ const testCustomerTask = () => {
   });
 };
 
-// 新增紧急事件测试方法
-const testEmergency = () => {
-  const taskStore = useTaskStore()
 
-  try {
-    // 获取第一个客户任务作为基准任务
-    const baseTask = taskStore.backlog.find(t => t.isCustomerTask);
-    
-    if (!baseTask) {
-      notification.error({
-        message: 'test failed',
-        description: 'create client task first',
-        placement: 'bottomRight'
-      });
-      return;
-    }
 
-    // 生成突发事件任务
-    taskStore.generateEmergencyTask({
-      emergencyId: 'server_down',  // 使用预定义的紧急事件模板
-      baseTaskId: baseTask.id,
-    });
 
-    notification.success({
-      message: 'emergency task added',
-      description: `
-        create：
-        1. emergency personal task
-        2. emergency recipient
-        3. emergency meeting
-      `,
-      placement: 'bottomRight'
-    });
 
-  } catch (error) {
-    console.error('紧急事件测试失败:', error);
-    notification.error({
-      message: '测试失败',
-      description: '生成紧急事件时发生错误',
-      placement: 'bottomRight'
-    });
-  }
+const triggerEmergency = () => {
+  autoGenerateEmergency('server_down'); // 传入 templateId
 };
-
 
 
 // 触发事件通知父组件状态变化
@@ -157,10 +122,8 @@ const handleCancel = () => {
       <a-button danger @click = "quickTask">quick add client task</a-button>
       <a-button danger @click = "quickUnlockND">unlock next day</a-button>
       <a-button danger @click = "testCustomerTask">test client meeting generataion</a-button>
-            
-      <a-button danger @click="testEmergency">
-        test emergency task
-      </a-button>
+      <a-button type="primary" @click="triggerEmergency">测试紧急任务</a-button>
+
 
     </p>
   </a-modal>
