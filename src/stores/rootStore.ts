@@ -9,7 +9,6 @@ export const useRootStore = defineStore('root', {
     firstTimePlay:true,
     openTour:false,
     isFristTour:true,
-    workflowProgress:0,
     worker:2
   }),
 

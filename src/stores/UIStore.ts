@@ -11,11 +11,6 @@ export const useUIStore = defineStore('ui', {
     configModalOpen:false,
 
     nextDayBtnCanUse:false,
-
-    emailFilter: {
-      unreadOnly: false,
-      category: undefined
-    },
     kanban: {
       visibleColumns: {
         backlog: true,
@@ -41,18 +36,7 @@ export const useUIStore = defineStore('ui', {
   },
   getters: {
     /** 过滤后的邮件列表 */
-    filteredEmails: (state) => {
-      const emailStore = useEmailStore();
-      return emailStore.inbox.filter(email => {
-        const categoryMatch = state.emailFilter.category 
-          ? email.metadata.category === state.emailFilter.category
-          : true;
-        const unreadMatch = state.emailFilter.unreadOnly 
-          ? !email.isRead 
-          : true;
-        return categoryMatch && unreadMatch;
-      });
-    }
+
   },
   persist:true,
 },

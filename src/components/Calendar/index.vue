@@ -27,9 +27,7 @@
         >
           <div class="day-header">
             <span>Day {{ day.number }}</span>
-            <a-tag v-if="isSprintDay(day.number)" color="#87d068">
-              Sprint {{ sprintDayNumber(day.number) }}
-            </a-tag>
+
           </div>
 
           <div class="events">
@@ -182,15 +180,7 @@ const resetClickedEvents = () => {
   calendarStore.resetClickedEvents();
 };
 
-const isSprintDay = (dayNumber: number): boolean => {
-  return !!taskStore.currentSprint?.startDay &&
-         dayNumber >= taskStore.currentSprint.startDay &&
-         dayNumber <= taskStore.currentSprint.endDay;
-};
 
-const sprintDayNumber = (dayNumber: number): number => {
-  return dayNumber - (taskStore.currentSprint?.startDay || 0);
-};
 
 const getEventClass = (event: CalendarEvent) => ({
   'event-completed': event.completed,

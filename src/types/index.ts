@@ -65,6 +65,12 @@ export interface Task {
   linkedMeetingId?: string;
   linkedPersonalTaskId?: string;
 }
+export type YesterdayTask = {
+  id: string;
+  title: string;
+  status: 'done' | 'inProgress';
+  progress: number;
+};
 
 export interface PersonalTask {
   id: string;
@@ -194,10 +200,7 @@ export interface UIState {
   readingEmailModalOpen: boolean;
   sendingEmailModalOpen: boolean;
   activeView: 'mail' | 'kanban' | 'calendar';
-  emailFilter: {
-    unreadOnly: boolean;
-    category?: Email['metadata']['category'];
-  };
+
   kanban: {
     visibleColumns: Record<string, boolean>;
   };
