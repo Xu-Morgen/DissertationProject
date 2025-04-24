@@ -29,30 +29,6 @@ export const MEETING_TEMPLATES = {
   }
 } satisfies Record<string, Omit<CalendarEvent, "completed" | "day">>;
 
-const CLIENT_MEETINGS: CalendarEvent[] = [{
-  id: 'sprint_review',
-  type: 'client',
-  title: 'Sprint评审会议',
-  canDelete:true,
-  day: 7,
-  participants: contacts.CONTACTS['team'],
-  completed: false,
-  scripts: [
-    {
-      sys: "欢迎参加Sprint评审，请展示已完成的功能：",
-      options: [
-        {
-          text: "展示登录模块",
-          effects: [
-            { type: 'modify_satisfaction', value: 10 },
-            { type: 'finish_task', taskId: 'login_module' }
-          ]
-        }
-      ]
-    }
-  ]
-}];
-
 /** 新人会议模板 */
 const FRESH_MEETINGS: CalendarEvent[] = [{
   id: 'fresher_meeting',
@@ -212,4 +188,4 @@ const FRESH_MEETINGS: CalendarEvent[] = [{
   
 
 
-export default { MEETING_TEMPLATES, CLIENT_MEETINGS,FRESH_MEETINGS,dailyMeeting,CUSTOMER_MEETINGS,customCustomerMeeting };
+export default { MEETING_TEMPLATES,FRESH_MEETINGS,dailyMeeting,CUSTOMER_MEETINGS,customCustomerMeeting };

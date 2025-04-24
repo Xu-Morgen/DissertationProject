@@ -77,7 +77,7 @@ export const useTaskStore = defineStore('tasks', {
       if (template.autoGenerate?.meeting) {
         calendar.addNewMeetingCanUse({
           id: template.autoGenerate.meeting.templateId,
-          title: `[紧急] ${template.title}`,
+          title: `[emergency] ${template.title}`,
           type: 'personal',
           canDelete: true,
           scripts: emergencyScripts,
@@ -85,7 +85,7 @@ export const useTaskStore = defineStore('tasks', {
           finishEventId: `event_emergency_${template.id}`,
           participants: {
             id: 'user',
-            name: '你',
+            name: 'player',
             isEmergency: true
           },
           day: 0,
@@ -101,8 +101,8 @@ export const useTaskStore = defineStore('tasks', {
             type: 'add_emergency_task_personal', // 👈 统一使用标准事件类型
             task: {
               id: `emergency_${template.id}`,
-              title: `[紧急] ${template.title}`,
-              description: `处理紧急事件：“${template.title}”。`,
+              title: `[emergency] ${template.title}`,
+              description: `Handle emergency events: "${template.title}".`,
               status: 'backlog',
               linkedTaskId: undefined,
               deadline: undefined,

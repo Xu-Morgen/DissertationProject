@@ -25,8 +25,8 @@ export const EMERGENCY_TEMPLATES: Record<string, EmergencyTemplate> = {
     title: 'AI Code Optimizer Deployed',
     autoGenerate: {
       email: {
-        subject: '[系统提示] AI加速器上线',
-        content: 'AI辅助编程工具已部署，生产力将大幅提升！',
+        subject: '[System Prompt] The AI accelerator is now live',
+        content: 'Ai-assisted programming tools have been deployed, and productivity will be significantly enhanced!',
         recipients: ['team']
       }
     },
@@ -161,8 +161,8 @@ export const EMERGENCY_TEMPLATES: Record<string, EmergencyTemplate> = {
     title: 'Positive Press Coverage',
     autoGenerate: {
       email: {
-        subject: '[新闻快报] 本公司获得积极媒体报道',
-        content: '最新新闻赞扬我们团队的创新表现，士气大涨！',
+        subject: '[News Flash] Our company has received positive media coverage.',
+        content: 'The latest news praises our teams innovative performance, and morale has soared!',
         recipients: ['team']
       }
     },
@@ -196,8 +196,8 @@ export const EMERGENCY_TEMPLATES: Record<string, EmergencyTemplate> = {
     title: 'Team Building Day',
     autoGenerate: {
       email: {
-        subject: '[提醒] 团建活动今日开启',
-        content: '今天下午安排团建活动，请放松并享受乐趣！',
+        subject: '[Reminder] The team-building activity starts today',
+        content: 'We have arranged a team-building activity this afternoon. Please relax and have fun!',
         recipients: ['team']
       }
     },
@@ -252,8 +252,8 @@ export const EMERGENCY_TEMPLATES: Record<string, EmergencyTemplate> = {
     title: 'Toolchain Upgrade Completed',
     autoGenerate: {
       email: {
-        subject: '[通知] 工具链更新完成',
-        content: '新版本工具链已启用，开发效率将有所提升。',
+        subject: '[Notice] The toolchain update has been completed',
+        content: 'The new version of the toolchain has been enabled, and the development efficiency will be improved.',
         recipients: ['devops', 'tech_lead']
       }
     },
@@ -266,8 +266,8 @@ export const EMERGENCY_TEMPLATES: Record<string, EmergencyTemplate> = {
     title: 'Key Developer on Sick Leave',
     autoGenerate: {
       email: {
-        subject: '[通知] 员工请病假',
-        content: '开发团队一位关键成员将休假三天，请调整安排。',
+        subject: '[Notice] Employee is on sick leave',
+        content: 'A key member of the development team will be on vacation for three days. Please adjust the arrangement.',
         recipients: ['team']
       },
       meeting: {

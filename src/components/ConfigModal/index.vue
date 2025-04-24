@@ -6,7 +6,6 @@ import {useCalendarStore,useEmailStore,useEventStore,useRootStore,useTaskStore,u
 import meetings from '@/data/meetings';
 import tasks from '@/data/tasks';
 import { notification } from 'ant-design-vue';
-import { autoGenerateEmergency } from '@/utils/emergencyHandler';
 import { EMERGENCY_TEMPLATES } from '@/data/emergency';
 
 const router = useRouter();
@@ -111,6 +110,10 @@ const emit = defineEmits(["update:open"]);
 const handleCancel = () => {
   emit("update:open", uiStore.toggleConfig(false));
 };
+
+const gosurvey  = () =>{
+  router.push('/survey');
+}
 </script>
 
 <template>
@@ -130,9 +133,11 @@ const handleCancel = () => {
       <a-button danger @click = "quickTask">quick add client task</a-button>
       <a-button danger @click = "quickUnlockND">unlock next day</a-button>
       <a-button danger @click = "testCustomerTask">test client meeting generataion</a-button>
-      <a-button type="primary" @click="triggerEmergency">测试紧急任务</a-button>
-      <a-button type="primary" @click="triggerEmergency2">测试紧急任务2</a-button>
-      <a-button type="primary" @click="day20">day 20</a-button>
+      <a-button danger @click="triggerEmergency">Test emergency tasks</a-button>
+      <a-button danger @click="triggerEmergency2">Test emergency tasks2</a-button>
+      <a-button danger @click="day20">day 20</a-button>
+      <a-button danger @click="gosurvey">go survey</a-button>
+
 
 
     </p>

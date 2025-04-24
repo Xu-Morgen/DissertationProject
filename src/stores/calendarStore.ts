@@ -5,7 +5,6 @@ import meetings from '@/data/meetings';
 import { useEventStore } from './eventStore';
 import { GAME_EVENTS } from '@/data/events';
 import { useTaskStore } from './taskStore';
-import tasks from '@/data/tasks';
 import emails from '@/data/emails';
 import router from '@/router';
 
@@ -131,8 +130,8 @@ export const useCalendarStore = defineStore('calendar', {
     
       if (lost) {
         Modal.warn({
-          title: '💥 游戏失败：客户满意度过低！',
-          content: '你完成了所有任务或坚持到了第21天，点击确定前往问卷页面',
+          title: '💥 Game failure:',
+          content: 'Customer satisfaction is too low!',
           onOk: () => {
             router.push('/survey');
           }
@@ -141,8 +140,8 @@ export const useCalendarStore = defineStore('calendar', {
       } else if (allTasksCompleted || dayLimitReached) {
 
         Modal.success({
-          title: '🎉 游戏胜利！',
-          content: '你完成了所有任务或坚持到了第21天，点击确定前往问卷页面',
+          title: '🎉 Victory in the game!！',
+          content: 'If you have completed all the tasks or persisted until the 21st day, click OK to go to the questionnaire page',
           onOk: () => {
             router.push('/survey');
           }
@@ -160,16 +159,16 @@ export const useCalendarStore = defineStore('calendar', {
     
       return [
         {
-          sys: `CTO：欢迎参加Sprint总结，以下是上周完成的任务共 ${completed.length} 项。`,
-          options: [{ text: "继续" }]
+          sys: `CTO: Welcome to the Sprint summary. Here are ${completed.length}tasks completed last week`,
+          options: [{ text: "continue" }]
         },
         {
-          sys: `CTO：仍有 ${inProgress.length} 项任务未完成，请确保接下来的工作进度。`,
-          options: [{ text: "明白了" }]
+          sys: `CTO: There are still ${inProgress.length} tasks unfinished. Please ensure the progress of the following work.`,
+          options: [{ text: "got it" }]
         },
         {
-          sys: `CTO：我们将继续追踪本Sprint满意度，目前客户满意度为 ${taskStore.satisfaction}。`,
-          options: [{ text: "保持努力" }]
+          sys: `CTO: We will continue to track the satisfaction of this Sprint. Currently, the customer satisfaction is ${taskStore.satisfaction}.`,
+          options: [{ text: "keep" }]
         }
       ];
     },
@@ -232,7 +231,7 @@ export const useCalendarStore = defineStore('calendar', {
               meeting.scripts = scripts;
             
           } else {
-            console.warn(`没有找到 taskId 为 ${meeting.linkedTaskId} 的任务。`);
+            console.warn(`No task with taskId of ${meeting.linkedTaskId} was found.`);
           }
         }
       });

@@ -112,10 +112,6 @@ const InitialTheGame = () =>{
 
 
 
-//选择meeting
-const handleMeetingSelect = () => {
-  //TODO
-}
 
 // 任务过滤
 const visibleTasks = computed(() => {

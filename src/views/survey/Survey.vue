@@ -1,7 +1,7 @@
 <template>
   <div class="survey-page">
-    <h1>感谢你的游玩！</h1>
-    <p>请填写以下问卷帮助我们改进产品：</p>
+    <h1>Thanks playing！</h1>
+    <p>Please fill in the following questionnaire to help us survry：</p>
 
     <!-- 调查问卷链接 -->
     <a
@@ -9,7 +9,7 @@
       href="https://docs.google.com/forms/d/e/1FAIpQLSeXSA-_Bl3ubwSKu3aZcrTOp3-qSDB0RvOehRtEMW7L60VZ7w/viewform?usp=dialog"
       target="_blank"
     >
-      👉 点此填写问卷
+      👉 Click here to fill in the questionnaire
     </a>
 
     <div class="consent-text">
@@ -25,7 +25,7 @@
         download
         class="download-link"
       >
-        📄 下载知情同意书
+        📄 Download the informed consent form
       </a>
 
       <a
@@ -33,7 +33,7 @@
         download
         class="download-link"
       >
-        📄 下载实验内容说明书
+        📄 Download the instruction manual of the experimental content
       </a>
 
       
@@ -42,7 +42,7 @@
         download
         class="download-link"
       >
-        📄 下载问卷内容
+        📄 Download the content of the questionnaire
       </a>
 
 

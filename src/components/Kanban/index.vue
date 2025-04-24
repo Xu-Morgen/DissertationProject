@@ -124,7 +124,7 @@
           </div>
         </a-card>
       </div>
-      <a-empty v-else description="暂无任务" class="empty-state" />
+      <a-empty v-else description="There are no tasks for the time being." class="empty-state" />
     </div>
   </div>
 </template>

@@ -208,7 +208,7 @@
         from: 'player',
         to: [selectedRecipient.value as string],
         subject: selectedSubject.value,
-        content: `${emailContent.value}<br><br>会议将在${meetingDay.value}举行,会议主题为${selectedMeeting.value}`,
+        content: `${emailContent.value}<br><br>The meeting will be held at ${meetingDay.value}, and the theme of the meeting is ${selectedMeeting.value}.`,
         day: useCalendarStore().currentDay,
         replies: [],
         metadata: {
@@ -242,7 +242,7 @@
     //   return false;
     // }
     if (!selectedSubject) {
-      alert('请选择邮件主题');
+      alert('Please select the subject of the email');
       return false;
     }
     return true;
