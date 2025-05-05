@@ -2,7 +2,7 @@
 import type { GameEvent } from '@/types';
 import MeetingData from './meetings'
 
-/** 游戏事件配置 */
+/** event  */
 export const GAME_EVENTS: Record<string, GameEvent> = {
   daily_check:{
     id:'daily_check',

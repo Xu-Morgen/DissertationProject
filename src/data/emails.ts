@@ -21,7 +21,7 @@ const SYSTEM_EMAILS: Email[] = [{
   id: 'see_kanban',
   from: 'boss',
   to: ['player'],
-  subject: 'An urgent task entered our backlog',
+  subject: 'An urgent task entered our backlog',  
   content: `Our staff has not been effectively taking tasks from kanban for too long. Please go to the kanban page and transfer new tasks to urgent.`,
   day: 0,
   isRead: false, 

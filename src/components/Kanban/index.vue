@@ -218,10 +218,10 @@ const setActiveTab = (tab: TaskPriority) => {
   activeTab.value = tab;
 };
 
-// 处理Transfer变化
+// handle transfer
 const handleChange = (priority: TaskPriority, targetKeys:string[], direction:string, moveKeys:string[],listNumber:number) => {
 
-  // 当前列表对应数据源
+  // current transfer list
   const listConfig = [
     [datalist2, datalist3],
     [datalist1, datalist3],

@@ -1,6 +1,6 @@
 import type { EmergencyTemplate } from "@/types";
 
-// 模板定义
+// emergency events
 export const EMERGENCY_TEMPLATES: Record<string, EmergencyTemplate> = {
   server_crash: {
     id: 'server_crash',

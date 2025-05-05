@@ -29,7 +29,7 @@ export const MEETING_TEMPLATES = {
   }
 } satisfies Record<string, Omit<CalendarEvent, "completed" | "day">>;
 
-/** 新人会议模板 */
+/** fresher meeting */
 const FRESH_MEETINGS: CalendarEvent[] = [{
   id: 'fresher_meeting',
   type: 'client',
@@ -102,7 +102,7 @@ const FRESH_MEETINGS: CalendarEvent[] = [{
     const returnMeeting: CalendarEvent = {
       id: 'daily_meeting_' + Date.now(),
       type: 'daily',
-      title: '每日会议',
+      title: 'daily meeting',
       canDelete: true,
       day: 7,
       participants: contacts.CONTACTS['team'],
