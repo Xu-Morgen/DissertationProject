@@ -1,1 +1,0 @@
-Unzip the file, open the unzipped folder with vscode as the workspace, download the live server plugin and select index.html to start live server
