@@ -129,7 +129,7 @@ export const useEmailStore = defineStore('email', {
      * 标记邮件为已读
      */
     markAsRead(emailId: string) {
-      const email = this.inbox.find(e => e.id === emailId);
+      const email = this.inbox.find(e => e.id == emailId);
       if (email) email.isRead = true;
     }
   },
