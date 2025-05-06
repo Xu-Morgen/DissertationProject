@@ -45,7 +45,8 @@ export const useTaskStore = defineStore('tasks', {
     
       // ✅ 添加一封引导邮件，点击打开后触发任务生成事件
       if (template.autoGenerate?.email) {
-        emailStore.addEmail({
+        emailStore.addEmailWithId({
+          id:`emergency_${Date.now()}`,
           from: 'system',
           to: template.autoGenerate.email.recipients,
           subject: template.autoGenerate.email.subject,
