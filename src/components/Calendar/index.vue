@@ -179,7 +179,7 @@ const resetClickedEvents = () => {
 const getEventClass = (event: CalendarEvent) => ({
   'event-completed': event.completed,
   'event-active': calendarStore.activeMeeting?.id === event.id,
-  'event-disabled': event.day !== calendarStore.currentDay // 新增禁用样式
+  'event-disabled': event.day !== calendarStore.currentDay 
 });
 
 const eventStatus = (event: CalendarEvent) => {
