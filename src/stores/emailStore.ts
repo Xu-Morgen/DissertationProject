@@ -30,6 +30,18 @@ export const useEmailStore = defineStore('email', {
       });
     },
 
+        /**
+     * 添加新邮件到收件箱
+     * @param email 不包含id和isRead的新邮件对象
+     */
+    addEmailWithId(email: Omit<Email, | 'isRead'>) {
+      this.inbox.unshift({
+        ...email,
+        isRead: false
+      });
+    },
+    
+
     /**
    * 发送新邮件到发件箱
    * @param email 不包含id和isRead的新邮件对象
@@ -129,8 +141,10 @@ export const useEmailStore = defineStore('email', {
      * 标记邮件为已读
      */
     markAsRead(emailId: string) {
-      const email = this.inbox.find(e => e.id === emailId);
-      if (email) email.isRead = true;
+      const email = this.inbox.find(e => e.id == emailId);
+      if (email) {
+        email.isRead = true;
+      }
     }
   },
 

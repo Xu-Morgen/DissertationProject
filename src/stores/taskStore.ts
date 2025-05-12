@@ -45,7 +45,8 @@ export const useTaskStore = defineStore('tasks', {
     
       // ✅ 添加一封引导邮件，点击打开后触发任务生成事件
       if (template.autoGenerate?.email) {
-        emailStore.addEmail({
+        emailStore.addEmailWithId({
+          id:`emergency_${Date.now()}`,
           from: 'system',
           to: template.autoGenerate.email.recipients,
           subject: template.autoGenerate.email.subject,
@@ -94,25 +95,29 @@ export const useTaskStore = defineStore('tasks', {
       }
     
       // ✅ 任务触发事件（用户点开邮件后触发）
-      GAME_EVENTS[`event_show_task_${template.id}`] = {
-        id: `event_show_task_${template.id}`,
-        actions: [
-          {
-            type: 'add_emergency_task_personal', // 👈 统一使用标准事件类型
-            task: {
-              id: `emergency_${template.id}`,
-              title: `[emergency] ${template.title}`,
-              description: `Handle emergency events: "${template.title}".`,
-              status: 'backlog',
-              linkedTaskId: undefined,
-              deadline: undefined,
-              creator: 'system',
-              createdAt: currentDay,
-              emergencyTemplateId: template.id
+      // 仅在有 meeting 时添加个人任务
+      if (template.autoGenerate?.meeting) {
+        GAME_EVENTS[`event_show_task_${template.id}`] = {
+          id: `event_show_task_${template.id}`,
+          actions: [
+            {
+              type: 'add_emergency_task_personal',
+              task: {
+                id: `emergency_${template.id}`,
+                title: `[emergency] ${template.title}`,
+                description: `Handle emergency events: "${template.title}".`,
+                status: 'backlog',
+                linkedTaskId: undefined,
+                deadline: undefined,
+                creator: 'system',
+                createdAt: currentDay,
+                emergencyTemplateId: template.id
+              }
             }
-          }
-        ]
-      };
+          ]
+        };
+      }
+
     
       // ✅ 事件动作（如 boostWorker 或 blockKeywords）
       const actions: GameEventAction[] = [];

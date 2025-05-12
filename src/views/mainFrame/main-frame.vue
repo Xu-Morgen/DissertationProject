@@ -277,7 +277,7 @@ const remainingMeetings = computed(() => {
           </a-button-group>
           
           <a-tooltip
-            :title="!canAdvanceToday ? `还有 ${remainingMeetings} 个会议未完成` : ''"
+            :title="!canAdvanceToday ? `${remainingMeetings} meeting hasn't finished` : ''"
           >
             <a-button 
               ref="tourStep5"

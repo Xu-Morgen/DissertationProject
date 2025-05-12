@@ -48,6 +48,7 @@ export const useCalendarStore = defineStore('calendar', {
       this.meetingCanUse = this.meetingCanUse.filter(t => t.id != meetingId);
     },
 
+    
     advanceDay(days: number = 1) {
       const taskStore = useTaskStore();
       const mailStore = useEmailStore();
@@ -55,24 +56,26 @@ export const useCalendarStore = defineStore('calendar', {
     
       this.currentDay += days;
     
+      // Day 0 is reserved for tutorial only and skips the main game loop
       if (this.currentDay === 0) return;
     
+      // Advance backlog tasks including ongoing and yesterday's tasks
       taskStore.workingBacklog();
-      this.changeCustomMeeting()
-
+      this.changeCustomMeeting();
+    
+      // Record tasks completed yesterday
       const yesterdayTasks = [...taskStore.yesterdayTask];
       taskStore.clearYesterdayTask();
     
+      // Schedule daily stand-up meeting and send corresponding emails
       this.scheduleMeeting(meetings.dailyMeeting(yesterdayTasks), this.currentDay);
     
-
-    
-      // ✅ 每三日生成一次客户任务 + 客户会议
+      // Every 3 days: generate a new client task and schedule a client meeting
       if (this.currentDay % 3 === 0) {
         const customerMeetingId = `client_meeting_${this.currentDay}`;
         const { mainTask } = taskStore.generateCustomerTask({
           meetingId: customerMeetingId,
-          title: `Client Task - ${this.currentDay}`,
+          title: `Client Task - Day ${this.currentDay}`,
           dueDay: 3,
           storyPoints: 5 + Math.floor(Math.random() * 5)
         });
@@ -86,11 +89,11 @@ export const useCalendarStore = defineStore('calendar', {
         this.scheduleMeeting(customerMeeting, this.currentDay + 2);
       }
     
-      // ✅ 每七日安排 Sprint 总结会议
+      // Every 7 days: schedule a Sprint summary meeting
       if (this.currentDay % 7 === 0) {
         this.scheduleMeeting({
           id: `sprint_meeting_day_${this.currentDay}`,
-          title: `Sprint summary meeting`,
+          title: `Sprint Review Meeting`,
           type: 'personal',
           canDelete: true,
           scripts: this.generateSprintMeetingScript(),
@@ -98,25 +101,27 @@ export const useCalendarStore = defineStore('calendar', {
           finishEventId: undefined,
           participants: {
             id: 'user',
-            name: 'you',
+            name: 'You',
             isEmergency: false
           }
         }, this.currentDay);
       }
     
-      // ✅ 每日生成一个紧急任务
+      // Generate a random emergency task each day
       const emergencyTemplate = taskStore.getRandomEmergencyTemplate();
       if (emergencyTemplate) {
         taskStore.generateEmergencyTaskFrom(emergencyTemplate);
       }
+    
+      // Send the daily summary email containing all meetings for the day
       const todayMeetings = this.events.filter(t => t.day === this.currentDay);
-
       const { id, isRead, ...todayMeetingEmail } = emails.dailyEmail(todayMeetings, this.currentDay);
-
       mailStore.addEmail(todayMeetingEmail);
-      // ✅ 胜利 / 失败判定
+    
+      // Check win or loss condition
       this.checkVictoryOrDefeat();
     },
+    
     
     checkVictoryOrDefeat() {
       const taskStore = useTaskStore();
