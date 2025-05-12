@@ -25,11 +25,9 @@ export const useEventStore = defineStore('events', {
     
 
 
-    /**
-     * 触发指定事件
-     */
+
     async triggerEvent(eventId: string, fallbackEvents: Record<string, GameEvent>) {
-      const event = this.events[eventId] || fallbackEvents[eventId]; // ✅ 优先从已注册事件取
+      const event = this.events[eventId] || fallbackEvents[eventId]; 
       if (!event) return;
     
       try {
@@ -42,9 +40,7 @@ export const useEventStore = defineStore('events', {
     },
     
 
-    /**
-     * 执行单个事件动作
-     */
+
     async executeAction(action: GameEventAction) {
       const taskStore = useTaskStore();
       const emailStore = useEmailStore();
@@ -52,7 +48,6 @@ export const useEventStore = defineStore('events', {
       const uIStore = useUIStore();
       const rootStore = useRootStore();
       switch (action.type) {
-        // 常规动作处理...
         case 'add_email':
           const email = EmailData.SYSTEM_EMAILS.find(t=>t.id == action.templateId)
           if(email){
@@ -142,10 +137,8 @@ export const useEventStore = defineStore('events', {
           
 
 
-        //需验证动作处理
         case 'do_first_kanban':
           const firsttask = taskStore.backlog.find(t=>t.title == "User analysis panel")
-          //验证成功
           if(firsttask?.priority == 'urgent'){
             const actions:GameEventAction[] = [
               {type:'finish_personal_task',taskId:"first_kanban_work"},
@@ -157,7 +150,6 @@ export const useEventStore = defineStore('events', {
               await this.executeAction(action);
             }
           }
-          //验证失败
           else{
             const actions:GameEventAction[] = [
               {type:'add_email',templateId:"first_kanban_failed"},

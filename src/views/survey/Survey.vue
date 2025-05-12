@@ -3,7 +3,6 @@
     <h1>Thanks playing！</h1>
     <p>Please fill in the following questionnaire to help us survry：</p>
 
-    <!-- 调查问卷链接 -->
     <a
       class="survey-link"
       href="https://docs.google.com/forms/d/e/1FAIpQLSeXSA-_Bl3ubwSKu3aZcrTOp3-qSDB0RvOehRtEMW7L60VZ7w/viewform?usp=dialog"
@@ -19,7 +18,6 @@
         If you have not yet downloaded a copy of this document for your records, we recommend that you do that now.
       </p>
 
-      <!-- 可选：下载知情书按钮 -->
       <a
         href="/dissertationProject/src/docs/consent form.docx"
         download
@@ -52,9 +50,7 @@
 </template>
 
 <script setup lang="ts">
-// 你可以在此处添加表单提交前逻辑、打点、分析上传等
 const handleSubmit = () => {
-  // 假设点击后跳转到实际 Google Form 链接
   window.open('https://your-survey-link.com', '_blank');
 };
 </script>

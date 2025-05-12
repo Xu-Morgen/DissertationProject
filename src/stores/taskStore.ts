@@ -1,4 +1,4 @@
-// stores/taskStore.ts
+
 import { defineStore } from 'pinia';
 import type { Task, Sprint, PersonalTask, TaskPriority, SentFormat, Recipient, EmergencyTemplate, GameEvent, GameEventAction, ScriptStep, YesterdayTask } from '@/types';
 import { notification } from 'ant-design-vue';
@@ -11,8 +11,8 @@ import { EMERGENCY_TEMPLATES } from '@/data/emergency';
 export const useTaskStore = defineStore('tasks', {
   state: () => ({
     backlog: [] as Task[],
-    satisfaction: 20, // 客户满意度（0-100）
-    personaltTask:[] as PersonalTask[], //用户个人任务
+    satisfaction: 20, 
+    personaltTask:[] as PersonalTask[],
     yesterdayTask:[] as YesterdayTask[]
   }),
 
@@ -25,25 +25,24 @@ export const useTaskStore = defineStore('tasks', {
       const currentDay = calendar.currentDay;
       const eventId = `event_emergency_${template.id}`;
     
-      // ✅ 添加用户可发邮件的 sentFormat（用于 MailComposer）
       if (template.autoGenerate?.email && template.autoGenerate?.meeting) {
         emailStore.addNewSentFormat({
           id: `emergency_format_${template.id}`,
           subject: template.autoGenerate.email.subject,
           content: template.autoGenerate.email.content,
           relate: {
-            id: template.autoGenerate.email.recipients[0], // 确保这个 ID 在 contacts 中
+            id: template.autoGenerate.email.recipients[0],
             name: template.autoGenerate.email.recipients[0],
             isEmergency: true
           },
           type: 'meeting',
-          meetingid: template.autoGenerate.meeting.templateId, // 👈 用户邮件中选择的会议 id
-          nextEventId: `event_emergency_${template.id}` // 👈 邮件发出后触发
+          meetingid: template.autoGenerate.meeting.templateId,
+          nextEventId: `event_emergency_${template.id}` 
         });
         emailStore.addRecipient(template.autoGenerate.email.recipients[0])
       }
     
-      // ✅ 添加一封引导邮件，点击打开后触发任务生成事件
+
       if (template.autoGenerate?.email) {
         emailStore.addEmailWithId({
           id:`emergency_${Date.now()}`,
@@ -56,7 +55,7 @@ export const useTaskStore = defineStore('tasks', {
           metadata: {
             requiresAction: true,
             category: 'system',
-            onOpenEventId: `event_show_task_${template.id}` // 👈 点击邮件时触发添加任务
+            onOpenEventId: `event_show_task_${template.id}` 
           }
         });
       }
@@ -94,8 +93,7 @@ export const useTaskStore = defineStore('tasks', {
         });
       }
     
-      // ✅ 任务触发事件（用户点开邮件后触发）
-      // 仅在有 meeting 时添加个人任务
+
       if (template.autoGenerate?.meeting) {
         GAME_EVENTS[`event_show_task_${template.id}`] = {
           id: `event_show_task_${template.id}`,
@@ -119,7 +117,6 @@ export const useTaskStore = defineStore('tasks', {
       }
 
     
-      // ✅ 事件动作（如 boostWorker 或 blockKeywords）
       const actions: GameEventAction[] = [];
     
       if(template.effects?.custom){
@@ -191,10 +188,7 @@ export const useTaskStore = defineStore('tasks', {
 
 
     
-    /**
-     * 检查客户任务完成状态（在会议中调用）
-     * @param meetingId 会议ID
-     */
+
     checkCustomerTasks(meetingId: string): {
       completed: number;
       total: number;
@@ -210,9 +204,9 @@ export const useTaskStore = defineStore('tasks', {
       relatedTasks.forEach(task => {
         if (task.status === 'done') {
           completed++;
-          totalImpact += 5; // 每个完成的任务增加5点满意度
+          totalImpact += 5;
         } else {
-          totalImpact -= 8; // 每个未完成的任务减少8点满意度
+          totalImpact -= 8; 
         }
       });
 
@@ -235,21 +229,16 @@ export const useTaskStore = defineStore('tasks', {
       return EMERGENCY_TEMPLATES[randomKey];
     },
     
-    /**
-    * 生成客户关联任务对
-    * @param params 任务参数 
-    */
+
    generateCustomerTask(params: {
-     meetingId: string;      // 关联的会议ID
-     title: string;          // 任务标题
-     dueDay: number;         // 截止天数
-     storyPoints: number;    // 故事点数
+     meetingId: string;    
+     title: string;          
+     dueDay: number;        
+     storyPoints: number;    
    }): { mainTask: Task; personalTask: PersonalTask } {
-     // 生成唯一ID
      const taskId = `cust_${Date.now()}`;
      const personalTaskId = `${taskId}_pt`;
      
-     // 创建主任务（任务A）
      const mainTask: Task = {
        id: taskId,
        title: params.title,
@@ -267,7 +256,6 @@ export const useTaskStore = defineStore('tasks', {
        createdAt: useCalendarStore().currentDay
      };
 
-     // 创建关联的个人任务（任务B）
      const personalTask: PersonalTask = {
        id: personalTaskId,
        title: `client：${params.title}`,
@@ -279,7 +267,6 @@ export const useTaskStore = defineStore('tasks', {
        createdAt: useCalendarStore().currentDay
      };
 
-     // 存储任务
      this.upsertTask(mainTask);
      this.upsertPersoanlTask(personalTask);
 
@@ -292,7 +279,7 @@ export const useTaskStore = defineStore('tasks', {
      return { mainTask, personalTask };
    },
    workingBacklog() {
-    const worker = useRootStore().worker; // ✅ 只读取，不修改
+    const worker = useRootStore().worker; 
     let availableWorkers = worker;
   
     const priorityLevels: TaskPriority[] = ['urgent', 'high', 'low'];
@@ -341,7 +328,7 @@ export const useTaskStore = defineStore('tasks', {
     }
   
     this.backlog = updatedTasks;
-    this.yesterdayTask = Array.from(markedMap.values()); // ✅ 每个任务最多一条
+    this.yesterdayTask = Array.from(markedMap.values()); 
   },
   
 
@@ -359,9 +346,7 @@ export const useTaskStore = defineStore('tasks', {
         this.backlog.splice(index, 1, {...task,priority:priority});
       } 
     },
-    /**
-     * 添加或更新任务
-     */
+
     upsertTask(task: Task) {
       const index = this.backlog.findIndex(t => t.id === task.id);
       
@@ -372,8 +357,7 @@ export const useTaskStore = defineStore('tasks', {
       } else {
         this.backlog.push(task);
       }
-    
-      // 仅在添加新任务时显示通知
+
       if (isNewTask) {
         notification.success({
           message: 'task added',
@@ -387,9 +371,8 @@ export const useTaskStore = defineStore('tasks', {
         });
       }
     },
-    /**
-     * 添加或更新个人任务
-     */
+
+
     upsertPersoanlTask(task: PersonalTask) {
       const index = this.personaltTask.findIndex(t => t.id === task.id);
       if (index >= 0) {
@@ -399,10 +382,7 @@ export const useTaskStore = defineStore('tasks', {
       }
     },
 
-    /**
-     * 调整客户满意度
-     * @param delta 变化值（正负均可）
-     */
+
     adjustSatisfaction(delta: number) {
       this.satisfaction = Math.max(0, Math.min(100, this.satisfaction + delta));
     },

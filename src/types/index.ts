@@ -1,9 +1,8 @@
 // types/index.ts
 
-/* ================= 核心类型 ================= */
-export type GameDate = number; // 表示游戏开始后的天数
+export type GameDate = number;
 
-/* ================= 邮件系统 ================= */
+
 export interface Email {
   id: string;
   from: string;
@@ -43,7 +42,6 @@ export interface SentFormat {
 
 }
 
-/* ================= 任务系统 ================= */
 export type TaskStatus = 'backlog' | 'todo' | 'inProgress' | 'done';
 export type TaskPriority = 'none' | 'low' | 'medium' | 'high' | 'urgent';
 
@@ -84,7 +82,6 @@ export interface PersonalTask {
   emergencyTemplateId?: string;
 }
 
-/* ================= 日历系统 ================= */
 export type MeetingType = 'daily' | 'sprint' | 'client' | 'personal';
 
 export interface CalendarEvent {
@@ -124,7 +121,6 @@ export interface DailyMeetingConfig {
   participants: string[];
 }
 
-/* ================= Sprint系统 ================= */
 export interface Sprint {
   id: string;
   name: string;
@@ -135,7 +131,6 @@ export interface Sprint {
   completedPoints: number;
 }
 
-/* ================= 事件系统 ================= */
 export type GameEventAction =
   | { type: 'add_email'; templateId: string }
   | { type: 'modify_satisfaction'; value: number }
@@ -170,7 +165,6 @@ export interface GameEvent {
   actions: GameEventAction[];
 }
 
-// 类型定义
 export type EmergencyTemplate = {
   id: string;
   title: string;
@@ -187,13 +181,12 @@ export type EmergencyTemplate = {
     };
   };
   effects?: {
-    blockKeywords?: string[]; // 阻塞含关键字任务
-    boostWorker?: boolean;    // worker 数量翻倍
+    blockKeywords?: string[]; 
+    boostWorker?: boolean;   
     custom?:string;
   };
 };
 
-/* ================= UI状态 ================= */
 export interface UIState {
   configModalOpen: boolean;
   nextDayBtnCanUse: boolean;
