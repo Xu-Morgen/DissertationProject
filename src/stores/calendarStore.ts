@@ -55,18 +55,14 @@ export const useCalendarStore = defineStore('calendar', {
     
       this.currentDay += days;
     
-      // ✅ Day 0 - 教学关，跳过游戏主循环
       if (this.currentDay === 0) return;
     
-      // ✅ 推进 backlog（工作 + 昨日任务）
       taskStore.workingBacklog();
       this.changeCustomMeeting()
 
-      // ✅ 记录昨日任务
       const yesterdayTasks = [...taskStore.yesterdayTask];
       taskStore.clearYesterdayTask();
     
-      // ✅ Daily 会议安排 + 邮件
       this.scheduleMeeting(meetings.dailyMeeting(yesterdayTasks), this.currentDay);
     
 
@@ -76,7 +72,7 @@ export const useCalendarStore = defineStore('calendar', {
         const customerMeetingId = `client_meeting_${this.currentDay}`;
         const { mainTask } = taskStore.generateCustomerTask({
           meetingId: customerMeetingId,
-          title: `客户提出任务 - ${this.currentDay}`,
+          title: `Client Task - ${this.currentDay}`,
           dueDay: 3,
           storyPoints: 5 + Math.floor(Math.random() * 5)
         });
@@ -94,7 +90,7 @@ export const useCalendarStore = defineStore('calendar', {
       if (this.currentDay % 7 === 0) {
         this.scheduleMeeting({
           id: `sprint_meeting_day_${this.currentDay}`,
-          title: `Sprint总结会议`,
+          title: `Sprint summary meeting`,
           type: 'personal',
           canDelete: true,
           scripts: this.generateSprintMeetingScript(),
@@ -102,7 +98,7 @@ export const useCalendarStore = defineStore('calendar', {
           finishEventId: undefined,
           participants: {
             id: 'user',
-            name: '你',
+            name: 'you',
             isEmergency: false
           }
         }, this.currentDay);

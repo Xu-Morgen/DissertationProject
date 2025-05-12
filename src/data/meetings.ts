@@ -7,7 +7,7 @@ export const MEETING_TEMPLATES = {
     id: "tech_emergency",
     type: 'client',
     title: "tech emergency meeting",
-    participants: {  // 添加缺失的participants属性
+    participants: {  
       id: "tech_team",
       name: "tech team",
       isEmergency:true

@@ -15,14 +15,11 @@ const emit = defineEmits(['update:open']);
 const emailStore = useEmailStore();
 const eventStore = useEventStore();
 
-// 处理邮件回复
 const handleReply = (replyId: string) => {
   if (!props.email) return;
 
-  // 处理回复逻辑
   emailStore.processReply(props.email.id, replyId);
 
-  // 触发后续事件
   const reply = props.email.replies?.find(r => r.id === replyId);
   
   if (reply?.nextEventId) {
@@ -32,12 +29,10 @@ const handleReply = (replyId: string) => {
   closeModal();
 };
 
-// 关闭模态框
 const closeModal = () => {
   emit('update:open', false);
 };
 
-// 格式化邮件内容
 const formattedContent = computed(() => {
   return props.email?.content
     ?.replace(/ /g, '&nbsp;')
@@ -54,7 +49,6 @@ const formattedContent = computed(() => {
     :footer="null"
   >
     <div class="mail-modal-container">
-      <!-- 邮件头信息 -->
       <div class="email-header">
         <div class="sender-info">
           <span class="sender-name">
@@ -67,13 +61,11 @@ const formattedContent = computed(() => {
         </a-tag>
       </div>
 
-      <!-- 邮件正文 -->
       <div 
         class="email-content"
         v-html="formattedContent"
       />
 
-      <!-- 邮件回复选项部分 -->
       <div v-if="email?.replies?.length && !emailStore.answeredEmail.some(t=>t.id == email?.id)" class="reply-actions">
         <a-button
           v-for="reply in email.replies"
