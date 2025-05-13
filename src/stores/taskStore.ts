@@ -37,8 +37,8 @@ export const useTaskStore = defineStore('tasks', {
             isEmergency: true
           },
           type: 'meeting',
-          meetingid: template.autoGenerate.meeting.templateId, // 👈 用户邮件中选择的会议 id
-          nextEventId: `event_emergency_${template.id}` // 👈 邮件发出后触发
+          meetingid: template.autoGenerate.meeting.templateId, //  用户邮件中选择的会议 id
+          nextEventId: `event_emergency_${template.id}` // 邮件发出后触发
         });
         emailStore.addRecipient(template.autoGenerate.email.recipients[0])
       }
@@ -56,7 +56,7 @@ export const useTaskStore = defineStore('tasks', {
           metadata: {
             requiresAction: true,
             category: 'system',
-            onOpenEventId: `event_show_task_${template.id}` // 👈 点击邮件时触发添加任务
+            onOpenEventId: `event_show_task_${template.id}` // 点击邮件时触发添加任务
           }
         });
       }
@@ -292,7 +292,7 @@ export const useTaskStore = defineStore('tasks', {
      return { mainTask, personalTask };
    },
    workingBacklog() {
-    const worker = useRootStore().worker; // ✅ 只读取，不修改
+    const worker = useRootStore().worker; //只读取，不修改
     let availableWorkers = worker;
   
     const priorityLevels: TaskPriority[] = ['urgent', 'high', 'low'];
@@ -341,7 +341,7 @@ export const useTaskStore = defineStore('tasks', {
     }
   
     this.backlog = updatedTasks;
-    this.yesterdayTask = Array.from(markedMap.values()); // ✅ 每个任务最多一条
+    this.yesterdayTask = Array.from(markedMap.values()); // 每个任务最多一条
   },
   
 
