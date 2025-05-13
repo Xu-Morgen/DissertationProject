@@ -22,7 +22,6 @@ import type { TourProps } from 'ant-design-vue';
 import CommonUtils from '@/utils/utils';
 import EmailData from '@/data/emails'
 import TaskData from '@/data/tasks'
-// Store 实例
 const emailStore = useEmailStore();
 const taskStore = useTaskStore();
 const calendarStore = useCalendarStore();
@@ -30,14 +29,11 @@ const eventStore = useEventStore();
 const uiStore = useUIStore();
 const rootStore = useRootStore();
 
-// 当前视图状态
 const currentView = ref<'mail' | 'kanban' | 'calendar'>('mail');
 
-// 邮件相关状态
 const activeEmail = ref<Email | null>(null);
 const forceUpdate = ref(0);
 
-//新手引导
 const tourStep = ref(0)
 const tourStep1 = ref(null);
 const tourStep2 = ref(null);
@@ -50,45 +46,39 @@ const tourStep6 = ref(null);
 
 
 const steps: TourProps['steps'] = [
-  // 步骤1 - 任务面板
   {
     title: 'Task Panel',
     description: 'View and manage your current tasks here, track deadlines and progress',
     target: () => tourStep1.value && tourStep1.value.$el,
   },
-  // 步骤2 - 邮件视图
   {
     title: 'Mail Center',
     description: 'Check unread emails and handle important client communications',
     target: () => tourStep2.value && tourStep2.value.$el,
   },
-  // 步骤3 - 看板视图
   {
     title: 'Kanban Board',
     description: 'Visualize task flow and manage work progress using kanban view',
     target: () => tourStep3.value && tourStep3.value.$el,
   },
-  // 步骤4 - 日历视图
   {
     title: 'Project Calendar',
     description: 'Check meeting schedules and project timelines',
     target: () => tourStep4.value && tourStep4.value.$el,
     
   },
-  // 步骤5 - 推进天数
   {
     title: 'Advance Day',
     description: 'Click here to advance game day after completing daily work',
     target: () => tourStep5.value && tourStep5.value.$el,
   },
-  // 步骤6 - 帮助按钮
   {
     title: 'Help Center',
     description: 'Click the question mark anytime to review this tutorial',
     target: () => tourStep6.value && tourStep6.value.$el,
     onFinish: () => {
       InitialTheGame()
-      rootStore.handleTour(false)  // 关闭 tour 状态
+      rootStore.handleTour(false)  
     }
   }
   
@@ -113,19 +103,16 @@ const InitialTheGame = () =>{
 
 
 
-// 任务过滤
 const visibleTasks = computed(() => {
-  // 确认store中的个人任务数组名称正确
   return taskStore.personaltTask.filter(t => 
     t.status !== 'done' 
   );
 });
 
-// 处理每日推进
 const advanceDay = async () => {
   eventStore.triggerEvent('daily_check', GAME_EVENTS); 
   await nextTick();
-  forceUpdate.value++; // 触发重新渲染
+  forceUpdate.value++; 
   currentView.value = 'mail'
 };
 
@@ -159,7 +146,6 @@ const remainingMeetings = computed(() => {
 <template>
   <div class="main-layout" :key="forceUpdate">
     <a-layout>
-      <!-- 头部 -->
       <a-layout-header class="header">
         <ConfigModal :open="uiStore.configModalOpen"/>
         <a-button 
@@ -183,12 +169,10 @@ const remainingMeetings = computed(() => {
         </span>
       </a-layout-header>
 
-      <!-- 内容区域 -->
       <a-layout>
 
 
         <a-layout-content class="content">
-          <!-- 动态视图切换 -->
           <Inbox 
             v-if="currentView == 'mail'"
             @select-email="(email) => {
@@ -205,7 +189,6 @@ const remainingMeetings = computed(() => {
           />
         </a-layout-content>
 
-        <!-- 右侧任务侧边栏 -->
         <a-layout-sider class="sider" ref ="tourStep1">
           <div class="task-panel" >
             <div >
@@ -240,7 +223,6 @@ const remainingMeetings = computed(() => {
         </a-layout-sider>
       </a-layout>
 
-      <!-- 底部导航 -->
       <a-layout-footer class="footer">
         <div class="nav-bar">
           <a-button-group>
@@ -306,9 +288,8 @@ const remainingMeetings = computed(() => {
   height: 100vh;
   display: flex;
   flex-direction: column;
-  overflow: hidden; /* 防止滚动条 */
+  overflow: hidden; 
 
-  /* 根布局 */
   display: flex;
   flex-direction: column;
 
@@ -329,20 +310,19 @@ const remainingMeetings = computed(() => {
   }
 
   .content {
-    max-width: 1600px; /* 限制最大宽度为 1600px 或根据需要调整 */
+    max-width: 1600px;
     margin: 0 auto;
     padding: 24px;
     background: #f0f2f5;
-    flex-grow: 1; /* 允许内容区域伸展以填充剩余空间 */
+    flex-grow: 1;
   }
 
-  /* 右侧任务栏样式，调整宽度 */
   .sider {
     background: #fff;
     border-left: 1px solid #e8e8e8;
     padding: 16px;
-    flex-shrink: 0; /* 确保任务栏不会缩小 */
-    width: 350px !important; /* 调整任务栏宽度为 400px，可以根据需要进一步增加或减少 */
+    flex-shrink: 0; 
+    width: 350px !important; 
     min-width: 350px !important;
     max-width: 350px !important;
 

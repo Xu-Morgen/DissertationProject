@@ -18,10 +18,7 @@ export const useEmailStore = defineStore('email', {
 
 
     
-    /**
-     * 添加新邮件到收件箱
-     * @param email 不包含id和isRead的新邮件对象
-     */
+
     addEmail(email: Omit<Email, 'id' | 'isRead'>) {
       this.inbox.unshift({
         ...email,
@@ -30,10 +27,7 @@ export const useEmailStore = defineStore('email', {
       });
     },
 
-        /**
-     * 添加新邮件到收件箱
-     * @param email 不包含id和isRead的新邮件对象
-     */
+
     addEmailWithId(email: Omit<Email, | 'isRead'>) {
       this.inbox.unshift({
         ...email,
@@ -42,10 +36,7 @@ export const useEmailStore = defineStore('email', {
     },
     
 
-    /**
-   * 发送新邮件到发件箱
-   * @param email 不包含id和isRead的新邮件对象
-   */
+
     sentEmail(email: Omit<Email, 'id' | 'isRead'>) {
       this.sent.unshift({
         ...email,
@@ -55,10 +46,7 @@ export const useEmailStore = defineStore('email', {
     },
 
     
-  /**
-   * 添加新收件人
-   * @param RecipientId 收信人的id
-   */
+
     addRecipient(RecipientId:string) {
       const newRecipient = contacts.CONTACTS[RecipientId]
       if (newRecipient) {
@@ -69,10 +57,7 @@ export const useEmailStore = defineStore('email', {
       }
       
     },
-  /**
-   * 删去收件人
-   * @param RecipientId 收信人的id
-   */
+
       removeRecipient(RecipientId:string) {
         const removeRecipient = contacts.CONTACTS[RecipientId]
         if (removeRecipient){
@@ -82,10 +67,7 @@ export const useEmailStore = defineStore('email', {
 
 
 
-  /**
-   * 添加新发件格式
-   * @param SentId 发件格式的id
-   */
+
     addSentFormat(SentId:string) {
       const newSentFormat = sentFormat.SENT.find(s=>s.id == SentId)
       if (newSentFormat){
@@ -98,10 +80,6 @@ export const useEmailStore = defineStore('email', {
   },
 
 
-  /**
-   * 删去发件格式
-   * @param SentId 发件格式的id
-   */
     removeSentFormat(SentId:string) {
       const removeSentFormat = sentFormat.SENT.find(s=>s.id == SentId)
       console.log(removeSentFormat)
@@ -110,18 +88,13 @@ export const useEmailStore = defineStore('email', {
         console.log(this.sentFormat)
       }
   },
-    /**
-     * 处理邮件回复
-     * @param emailId 目标邮件ID
-     * @param replyId 选择的回复ID
-     */
+
     processReply(emailId: string, replyId: string) {
       const email = this.inbox.find(e => e.id === emailId);
       const reply = email?.replies?.find(r => r.id === replyId);
 
       if (!email || !reply) return;
 
-      // 将作出回应的邮件记录列表
       this.answeredEmail.push({
         ...email,
         from: 'player',
@@ -131,15 +104,12 @@ export const useEmailStore = defineStore('email', {
         metadata: { ...email.metadata }
       });
 
-      // 移除非持续型邮件
       if (!email.metadata.requiresAction) {
         this.inbox = this.inbox.filter(e => e.id !== emailId);
       }
     },
 
-    /**
-     * 标记邮件为已读
-     */
+
     markAsRead(emailId: string) {
       const email = this.inbox.find(e => e.id == emailId);
       if (email) {
@@ -149,21 +119,17 @@ export const useEmailStore = defineStore('email', {
   },
 
   getters: {
-     // 根据收件人筛选对应的主题
      getSubjectsByRecipient: (state) => (recipientId: string) => {
       return state.sentFormat.filter(mail => mail.relate.id === recipientId);
     },
     
     
-    /** 未读邮件数量 */
     unreadCount: (state) => state.inbox.filter(e => !e.isRead).length,
 
-    /** 需要处理的紧急邮件 */
     urgentEmails: (state) => state.inbox.filter(
       e => e.metadata.requiresAction && !e.isRead
     ),
 
-    /** 获取联系人名称 */
     getContactName: (state) => (id: string) => 
       state.contacts.find(c => c.id === id)?.name || id
   },

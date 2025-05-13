@@ -141,7 +141,6 @@ export const EMERGENCY_TEMPLATES: Record<string, EmergencyTemplate> = {
     }
   },
 
-  // ✅ 再生成 11 条轻型事件作为补充
   api_limit_reached: {
     id: 'api_limit_reached',
     title: 'API Rate Limit Hit',

@@ -1,17 +1,14 @@
 <template>
   <div class="kanban-container">
-    <!-- 优先级看板区域 -->
     <div class="kanban-section">
       <a-divider orientation="left" class="custom-divider">
         <div class="divider-header">
-          <!-- 左侧图标和标题 -->
           <div class="header-left">
             <a-tag color="#1890ff" class="divider-tag">
               <rocket-outlined /> Priority board
             </a-tag>
           </div>
 
-          <!-- 右侧选项卡和按钮 -->
           <div class="header-right">
             <div class="priority-tabs">
               <div 
@@ -31,9 +28,7 @@
         </div>
       </a-divider>
 
-      <!-- 看板内容容器 -->
       <div class="kanban-content">
-        <!-- 紧急优先级看板 -->
         <div 
           class="priority-kanban urgent-kanban"
           v-show="activeTab === 'urgent'"
@@ -47,7 +42,6 @@
           />
         </div>
 
-        <!-- 高优先级看板 -->
         <div 
           class="priority-kanban high-kanban"
           v-show="activeTab === 'high'"
@@ -61,7 +55,6 @@
           />
         </div>
 
-        <!-- 低优先级看板 -->
         <div 
           class="priority-kanban low-kanban"
           v-show="activeTab === 'low'"
@@ -77,7 +70,6 @@
       </div>
     </div>
 
-    <!-- 任务列表区域 -->
     <div class="task-section">
       <a-divider orientation="left" class="custom-divider">
         <a-tag color="#52c41a" class="divider-tag">task list</a-tag>
@@ -137,7 +129,6 @@ import { DeleteOutlined, ClockCircleOutlined, RocketOutlined, PlusOutlined } fro
 
 const taskStore = useTaskStore();
 
-// 响应式状态
 const activeTab = ref<TaskPriority>('urgent');
 const priorityTabs = ref<{value:TaskPriority,label:string,color:string}[]>([
   { value: 'urgent', label: 'urgent tasks', color: '#ff4d4f' },
@@ -145,13 +136,11 @@ const priorityTabs = ref<{value:TaskPriority,label:string,color:string}[]>([
   { value: 'low', label: 'General tasks', color: '#52c41a' }
 ]);
 
-// 任务数据
 const tasks = computed(() => taskStore.backlog);
 const unarrangedTask = computed(() => 
   tasks.value.filter(task => task.status !== 'done')
 );
 
-// 初始化数据源
 const initializeDataSources = () => {
   const baseData = unarrangedTask.value.map(task => ({
     key: task.id,
@@ -171,9 +160,7 @@ const datalist1 = ref([...list1.value]);
 const datalist2 = ref([...list1.value]);
 const datalist3 = ref([...list1.value]);
 
-// 组件挂载时初始化看板数据
 onMounted(() => {
-  // 初始化紧急任务
   taskStore.backlog
     .filter(t => t.priority === 'urgent' && t.status !== 'done')
     .forEach(task => {
@@ -182,7 +169,6 @@ onMounted(() => {
       datalist3.value = datalist3.value.filter(item => item.key !== task.id);
     });
 
-  // 初始化重要任务
   taskStore.backlog
     .filter(t => t.priority === 'high' && t.status !== 'done')
     .forEach(task => {
@@ -191,7 +177,6 @@ onMounted(() => {
       datalist3.value = datalist3.value.filter(item => item.key !== task.id);
     });
 
-  // 初始化一般任务
   taskStore.backlog
     .filter(t => t.priority === 'low' && t.status !== 'done')
     .forEach(task => {
@@ -201,19 +186,17 @@ onMounted(() => {
     });
 });
 
-// 获取选项卡任务数量
 const getTabCount = (tabValue: TaskPriority): number => {
   const countMap: Record<TaskPriority, number> = {
     urgent: list2.value.length,
     high: list3.value.length,
     low: list4.value.length,
     medium:0,
-    none: 0 // 补充类型定义
+    none: 0 
   };
   return countMap[tabValue];
 };
 
-// 切换选项卡
 const setActiveTab = (tab: TaskPriority) => {
   activeTab.value = tab;
 };
@@ -255,7 +238,6 @@ const handleChange = (priority: TaskPriority, targetKeys:string[], direction:str
   }
 };
 
-// 样式相关工具函数
 const getPriorityColor = (priority: TaskPriority): string => {
   return {
     medium:'#d9d9d9',
@@ -268,24 +250,21 @@ const getPriorityColor = (priority: TaskPriority): string => {
 
 const getPriorityClass = (task: Task): string => {
   return task.status === 'done'
-    ? 'task-done' // 新样式
+    ? 'task-done' 
     : `priority-${task.priority}`;
 };
 
-// Transfer组件项渲染器
 const renderFunc = (item: { title: string }) => item.title;
 
 </script>
 
 <style scoped lang="less">
 .kanban-container {
-  /* 添加以下样式 */
-  height: 75vh; /* 根据视口高度设置 */
-  overflow-y: auto; /* 启用垂直滚动 */
+  height: 75vh; 
+  overflow-y: auto; 
   display: flex;
-  flex-direction: column; /* 保持内部布局结构 */
+  flex-direction: column; 
 
-  /* 原有样式保持不变 */
   background: #fff;
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
@@ -294,7 +273,6 @@ const renderFunc = (item: { title: string }) => item.title;
   max-width: 1200px;
 }
 
-/* 分割线头部布局 */
 .custom-divider .divider-header {
   display: flex;
   justify-content: space-between;
@@ -389,7 +367,6 @@ const renderFunc = (item: { title: string }) => item.title;
   }
 }
 
-/* 看板内容区域 */
 .kanban-content {
   position: relative;
   min-height: 420px;
@@ -414,7 +391,6 @@ const renderFunc = (item: { title: string }) => item.title;
   }
 }
 
-/* Transfer组件样式 */
 :deep(.custom-transfer) {
   height: 360px;
   display: flex;
@@ -461,7 +437,6 @@ const renderFunc = (item: { title: string }) => item.title;
   }
 }
 
-/* 任务列表样式（保持原有实现） */
 .task-section {
   margin-top: 32px;
 
@@ -481,7 +456,6 @@ const renderFunc = (item: { title: string }) => item.title;
   }
 
   .task-card {
-    /* 保持原有卡片样式 */
   }
 }
 

@@ -35,7 +35,7 @@ export const useUIStore = defineStore('ui', {
     },
   },
   getters: {
-    /** 过滤后的邮件列表 */
+
 
   },
   persist:true,

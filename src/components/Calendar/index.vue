@@ -1,6 +1,5 @@
 <template>
   <div class="calendar-container">
-    <!-- 调试控制栏 -->
     <div class="debug-controls">
       <!-- <a-button @click="changeDay(-1)">
         <left-outlined /> Previous Day
@@ -17,7 +16,6 @@
     </div>
 
     <div class="calendar-content">
-      <!-- 日历网格 -->
       <div class="calendar-grid">
         <div
           v-for="day in visibleDays"
@@ -59,7 +57,6 @@
         </div>
       </div>
 
-      <!-- 会议展示区域（固定在可视区域内） -->
       <div class="meeting-area" :class="{ active: calendarStore.inMeeting }">
         <div v-if="calendarStore.inMeeting" class="meeting-container">
           <div class="meeting-header">
@@ -128,7 +125,6 @@ const calendarStore = useCalendarStore();
 const taskStore = useTaskStore();
 const scriptFlow = ref<HTMLElement>();
 
-// 自动滚动到底部
 const scrollToBottom = () => {
   nextTick(() => {
     if (scriptFlow.value) {
@@ -137,7 +133,6 @@ const scrollToBottom = () => {
   });
 };
 
-// 计算属性
 const visibleDays = computed(() => {
   const start = Math.max(calendarStore.currentDay - 3, 0);
   const end = calendarStore.currentDay + 3;
@@ -169,7 +164,6 @@ const currentOptions = computed(() => {
   }];
 });
 
-// 方法
 const changeDay = (delta: number) => {
   const newDay = calendarStore.currentDay + delta;
   if (newDay < 1) return;
@@ -185,7 +179,7 @@ const resetClickedEvents = () => {
 const getEventClass = (event: CalendarEvent) => ({
   'event-completed': event.completed,
   'event-active': calendarStore.activeMeeting?.id === event.id,
-  'event-disabled': event.day !== calendarStore.currentDay // 新增禁用样式
+  'event-disabled': event.day !== calendarStore.currentDay 
 });
 
 const eventStatus = (event: CalendarEvent) => {
@@ -231,7 +225,6 @@ const deleteMeeting = (meetingId: string) => {
 
 };
 
-// 会议状态计算
 const meetingTagColor = computed(() => 
   calendarStore.activeMeeting?.completed ? '#52c41a' : '#1890ff'
 );
@@ -240,7 +233,6 @@ const meetingStatusText = computed(() =>
   calendarStore.activeMeeting?.completed ? 'Completed' : 'In Progress'
 );
 
-// 初始化时确保会议区域可见
 onMounted(() => {
   scrollToBottom();
 });
@@ -271,7 +263,7 @@ onMounted(() => {
   .calendar-content {
     display: flex;
     flex-direction: column;
-    height: calc(100vh - 25vh); /* 根据 debug-controls 等高度调整 */
+    height: calc(100vh - 25vh);
   }
 
   .calendar-grid {
@@ -353,16 +345,14 @@ onMounted(() => {
   }
 
   .meeting-area {
-    /* 保持固定的高度 */
   height: 300px;
-  /* 移除 transform，使其保持在正常文档流中 */
   transform: none;
   transition: all 0.3s;
   border: 2px dashed #e8e8e8;
   border-radius: 8px;
   padding: 16px;
   position: relative;
-  background: #f0f5ff; /* 可选：激活时可以有背景色 */
+  background: #f0f5ff;
     &.active {
       border-color: #1890ff;
       background: #f0f5ff;

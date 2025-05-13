@@ -16,7 +16,7 @@ const routes: Array<RouteRecordRaw> = [
     {
         path: '/survey',
         name: 'Survey',
-        component: () => import('@/views/survey/Survey.vue') // 你可以自己创建 Survey 页面
+        component: () => import('@/views/survey/Survey.vue')
       },
       
 ];

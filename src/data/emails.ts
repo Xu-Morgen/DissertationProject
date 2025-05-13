@@ -92,7 +92,7 @@ const SYSTEM_EMAILS: Email[] = [{
   subject: 'New feature requirements',
   content: `We hope to add a user analytics panel....`,
   day: 3,
-  isRead: false, // 添加 isRead 字段
+  isRead: false, 
   replies: [
     {
       id: 'agree',
@@ -111,7 +111,6 @@ const SYSTEM_EMAILS: Email[] = [{
 }];
 
 const dailyEmail = (meetings: CalendarEvent[], day: number): Email => {
-  // 生成邮件内容HTML
   const generateMeetingHTML = (meeting: CalendarEvent) => {
     const status = meeting.completed ? 
       '<span style="color: #52c41a;">✓ finished</span>' : 
@@ -129,7 +128,6 @@ const dailyEmail = (meetings: CalendarEvent[], day: number): Email => {
     `;
   };
 
-  // 构建邮件内容
   const content = `
         Day ${day} meetingn schedule
       

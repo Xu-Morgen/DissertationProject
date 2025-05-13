@@ -88,7 +88,6 @@
 import router from '@/router';
 
   const startSurvey = () => {
-    // 你可以在这里添加路由跳转，例如跳转到问卷页面
     router.push('/main')
   };
   </script>

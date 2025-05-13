@@ -9,7 +9,7 @@ const TASK_TEMPLATES: Record<string, Omit<Task, 'id' | 'createdAt'>> = {
     status: 'backlog',
     priority: 'none',
     storyPoints: 8,
-    creator: 'client', // 仅允许 'player' | 'boss' | 'client'
+    creator: 'client',
     blocked: false,
     progress:0,
   },

@@ -7,7 +7,6 @@
       destroyOnClose
       :styles="{ body: { maxHeight: '70vh' } }"
     >
-      <!-- 收件人选择 -->
       <a-select
         v-model:value="selectedRecipient"
         placeholder="Select recipient"
@@ -18,7 +17,6 @@
       />
 
 
-      <!-- 邮件主题选择 -->
         <a-select
         v-model:value="selectedSubject"
         placeholder="Select Subject"
@@ -31,7 +29,6 @@
   
       
 
-      <!-- 邮件正文 -->
       <a-textarea
         v-model:value="emailContent"
         placeholder="Email text"
@@ -40,8 +37,6 @@
         readonly
       />
 
-      <!-- 下方是会议选项 -->
-      <!--选择开会日期-->
       <div v-if = 'isMeeting' class="meeting-day">
       At Day :  &nbsp;
       <a-input-number
@@ -55,7 +50,6 @@
   
       </div>
 
-      <!-- 会议主题选择 -->
       <a-select
         v-if = 'isMeeting'
         v-model:value="selectedMeeting"
@@ -93,7 +87,6 @@
   const eventStore = useEventStore();
   const calendarStore = useCalendarStore();
   
-  // 选中的收件人和主题
   const selectedRecipient = ref<string>();  
   const selectedSubject = ref<string>("");
   const emailContent = ref<string>("");
@@ -115,7 +108,6 @@
   })
 
   watch(selectedRecipient, () => {
-    // 清空表单内容
     selectedSubject.value = '';
     emailContent.value = '';
     isMeeting.value = false;
@@ -123,7 +115,6 @@
     selectedMeeting.value = undefined;
   });
     
-  //会议选项
   const meetingOptions = computed(()=>{
     const chooseSubject = subject.value.find(t=>t.subject === selectedSubject.value)
     if(chooseSubject){
@@ -141,7 +132,6 @@
 
 
 
-  // 收件人选项
   const recipientOptions = computed(() => 
     emailStore.contacts
       .map(c => ({
@@ -150,13 +140,12 @@
       }))
   );
   
-  // 主题选项
   const subjectOptions = computed(() => {
     console.log("sentFormat:", emailStore.sentFormat);
     console.log("selectedRecipient id:", selectedRecipient.value  );
 
     if (!selectedRecipient.value) return [];
-    const recipientId = selectedRecipient.value; // 直接获取收件人 id
+    const recipientId = selectedRecipient.value; 
     subject.value = emailStore.getSubjectsByRecipient(recipientId);
     console.log(subject.value)
     return subject.value.map((c) => ({
@@ -168,7 +157,6 @@
 
 
   
-  // 自动变更主题内容
   watch(selectedSubject, (newSubject) => {
     const content = selectedSubject ? subject.value.find(t=>t.subject === selectedSubject.value)?.content : "";
     if(content){
@@ -177,10 +165,8 @@
 
   });
   
-  // 发送邮件
   const handleSend = () => {
     if (!validateForm()) return;
-  //常规邮件发送流程
     if(subject.value.find(t=>t.subject === selectedSubject.value)?.type == 'normal'){
       const newEmail: Omit<Email, 'id' | 'isRead'> = {
       from: 'player',
@@ -194,7 +180,6 @@
         category: 'system',
       },
     };
-    // 添加邮件
     emailStore.sentEmail(newEmail);
   
     const format = subject.value.find(t=>t.subject === selectedSubject.value)
@@ -202,7 +187,6 @@
         eventStore.triggerEvent(format.nextEventId, GAME_EVENTS);
       }
     }
-  //会议邮件发送逻辑
     else if(subject.value.find(t=>t.subject === selectedSubject.value)?.type == 'meeting'){
     const newEmail: Omit<Email, 'id' | 'isRead'> = {
         from: 'player',
@@ -227,7 +211,7 @@
       }
     }
     else{
-      console.log("发送邮件报错")
+      console.log("send email error")
     }
 
 
@@ -235,12 +219,8 @@
     resetForm();
   };
   
-  // 表单验证
   const validateForm = () => {
-    // if (!selectedRecipient.value?.name) {
-    //   alert('请选择至少一个收件人');
-    //   return false;
-    // }
+
     if (!selectedSubject) {
       alert('Please select the subject of the email');
       return false;
@@ -248,7 +228,6 @@
     return true;
   };
   
-  // 重置表单
   const resetForm = () => {
     isMeeting.value = false
     selectedRecipient.value = undefined 
@@ -257,14 +236,12 @@
     emit('update:open', useUIStore().toggleSending(false));
   };
   
-  // 取消操作
   const handleCancel = () => {
     resetForm();
   };
   </script>
   
   <style scoped>
-  /* 样式优化 */
   .ant-modal-body {
     max-height: 60vh;
     overflow-y: auto;

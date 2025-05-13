@@ -152,7 +152,6 @@ export const useCalendarStore = defineStore('calendar', {
       }
     },
     
-    //生成sprint会议脚本
     generateSprintMeetingScript(): ScriptStep[] {
       const taskStore = useTaskStore();
       const completed = taskStore.backlog.filter(t => t.status === 'done' && t.createdAt >= this.currentDay - 7);
@@ -175,18 +174,14 @@ export const useCalendarStore = defineStore('calendar', {
     },
     
 
-    /**
-    * 更新当日客户会议脚本
-    */
+
     changeCustomMeeting() {
       const todayMeetings = this.events.filter(t => t.day == this.currentDay)
       todayMeetings.forEach(meeting => {
         if (meeting.linkedTaskId) {
-          // 根据 taskId 获取任务
           const task = useTaskStore().backlog.find(t => t.id == meeting.linkedTaskId);
           if (task) {
 
-              // 如果任务已完成，则更新 meeting 的 scripts
               let scripts:ScriptStep[] = []
               if (task.status == 'done') {
                 scripts = [
@@ -202,7 +197,7 @@ export const useCalendarStore = defineStore('calendar', {
                       { text: "thanks" ,
                         effects:[
                           {type: 'finish_personal_task',taskId:task.linkedPersonalTaskId as string},
-                          { type: 'change_satisfaction', value: 5 } // ✅ 新增效果
+                          { type: 'change_satisfaction', value: 5 } 
 
                         ]
                       },
@@ -323,7 +318,6 @@ export const useCalendarStore = defineStore('calendar', {
       useEventStore().executeAction(effect)
     },
 
-    // 保持之前的所有方法不变，仅修改completeMeeting方法中的邮件生成
     generateMeetingEmail(): Omit<Email, 'id' | 'isRead'> {
       if (!this.activeMeeting) {
         throw new Error('No active meeting to generate email');

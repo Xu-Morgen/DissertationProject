@@ -30,7 +30,7 @@ export const useRootStore = defineStore('root', {
 
   getters: {
     progress: () => {
-      const taskStore = useTaskStore(); // 导入你的任务管理模块
+      const taskStore = useTaskStore(); 
       const all = taskStore.backlog;
       const totalPoints = all.reduce((sum, t) => sum + (t.storyPoints || 0), 0);
       const completedPoints = all

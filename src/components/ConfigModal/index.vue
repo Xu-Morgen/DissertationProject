@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-//用于在游戏设置当中时弹出的页面
 
 import { useRouter } from 'vue-router';
 import {useCalendarStore,useEmailStore,useEventStore,useRootStore,useTaskStore,useUIStore} from "@/stores/index"
@@ -11,7 +10,6 @@ import { EMERGENCY_TEMPLATES } from '@/data/emergency';
 const router = useRouter();
 
 
-// 接收外部传入的 `open` 状态和 `Content`
 const props = defineProps<{
   open: boolean;
 }>();
@@ -51,14 +49,12 @@ const quickUnlockND = () =>{
 
 const testCustomerTask = () => {
   
-  // 先创建一个测试客户会议
   let customerMeeting = {
     ...meetings.CUSTOMER_MEETINGS[0], 
     id: `cust_meeting_${Date.now()}`
   };
   
 
-  // 生成关联的客户任务
   const {mainTask} = useTaskStore().generateCustomerTask({
     meetingId: customerMeeting.id,
     title: "client ask: system update",
@@ -72,7 +68,6 @@ const testCustomerTask = () => {
     taskIsComplete: mainTask
   })
   
-  // 安排到测试日
   useCalendarStore().scheduleMeeting(customerMeeting, useCalendarStore().currentDay+1);
 
 
@@ -103,7 +98,6 @@ const triggerEmergency2 = () =>{
 }
 
 
-// 触发事件通知父组件状态变化
 const emit = defineEmits(["update:open"]);
 
 
